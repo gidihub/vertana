@@ -4,14 +4,39 @@ __v0_devtools.tsx
 __v0_jsx-dev-runtime.ts
 .snowflake/
 .v0-trash/
-.vercel/
 
-# Environment variables
+# dependencies
+node_modules/
+.pnpm-store/
+
+# next.js
+.next/
+out/
+build/
+dist/
+
+# env files
+.env
 .env*.local
 
-# Common ignores
-node_modules
-.pnpm-store/
-.next/
-.DS_Store
+# vercel
+.vercel/
+
+# supabase local
 supabase/.temp/
+
+# testing
+coverage/
+
+# debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# typescript
+*.tsbuildinfo
+
+# misc
+.DS_Store
+*.pem
