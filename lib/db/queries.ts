@@ -847,13 +847,17 @@ export async function loadCertificateBySlug(slug: string) {
 
   if (!data || data.revoked_at) return null
 
-  const testTitle =
-    (data.attempts as { test_invites: { tests: { title: string } } })?.test_invites
-      ?.tests?.title ?? "Assessment"
+  const attempt = data.attempts as {
+    candidate_email: string
+    test_invites: { tests: { title: string } }
+  } | null
+
+  const testTitle = attempt?.test_invites?.tests?.title ?? "Assessment"
 
   return {
     slug: data.public_slug,
     candidate_name: data.candidate_name,
+    candidate_email: attempt?.candidate_email ?? "",
     skill_name: testTitle,
     percentile_band:
       data.percentile !== null ? `Top ${Math.round(data.percentile)}%` : "Top tier",

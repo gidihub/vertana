@@ -104,6 +104,7 @@ export function CandidateFlow({
       }
     } catch (err) {
       toast.error((err as Error).message)
+    } finally {
       setSubmitting(false)
     }
   }

@@ -386,7 +386,7 @@ export async function fetchCertificateBySlug(
       id: uid(),
       slug: data.certificate.slug,
       candidate_name: data.certificate.candidate_name,
-      candidate_email: "",
+      candidate_email: data.certificate.candidate_email,
       test_id: "",
       skill_name: data.certificate.skill_name,
       percentile_band: data.certificate.percentile_band,
