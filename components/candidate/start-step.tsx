@@ -44,7 +44,7 @@ export function StartStep({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl text-balance">{test.title}</CardTitle>
+        <CardTitle className="font-display text-2xl text-balance">{test.title}</CardTitle>
         {test.description && (
           <CardDescription className="text-pretty">
             {test.description}

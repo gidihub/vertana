@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Award, ArrowRight, ArrowLeft, ShieldCheck, Eye } from "lucide-react"
+import { toast } from "sonner"
 
 import type { Certificate, Test } from "@/lib/types"
 import { issueCertificate } from "@/lib/store"
@@ -23,11 +24,15 @@ type Phase = "offer" | "confirm" | "issued"
 
 export function CertificateStep({
   test,
+  token,
+  attemptId,
   band,
   email,
   onDecline,
 }: {
   test: Test
+  token: string
+  attemptId: string
   band: string
   email: string
   onDecline: () => void
@@ -37,18 +42,30 @@ export function CertificateStep({
   const [name, setName] = useState("")
   const [confirmEmail, setConfirmEmail] = useState(email)
   const [certificate, setCertificate] = useState<Certificate | null>(null)
+  const [issuing, setIssuing] = useState(false)
 
-  function handleIssue() {
-    if (!name.trim()) return
-    const cert = issueCertificate({
-      testId: test.id,
-      candidateName: name,
-      candidateEmail: confirmEmail,
-      skillName: test.title,
-      band,
-    })
-    setCertificate(cert)
-    setPhase("issued")
+  async function handleIssue() {
+    if (!name.trim() || issuing) return
+    setIssuing(true)
+    try {
+      const cert = await issueCertificate({
+        token,
+        attemptId,
+        candidateName: name,
+      })
+      setCertificate({
+        ...cert,
+        candidate_email: confirmEmail,
+        test_id: test.id,
+        skill_name: test.title,
+        percentile_band: band,
+      })
+      setPhase("issued")
+    } catch (err) {
+      toast.error((err as Error).message)
+    } finally {
+      setIssuing(false)
+    }
   }
 
   if (phase === "issued" && certificate) {
@@ -118,7 +135,7 @@ export function CertificateStep({
             <ArrowLeft data-icon="inline-start" />
             Back
           </Button>
-          <Button onClick={handleIssue} disabled={!name.trim()}>
+          <Button onClick={handleIssue} disabled={!name.trim() || issuing}>
             Issue my certificate
             <ArrowRight data-icon="inline-end" />
           </Button>

@@ -1,11 +1,14 @@
 "use client"
 
-import { use } from "react"
+import { use, useEffect, useState } from "react"
 import Link from "next/link"
-import { FileQuestion } from "lucide-react"
+import { FileQuestion, Loader2 } from "lucide-react"
 
-import { useStore } from "@/lib/store"
+import { CandidateHeader } from "@/components/candidate/candidate-header"
+import { fetchCertificateBySlug } from "@/lib/store"
+import type { Certificate } from "@/lib/types"
 import { CertificateView } from "@/components/certificate/certificate-view"
+import { appShell } from "@/lib/design-tokens"
 
 export default function CertificatePage({
   params,
@@ -13,20 +16,38 @@ export default function CertificatePage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = use(params)
-  const certificate = useStore((db) =>
-    db.certificates.find((c) => c.slug === slug),
-  )
+  const [certificate, setCertificate] = useState<Certificate | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    void fetchCertificateBySlug(slug).then((cert) => {
+      setCertificate(cert)
+      setLoading(false)
+    })
+  }, [slug])
+
+  if (loading) {
+    return (
+      <div className={appShell}>
+        <CandidateHeader />
+        <div className="flex flex-1 items-center justify-center py-24">
+          <Loader2 className="size-8 animate-spin text-pine" />
+        </div>
+      </div>
+    )
+  }
 
   const isAvailable = certificate && !certificate.revoked
 
   return (
-    <main className="min-h-svh bg-sage/40">
-      <div className="mx-auto flex min-h-svh w-full max-w-3xl flex-col items-center justify-center px-4 py-16">
+    <div className={appShell}>
+      <CandidateHeader />
+      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-4 py-16">
         {isAvailable ? (
           <CertificateView certificate={certificate} />
         ) : (
           <div className="flex max-w-md flex-col items-center gap-4 text-center">
-            <div className="flex size-14 items-center justify-center rounded-full bg-paper text-ink-muted">
+            <div className="flex size-14 items-center justify-center rounded-full bg-sage text-ink-muted">
               <FileQuestion className="size-7" aria-hidden />
             </div>
             <h1 className="font-display text-2xl font-semibold tracking-tight text-balance text-ink">
@@ -44,7 +65,7 @@ export default function CertificatePage({
             </Link>
           </div>
         )}
-      </div>
-    </main>
+      </main>
+    </div>
   )
 }

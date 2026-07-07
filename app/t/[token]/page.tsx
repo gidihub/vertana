@@ -1,11 +1,11 @@
 "use client"
 
-import { use, useEffect, useState } from "react"
-import { CircleSlash, CalendarX, Lock, CircleCheck } from "lucide-react"
+import { useEffect, useState } from "react"
+import { CircleSlash, CalendarX, Lock, Loader2 } from "lucide-react"
 
-import { useStore } from "@/lib/store"
-import { getSubmittedAt } from "@/lib/attempt"
+import { fetchTestByToken } from "@/lib/store"
 import { formatDateTime } from "@/lib/format"
+import type { Test } from "@/lib/types"
 import { CandidateFlow } from "@/components/candidate/candidate-flow"
 import { CandidateMessage } from "@/components/candidate/candidate-message"
 
@@ -19,36 +19,45 @@ export default function CandidateTestPage({
 }: {
   params: Promise<{ token: string }>
 }) {
-  const { token } = use(params)
-  const test = useStore((db) => db.tests.find((t) => t.token === token))
+  const [token, setToken] = useState<string | null>(null)
+  const [test, setTest] = useState<Test | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  // A completed attempt from this browser takes precedence over everything
-  // else, so returning to a finished link never looks like a retake.
-  const [submittedAt, setSubmittedAt] = useState<string | null>(null)
   useEffect(() => {
-    setSubmittedAt(getSubmittedAt(token))
-  }, [token])
+    void (async () => {
+      const { token: t } = await params
+      setToken(t)
+      try {
+        const loaded = await fetchTestByToken(t)
+        setTest(loaded)
+      } catch (err) {
+        setError((err as Error).message)
+      } finally {
+        setLoading(false)
+      }
+    })()
+  }, [params])
 
-  if (submittedAt) {
+  if (loading) {
     return (
-      <CandidateMessage
-        icon={CircleCheck}
-        tone="positive"
-        title="Your assessment is already recorded"
-      >
-        This link has already been completed from this device on{" "}
-        <span className="font-medium text-foreground">
-          {formatDateTime(submittedAt)}
-        </span>
-        . There&apos;s nothing more to do — the hiring team has your responses
-        and will follow up with next steps. You can close this window.
+      <div className="flex min-h-svh items-center justify-center bg-paper">
+        <Loader2 className="size-8 animate-spin text-pine" />
+      </div>
+    )
+  }
+
+  if (error || !test || !token) {
+    return (
+      <CandidateMessage icon={CircleSlash} title="This link doesn't lead to an assessment">
+        The assessment link you opened is invalid or hasn&apos;t been published
+        yet. Double-check that you used the full link, and contact the hiring
+        team that sent it if it still doesn&apos;t work.
       </CandidateMessage>
     )
   }
 
-  // No test matches this token: the link is malformed or points at something
-  // that no longer exists. A draft test isn't live yet, so it reads the same.
-  if (!test || test.status === "draft") {
+  if (test.status === "draft") {
     return (
       <CandidateMessage icon={CircleSlash} title="This link doesn't lead to an assessment">
         The assessment link you opened is invalid or hasn&apos;t been published
@@ -83,5 +92,5 @@ export default function CandidateTestPage({
     )
   }
 
-  return <CandidateFlow test={test} />
+  return <CandidateFlow test={test} token={token} />
 }

@@ -5,11 +5,31 @@ export type TestStatus = "draft" | "active" | "closed"
 
 export type QuestionType = "multiple_choice" | "short_answer" | "coding"
 
+export type AiResistance = "low" | "medium" | "high"
+
+export type QuestionSource = "library" | "custom" | "ai_generated"
+
+export type QuestionDifficulty = "easy" | "medium" | "hard"
+
+export type LibraryCategory = "frontend" | "backend" | "data" | "ops"
+
 export type CandidateStatus =
   | "invited"
   | "in_progress"
   | "submitted"
   | "expired"
+
+export type PlanTier = "free" | "starter" | "growth" | "custom"
+
+export interface Organization {
+  id: string
+  name: string
+  plan_tier: PlanTier
+  credits_remaining: number
+  credits_reset_at: string
+  ai_generations_used: number
+  ai_generations_reset_at: string
+}
 
 // Table: questions
 export interface Question {
@@ -17,15 +37,47 @@ export interface Question {
   test_id: string
   type: QuestionType
   prompt: string
-  // MCQ only: 2-6 options and the index of the correct one.
   options: string[]
   correct_option_index: number | null
+  correct_answer_exact?: string | null
   position: number
+  points?: number
+  ai_resistance?: AiResistance
+  source?: QuestionSource
+  library_category?: LibraryCategory | string | null
+  estimated_minutes?: number | null
+  difficulty?: QuestionDifficulty | null
+}
+
+export interface LibraryQuestion extends Question {
+  is_library_item: true
+  test_id: ""
+}
+
+export interface TestPlan {
+  total_time_minutes: number
+  question_count: number
+  summary: string
+  questions: PlannedQuestion[]
+}
+
+export interface PlannedQuestion {
+  tempId: string
+  type: QuestionType
+  prompt: string
+  options: string[]
+  correct_option_index: number | null
+  correct_answer_exact?: string | null
+  ai_resistance: AiResistance
+  estimated_minutes: number
+  difficulty: QuestionDifficulty
+  points?: number
 }
 
 // Table: tests
 export interface Test {
   id: string
+  org_id?: string
   title: string
   description: string
   time_limit_minutes: number
@@ -49,6 +101,7 @@ export interface Test {
 export interface Certificate {
   id: string
   slug: string // public URL slug (unguessable)
+  attempt_id?: string
   candidate_name: string
   candidate_email: string // private; used only for removal requests
   test_id: string
@@ -63,12 +116,13 @@ export interface Certificate {
 // so there is an auditable record of what each candidate actually agreed to.
 export interface ConsentRecord {
   id: string
-  candidate_id: string
+  attempt_id: string
   test_id: string
   consent_version: string
   consent_text_snapshot: string
   accepted: boolean
   responded_at: string // ISO datetime
+  ip_address?: string | null
 }
 
 // Table: candidates (one row per candidate attempt)
@@ -79,6 +133,7 @@ export interface Candidate {
   status: CandidateStatus
   score: number | null // percentage 0-100, null until graded
   tab_switch_count: number
+  flagged: boolean
   consent_id: string | null
   started_at: string | null
   submitted_at: string | null

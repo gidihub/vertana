@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, Plus, Sparkles, Save, Send } from "lucide-react"
+import { ArrowLeft, Save, Send } from "lucide-react"
 import { toast } from "sonner"
 
 import type { Question, Test } from "@/lib/types"
@@ -26,33 +26,26 @@ import {
   FieldDescription,
   FieldGroup,
 } from "@/components/ui/field"
-import {
-  Empty,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-  EmptyDescription,
-  EmptyContent,
-} from "@/components/ui/empty"
-import { QuestionCardMockup } from "@/components/empty-mockups"
-import { QuestionEditor } from "@/components/builder/question-editor"
-import { AiGenerateDialog } from "@/components/builder/ai-generate-dialog"
+import { QuestionsSection } from "@/components/builder/questions-section"
 
 function newQuestion(testId: string, position: number): Question {
   return {
-    id: uid("q"),
+    id: uid(),
     test_id: testId,
     type: "multiple_choice",
     prompt: "",
     options: ["", ""],
     correct_option_index: 0,
     position,
+    points: 1,
+    ai_resistance: "medium",
+    source: "custom",
   }
 }
 
 export function TestBuilder({ existing }: { existing?: Test }) {
   const router = useRouter()
-  const testId = useMemo(() => existing?.id ?? uid("test"), [existing?.id])
+  const testId = useMemo(() => existing?.id ?? uid(), [existing?.id])
 
   const [title, setTitle] = useState(existing?.title ?? "")
   const [description, setDescription] = useState(existing?.description ?? "")
@@ -77,8 +70,6 @@ export function TestBuilder({ existing }: { existing?: Test }) {
   const [questions, setQuestions] = useState<Question[]>(
     existing?.questions ?? [],
   )
-  const [aiOpen, setAiOpen] = useState(false)
-
   function addQuestion() {
     setQuestions((qs) => [...qs, newQuestion(testId, qs.length)])
   }
@@ -123,7 +114,7 @@ export function TestBuilder({ existing }: { existing?: Test }) {
     return null
   }
 
-  function persist(status: Test["status"]) {
+  async function persist(status: Test["status"]) {
     const error = validate()
     if (error) {
       toast.error(error)
@@ -144,16 +135,20 @@ export function TestBuilder({ existing }: { existing?: Test }) {
         100,
       ),
       status,
-      token: existing?.token ?? uid("tok").replace("tok_", ""),
+      token: existing?.token ?? "",
       created_at: existing?.created_at ?? new Date().toISOString(),
       questions: questions.map((q, i) => ({ ...q, position: i })),
     }
 
-    saveTest(test)
-    toast.success(
-      status === "active" ? "Test published" : "Draft saved",
-    )
-    router.push("/dashboard")
+    try {
+      await saveTest(test)
+      toast.success(
+        status === "active" ? "Test published" : "Draft saved",
+      )
+      router.push("/dashboard")
+    } catch (err) {
+      toast.error((err as Error).message)
+    }
   }
 
   return (
@@ -170,7 +165,7 @@ export function TestBuilder({ existing }: { existing?: Test }) {
           Back to tests
         </Button>
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-balance">
+          <h1 className="font-display text-2xl font-semibold tracking-tight text-balance text-ink">
             {existing ? "Edit test" : "Create a new test"}
           </h1>
           <p className="text-muted-foreground">
@@ -312,67 +307,16 @@ export function TestBuilder({ existing }: { existing?: Test }) {
         </CardContent>
       </Card>
 
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="text-lg font-semibold">Questions</h2>
-            <p className="text-sm text-muted-foreground">
-              {questions.length} question{questions.length === 1 ? "" : "s"}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => setAiOpen(true)}>
-              <Sparkles data-icon="inline-start" />
-              Generate with AI
-            </Button>
-            <Button variant="outline" onClick={addQuestion}>
-              <Plus data-icon="inline-start" />
-              Add question
-            </Button>
-          </div>
-        </div>
-
-        {questions.length === 0 ? (
-          <Empty className="rounded-lg border border-dashed border-border py-10">
-            <EmptyHeader>
-              <EmptyMedia>
-                <QuestionCardMockup />
-              </EmptyMedia>
-              <EmptyTitle className="text-base">Add your first question</EmptyTitle>
-              <EmptyDescription>
-                Write a question manually or let AI draft a role-specific set to
-                start from.
-              </EmptyDescription>
-            </EmptyHeader>
-            <EmptyContent>
-              <div className="flex gap-2">
-                <Button onClick={() => setAiOpen(true)}>
-                  <Sparkles data-icon="inline-start" />
-                  Generate with AI
-                </Button>
-                <Button variant="outline" onClick={addQuestion}>
-                  <Plus data-icon="inline-start" />
-                  Add manually
-                </Button>
-              </div>
-            </EmptyContent>
-          </Empty>
-        ) : (
-          <div className="flex flex-col gap-4">
-            {questions.map((q, i) => (
-              <QuestionEditor
-                key={q.id}
-                question={q}
-                index={i}
-                total={questions.length}
-                onChange={updateQuestion}
-                onRemove={() => removeQuestion(q.id)}
-                onMove={(dir) => moveQuestion(i, dir)}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      <QuestionsSection
+        testId={testId}
+        questions={questions}
+        onAdd={addQuestion}
+        onUpdate={updateQuestion}
+        onRemove={removeQuestion}
+        onMove={moveQuestion}
+        onInsert={insertGenerated}
+        onSuggestedTime={(minutes) => setTimeLimit(String(minutes))}
+      />
 
       <Separator />
 
@@ -387,12 +331,6 @@ export function TestBuilder({ existing }: { existing?: Test }) {
         </Button>
       </div>
 
-      <AiGenerateDialog
-        open={aiOpen}
-        onOpenChange={setAiOpen}
-        testId={testId}
-        onInsert={insertGenerated}
-      />
     </div>
   )
 }

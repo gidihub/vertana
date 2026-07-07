@@ -28,11 +28,8 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  colorScheme: 'light dark',
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f7f8fa' },
-    { media: '(prefers-color-scheme: dark)', color: '#0f1420' },
-  ],
+  colorScheme: 'light',
+  themeColor: '#f2f3ef',
 }
 
 export default function RootLayout({
@@ -43,7 +40,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`bg-background ${geistSans.variable} ${geistMono.variable} ${fraunces.variable}`}
+      className={`light bg-paper ${geistSans.variable} ${geistMono.variable} ${fraunces.variable}`}
     >
       <body className="font-sans antialiased">
         {children}

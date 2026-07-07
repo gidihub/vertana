@@ -65,7 +65,7 @@ const TIERS: Tier[] = [
       "400 candidate credits / month",
       "100 AI-generated questions / month",
       "Everything in Starter",
-      "Proctoring (camera + face verification)",
+      "Tab-switch integrity monitoring",
       "ATS integrations",
     ],
     cta: "Start Growth",
@@ -208,7 +208,7 @@ export function Pricing() {
                 </ul>
 
                 <Link
-                  href="/dashboard"
+                  href="/signup"
                   className={
                     tier.featured
                       ? "mt-8 inline-flex items-center justify-center rounded-full bg-pine px-5 py-3 text-sm font-semibold text-pine-foreground transition-colors hover:bg-pine-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pine focus-visible:ring-offset-2 focus-visible:ring-offset-card"

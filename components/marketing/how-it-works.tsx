@@ -13,8 +13,8 @@ const STEPS = [
   },
   {
     icon: MonitorCheck,
-    title: "They take it — optionally proctored",
-    body: "With consent, the session is monitored: camera verification and tab-switch tracking, clearly disclosed up front.",
+    title: "They take it — optionally monitored",
+    body: "With consent, tab-switch events are recorded when candidates leave the assessment window — clearly disclosed up front.",
   },
   {
     icon: BarChart3,

@@ -37,7 +37,6 @@ import { TestStatusBadge } from "@/components/status-badge"
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from "@/components/ui/empty"
 import { TestCardMockup } from "@/components/empty-mockups"
 import { TestListSkeleton } from "@/components/loading-skeletons"
-import { useSimulatedLoad } from "@/lib/use-loading"
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -67,9 +66,10 @@ function Meta({ icon: Icon, children }: { icon: typeof Users; children: React.Re
 
 export function TestList() {
   const router = useRouter()
-  const loading = useSimulatedLoad()
+  const loading = useStore((db) => db.loading)
   const tests = useStore((db) => db.tests)
   const candidates = useStore((db) => db.candidates)
+  const org = useStore((db) => db.organization)
 
   const countFor = (id: string) => candidates.filter((c) => c.test_id === id).length
 
@@ -78,29 +78,47 @@ export function TestList() {
   const activeCount = tests.filter((t) => t.status === "active").length
 
   function copyLink(test: Test) {
+    if (!test.token) {
+      toast.error("Publish this test first to get a candidate link.")
+      return
+    }
+    if (org && org.credits_remaining <= 0) {
+      toast.error(
+        "No candidate credits remaining. Upgrade your plan or wait for your monthly reset before inviting candidates.",
+      )
+      return
+    }
     const origin = typeof window !== "undefined" ? window.location.origin : ""
     navigator.clipboard.writeText(`${origin}/t/${test.token}`)
     toast.success("Candidate link copied to clipboard")
   }
 
-  function changeStatus(test: Test, status: TestStatus) {
-    setTestStatus(test.id, status)
-    toast.success(`"${test.title}" set to ${status}`)
+  async function changeStatus(test: Test, status: TestStatus) {
+    try {
+      await setTestStatus(test.id, status)
+      toast.success(`"${test.title}" set to ${status}`)
+    } catch (err) {
+      toast.error((err as Error).message)
+    }
   }
 
-  function handleDelete(test: Test) {
-    deleteTest(test.id)
-    toast.success(`Deleted "${test.title}"`)
+  async function handleDelete(test: Test) {
+    try {
+      await deleteTest(test.id)
+      toast.success(`Deleted "${test.title}"`)
+    } catch (err) {
+      toast.error((err as Error).message)
+    }
   }
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-balance">
+          <h1 className="font-display text-2xl font-semibold tracking-tight text-balance text-ink">
             Your assessments
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-ink-muted">
             Create tests, share candidate links, and review results.
           </p>
         </div>

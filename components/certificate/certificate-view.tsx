@@ -10,9 +10,12 @@ import type { Certificate } from "@/lib/types"
 import { revokeCertificate } from "@/lib/store"
 import { formatDate } from "@/lib/format"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Field, FieldLabel } from "@/components/ui/field"
 
 export function CertificateView({ certificate }: { certificate: Certificate }) {
   const [removing, setRemoving] = useState(false)
+  const [confirmEmail, setConfirmEmail] = useState(certificate.candidate_email)
   // Resolved after mount so SSR and the first client render agree (avoids a
   // hydration mismatch on the share URLs).
   const [origin, setOrigin] = useState("")
@@ -39,9 +42,19 @@ export function CertificateView({ certificate }: { certificate: Certificate }) {
   }
 
   function handleRemoval() {
-    revokeCertificate(certificate.slug)
-    setRemoving(false)
-    toast.success("Removal requested. This certificate is no longer public.")
+    if (!confirmEmail.trim()) {
+      toast.error("Enter the email you used for the assessment")
+      return
+    }
+    void revokeCertificate({
+      slug: certificate.slug,
+      email: confirmEmail.trim(),
+    })
+      .then(() => {
+        setRemoving(false)
+        toast.success("Removal requested. This certificate is no longer public.")
+      })
+      .catch((err) => toast.error((err as Error).message))
   }
 
   return (
@@ -134,6 +147,15 @@ export function CertificateView({ certificate }: { certificate: Certificate }) {
             <p className="text-sm text-ink text-pretty">
               Remove this certificate? Its public link will stop working.
             </p>
+            <Field className="w-full text-left">
+              <FieldLabel htmlFor="remove-email">Confirm your email</FieldLabel>
+              <Input
+                id="remove-email"
+                type="email"
+                value={confirmEmail}
+                onChange={(e) => setConfirmEmail(e.target.value)}
+              />
+            </Field>
             <div className="flex gap-2">
               <Button
                 variant="ghost"

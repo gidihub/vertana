@@ -2,7 +2,8 @@
 
 import { Trash2, GripVertical, ChevronUp, ChevronDown, Check } from "lucide-react"
 
-import type { Question, QuestionType } from "@/lib/types"
+import type { AiResistance, Question, QuestionType } from "@/lib/types"
+import { AiResistanceBadge } from "@/components/builder/ai-resistance-badge"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -84,6 +85,9 @@ export function QuestionEditor({
             Question {index + 1}
           </span>
           <Badge variant="secondary">{TYPE_LABELS[question.type]}</Badge>
+          {question.ai_resistance ? (
+            <AiResistanceBadge level={question.ai_resistance} compact />
+          ) : null}
         </div>
         <div className="flex items-center gap-1">
           <Button
@@ -117,7 +121,7 @@ export function QuestionEditor({
       </div>
 
       <div className="flex flex-col gap-4 p-4">
-        <div className="grid gap-4 sm:grid-cols-[1fr_180px]">
+        <div className="grid gap-4 sm:grid-cols-[1fr_160px_120px_100px]">
           <Field>
             <FieldLabel htmlFor={`prompt-${question.id}`}>Prompt</FieldLabel>
             <Textarea
@@ -143,6 +147,37 @@ export function QuestionEditor({
                 <SelectItem value="coding">Coding</SelectItem>
               </SelectContent>
             </Select>
+          </Field>
+          <Field>
+            <FieldLabel>AI resistance</FieldLabel>
+            <Select
+              value={question.ai_resistance ?? "medium"}
+              onValueChange={(v) =>
+                update({ ai_resistance: v as AiResistance })
+              }
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">Low</SelectItem>
+                <SelectItem value="medium">Medium</SelectItem>
+                <SelectItem value="high">High</SelectItem>
+              </SelectContent>
+            </Select>
+          </Field>
+          <Field>
+            <FieldLabel htmlFor={`points-${question.id}`}>Points</FieldLabel>
+            <Input
+              id={`points-${question.id}`}
+              type="number"
+              min={1}
+              max={100}
+              value={question.points ?? 1}
+              onChange={(e) =>
+                update({ points: Math.max(1, Number(e.target.value) || 1) })
+              }
+            />
           </Field>
         </div>
 
@@ -202,10 +237,27 @@ export function QuestionEditor({
         )}
 
         {question.type === "short_answer" && (
-          <p className="rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground">
-            Candidates will type a free-form text answer. These are graded manually
-            from the results dashboard.
-          </p>
+          <div className="flex flex-col gap-3">
+            <Field>
+              <FieldLabel htmlFor={`exact-${question.id}`}>
+                Auto-grade answer (optional)
+              </FieldLabel>
+              <Input
+                id={`exact-${question.id}`}
+                placeholder="Exact match for auto-grading"
+                value={question.correct_answer_exact ?? ""}
+                onChange={(e) =>
+                  update({
+                    correct_answer_exact: e.target.value || null,
+                  })
+                }
+              />
+            </Field>
+            <p className="rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground">
+              Leave blank to grade manually from results. Set an exact answer to
+              auto-score on submit.
+            </p>
+          </div>
         )}
 
         {question.type === "coding" && (

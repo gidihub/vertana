@@ -40,13 +40,13 @@ export function Hero() {
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink-muted text-pretty">
             Vertana turns the résumé guessing game into a real, timed test every
             candidate actually takes. Build assessments in minutes, invite
-            candidates, optionally proctor, and get a ranked, auditable result
-            you can defend.
+            candidates, optionally monitor tab focus with consent, and get a ranked,
+            auditable result you can defend.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Link
-              href="/dashboard"
+              href="/signup"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-pine px-6 py-3 text-sm font-semibold text-pine-foreground transition-colors hover:bg-pine-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pine focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
             >
               Create your first test

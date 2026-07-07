@@ -64,40 +64,42 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-:root {
+:root,
+.light {
   color-scheme: light;
-  --background: oklch(0.985 0.003 240);
-  --foreground: oklch(0.22 0.02 250);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.02 250);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.02 250);
-  --primary: oklch(0.5 0.13 248);
-  --primary-foreground: oklch(0.99 0.005 240);
-  --secondary: oklch(0.955 0.006 240);
-  --secondary-foreground: oklch(0.3 0.02 250);
-  --muted: oklch(0.955 0.006 240);
-  --muted-foreground: oklch(0.52 0.015 250);
-  --accent: oklch(0.93 0.03 200);
-  --accent-foreground: oklch(0.3 0.05 220);
+  /* Map shadcn semantic tokens → Vertana "Ink & Signal" palette */
+  --background: var(--color-paper);
+  --foreground: var(--color-ink);
+  --card: #ffffff;
+  --card-foreground: var(--color-ink);
+  --popover: #ffffff;
+  --popover-foreground: var(--color-ink);
+  --primary: var(--color-pine);
+  --primary-foreground: var(--color-pine-foreground);
+  --secondary: var(--color-sage);
+  --secondary-foreground: var(--color-ink);
+  --muted: var(--color-sage);
+  --muted-foreground: var(--color-ink-muted);
+  --accent: color-mix(in srgb, var(--color-pine) 8%, var(--color-sage));
+  --accent-foreground: var(--color-pine);
   --destructive: oklch(0.577 0.22 27.5);
-  --border: oklch(0.9 0.008 240);
-  --input: oklch(0.9 0.008 240);
-  --ring: oklch(0.5 0.13 248);
-  --chart-1: oklch(0.5 0.13 248);
-  --chart-2: oklch(0.6 0.12 190);
-  --chart-3: oklch(0.68 0.13 145);
-  --chart-4: oklch(0.72 0.14 65);
+  --border: var(--color-sage-line);
+  --input: var(--color-sage-line);
+  --ring: var(--color-pine);
+  --chart-1: var(--color-pine);
+  --chart-2: var(--color-lime-ink);
+  --chart-3: var(--color-pine-deep);
+  --chart-4: var(--color-lime);
   --chart-5: oklch(0.62 0.2 25);
   --radius: 0.625rem;
-  --sidebar: oklch(0.99 0.004 240);
-  --sidebar-foreground: oklch(0.22 0.02 250);
-  --sidebar-primary: oklch(0.5 0.13 248);
-  --sidebar-primary-foreground: oklch(0.99 0.005 240);
-  --sidebar-accent: oklch(0.955 0.006 240);
-  --sidebar-accent-foreground: oklch(0.3 0.02 250);
-  --sidebar-border: oklch(0.9 0.008 240);
-  --sidebar-ring: oklch(0.5 0.13 248);
+  --sidebar: var(--color-paper);
+  --sidebar-foreground: var(--color-ink);
+  --sidebar-primary: var(--color-pine);
+  --sidebar-primary-foreground: var(--color-pine-foreground);
+  --sidebar-accent: var(--color-sage);
+  --sidebar-accent-foreground: var(--color-ink);
+  --sidebar-border: var(--color-sage-line);
+  --sidebar-ring: var(--color-pine);
 }
 
 .dark {
@@ -177,6 +179,12 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-paper font-sans text-ink antialiased;
+  }
+  h1,
+  h2,
+  h3,
+  .font-display {
+    @apply font-display;
   }
 }

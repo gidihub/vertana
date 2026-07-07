@@ -1,12 +1,13 @@
 "use client"
 
-import { use } from "react"
+import { use, useEffect, useState } from "react"
 import Link from "next/link"
 
-import { useStore } from "@/lib/store"
+import { fetchTestById, useStore } from "@/lib/store"
 import { RecruiterShell } from "@/components/recruiter-shell"
 import { TestBuilder } from "@/components/builder/test-builder"
 import { Button } from "@/components/ui/button"
+import { Loader2 } from "lucide-react"
 import {
   Empty,
   EmptyHeader,
@@ -21,11 +22,23 @@ export default function EditTestPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = use(params)
-  const test = useStore((db) => db.tests.find((t) => t.id === id))
+  const cached = useStore((db) => db.tests.find((t) => t.id === id))
+  const [test, setTest] = useState(cached)
+  const [loading, setLoading] = useState(!cached)
+
+  useEffect(() => {
+    void fetchTestById(id)
+      .then((loaded) => setTest(loaded ?? undefined))
+      .finally(() => setLoading(false))
+  }, [id])
 
   return (
     <RecruiterShell>
-      {test ? (
+      {loading ? (
+        <div className="flex items-center justify-center py-24">
+          <Loader2 className="size-8 animate-spin text-muted-foreground" />
+        </div>
+      ) : test ? (
         <TestBuilder existing={test} />
       ) : (
         <div className="mx-auto w-full max-w-3xl px-4 py-16">
@@ -37,7 +50,9 @@ export default function EditTestPage({
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <Button nativeButton={false} render={<Link href="/dashboard" />}>Back to tests</Button>
+              <Button nativeButton={false} render={<Link href="/dashboard" />}>
+                Back to tests
+              </Button>
             </EmptyContent>
           </Empty>
         </div>

@@ -40,18 +40,18 @@ export function MarketingNav() {
         </div>
 
         <div className="hidden items-center gap-2 md:flex">
-          <Link
-            href="/dashboard"
-            className="rounded-full px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-sage focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pine focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
-          >
-            Sign in
-          </Link>
-          <Link
-            href="/dashboard"
-            className="rounded-full bg-pine px-4 py-2 text-sm font-semibold text-pine-foreground transition-colors hover:bg-pine-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pine focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
-          >
-            Get started
-          </Link>
+            <Link
+              href="/login"
+              className="rounded-full px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-sage focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pine focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/signup"
+              className="rounded-full bg-pine px-4 py-2 text-sm font-semibold text-pine-foreground transition-colors hover:bg-pine-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pine focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+            >
+              Get started
+            </Link>
         </div>
 
         <button
@@ -80,13 +80,13 @@ export function MarketingNav() {
             ))}
             <div className="mt-2 flex flex-col gap-2">
               <Link
-                href="/dashboard"
+                href="/login"
                 className="rounded-full border border-sage-line px-4 py-2 text-center text-sm font-medium text-ink hover:bg-sage"
               >
                 Sign in
               </Link>
               <Link
-                href="/dashboard"
+                href="/signup"
                 className="rounded-full bg-pine px-4 py-2 text-center text-sm font-semibold text-pine-foreground hover:bg-pine-deep"
               >
                 Get started

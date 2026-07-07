@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { Clock, ChevronLeft, ChevronRight, Eye, Send } from "lucide-react"
 
 import type { Question, Test } from "@/lib/types"
+import { autosaveAnswer, reportTabSwitch } from "@/lib/store"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -40,15 +41,22 @@ function formatClock(seconds: number) {
 
 export function TestRunner({
   test,
+  token,
+  attemptId,
+  initialAnswers = {},
+  initialTabSwitches = 0,
   onSubmit,
 }: {
   test: Test
+  token: string
+  attemptId: string
+  initialAnswers?: Record<string, string>
+  initialTabSwitches?: number
   onSubmit: (result: {
     answers: Record<string, string>
     tabSwitchCount: number
   }) => void
 }) {
-  // Randomize once per attempt if enabled.
   const questions = useMemo(() => {
     const list = [...test.questions].sort((a, b) => a.position - b.position)
     if (!test.randomize_questions) return list
@@ -60,12 +68,13 @@ export function TestRunner({
   }, [test])
 
   const [current, setCurrent] = useState(0)
-  const [answers, setAnswers] = useState<Record<string, string>>({})
+  const [answers, setAnswers] = useState<Record<string, string>>(initialAnswers)
   const [remaining, setRemaining] = useState(test.time_limit_minutes * 60)
-  const [tabSwitches, setTabSwitches] = useState(0)
+  const [tabSwitches, setTabSwitches] = useState(initialTabSwitches)
   const [showTabWarning, setShowTabWarning] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const submittedRef = useRef(false)
+  const saveTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({})
 
   const finish = () => {
     if (submittedRef.current) return
@@ -73,7 +82,6 @@ export function TestRunner({
     onSubmit({ answers, tabSwitchCount: tabSwitches })
   }
 
-  // Countdown timer.
   useEffect(() => {
     const id = setInterval(() => {
       setRemaining((r) => {
@@ -89,18 +97,35 @@ export function TestRunner({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Proctoring: count tab/window switches.
   useEffect(() => {
     if (!test.requires_proctoring) return
-    function onVisibility() {
-      if (document.hidden) {
+
+    async function handleLeave() {
+      try {
+        const count = await reportTabSwitch(token, attemptId)
+        setTabSwitches(count)
+        setShowTabWarning(true)
+      } catch {
         setTabSwitches((c) => c + 1)
         setShowTabWarning(true)
       }
     }
+
+    function onVisibility() {
+      if (document.hidden) void handleLeave()
+    }
+
+    function onBlur() {
+      if (document.hidden) void handleLeave()
+    }
+
     document.addEventListener("visibilitychange", onVisibility)
-    return () => document.removeEventListener("visibilitychange", onVisibility)
-  }, [test.requires_proctoring])
+    window.addEventListener("blur", onBlur)
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility)
+      window.removeEventListener("blur", onBlur)
+    }
+  }, [test.requires_proctoring, token, attemptId])
 
   const q = questions[current]
   const answered = questions.filter((item) => {
@@ -112,11 +137,20 @@ export function TestRunner({
 
   function setAnswer(value: string) {
     setAnswers((prev) => ({ ...prev, [q.id]: value }))
+
+    clearTimeout(saveTimers.current[q.id])
+    saveTimers.current[q.id] = setTimeout(() => {
+      void autosaveAnswer({
+        token,
+        attemptId,
+        questionId: q.id,
+        response: value,
+      })
+    }, 500)
   }
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Sticky status bar */}
       <div className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-card/95 px-4 py-3 backdrop-blur">
         <div className="flex items-center gap-3">
           <span className="text-sm font-medium">{test.title}</span>
@@ -142,7 +176,6 @@ export function TestRunner({
         </div>
       </div>
 
-      {/* Progress dots */}
       <div className="flex flex-wrap gap-1.5">
         {questions.map((item, i) => {
           const isAnswered = answers[item.id] !== undefined && answers[item.id] !== ""
@@ -260,7 +293,6 @@ export function TestRunner({
         {answered} of {questions.length} answered
       </p>
 
-      {/* Tab switch warning */}
       <Dialog open={showTabWarning} onOpenChange={setShowTabWarning}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
@@ -277,7 +309,6 @@ export function TestRunner({
         </DialogContent>
       </Dialog>
 
-      {/* Submit confirmation */}
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>

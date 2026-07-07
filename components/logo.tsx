@@ -10,12 +10,12 @@ import { cn } from "@/lib/utils"
  * the logo sits naturally within the brand system.
  */
 
-// Brand colors — pulled from the "Ink & Signal" marketing palette so the mark
-// matches the rest of the site.
-const PINE = "#0E4A34" // deep green — converging bars on light surfaces
-const LIME = "#C4F250" // bright signal green — checkmark notch (high contrast)
-const PINE_DEEP = "#0A3325" // wordmark on light surfaces + checkmark on dark
-const PAPER = "#F2F3EF" // wordmark on dark surfaces
+import { colors } from "@/lib/design-tokens"
+
+const PINE = colors.pine
+const LIME = colors.lime
+const PINE_DEEP = colors.pineDeep
+const PAPER = colors.paper
 
 type Variant = "default" | "onDark"
 

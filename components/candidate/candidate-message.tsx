@@ -1,5 +1,7 @@
 import type { LucideIcon } from "lucide-react"
 
+import { CandidateHeader } from "@/components/candidate/candidate-header"
+import { appShell, displayHeading } from "@/lib/design-tokens"
 import {
   Card,
   CardHeader,
@@ -7,6 +9,7 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
 
 // A single, consistent surface for every candidate-facing terminal state
 // (invalid link, expired, closed, already submitted). States what happened in
@@ -23,8 +26,10 @@ export function CandidateMessage({
   children: React.ReactNode
 }) {
   return (
-    <main className="flex min-h-svh items-center justify-center bg-background px-4 py-10">
-      <Card className="w-full max-w-md text-center">
+    <div className={appShell}>
+      <CandidateHeader />
+      <main className="flex flex-1 items-center justify-center px-4 py-10">
+      <Card className="w-full max-w-md border-sage-line/80 text-center shadow-sm">
         <CardHeader className="items-center">
           <div
             className={
@@ -35,12 +40,15 @@ export function CandidateMessage({
           >
             <Icon className="size-7" aria-hidden />
           </div>
-          <CardTitle className="text-balance">{title}</CardTitle>
+          <CardTitle className={cn(displayHeading, "text-balance text-xl")}>
+            {title}
+          </CardTitle>
         </CardHeader>
         <CardContent className="text-pretty text-sm/relaxed text-muted-foreground">
           {children}
         </CardContent>
       </Card>
-    </main>
+      </main>
+    </div>
   )
 }

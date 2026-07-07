@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import {
   ArrowLeft,
@@ -13,8 +13,14 @@ import {
 } from "lucide-react"
 import { toast } from "sonner"
 
-import type { Candidate, Test } from "@/lib/types"
-import { useStore, getConsent } from "@/lib/store"
+import type { Candidate, ConsentRecord, Test } from "@/lib/types"
+import {
+  useStore,
+  getConsent,
+  loadTestResults,
+  gradeAttempt,
+  type AttemptAnswerView,
+} from "@/lib/store"
 import { formatDateTime } from "@/lib/format"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -47,7 +53,6 @@ import { ResultsPreviewMockup } from "@/components/empty-mockups"
 import { ResultsSummary } from "@/components/results/results-summary"
 import { ResultsTableSkeleton } from "@/components/loading-skeletons"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useSimulatedLoad } from "@/lib/use-loading"
 import {
   Dialog,
   DialogContent,
@@ -63,26 +68,45 @@ function scoreTone(score: number | null) {
   return "text-destructive"
 }
 
-function toCsv(test: Test, candidates: Candidate[]): string {
+function toCsv(
+  test: Test,
+  candidates: Candidate[],
+  consents: Record<string, ConsentRecord>,
+  answers: Record<string, AttemptAnswerView[]>,
+): string {
+  const questionHeaders = test.questions.map(
+    (q, i) => `Q${i + 1}: ${q.prompt.replace(/"/g, '""')}`,
+  )
   const header = [
     "Email",
     "Status",
     "Score (%)",
     "Tab switches",
+    "Flagged",
     "Started",
     "Submitted",
     "Consent",
+    ...questionHeaders,
   ]
   const rows = candidates.map((c) => {
-    const consent = getConsent(c.consent_id)
+    const consent = c.consent_id ? consents[c.consent_id] : undefined
+    const attemptAnswers = answers[c.id] ?? []
+    const answerCells = test.questions.map((q) => {
+      const a = attemptAnswers.find((item) => item.question_id === q.id)
+      return a?.response ?? ""
+    })
     return [
       c.email,
       c.status,
       c.score ?? "",
       c.tab_switch_count,
+      c.flagged ? "yes" : "no",
       c.started_at ?? "",
       c.submitted_at ?? "",
-      consent ? `${consent.accepted ? "accepted" : "declined"} (${consent.consent_version})` : "n/a",
+      consent
+        ? `${consent.accepted ? "accepted" : "declined"} (${consent.consent_version})`
+        : "n/a",
+      ...answerCells,
     ]
   })
   return [header, ...rows]
@@ -102,8 +126,28 @@ export function ResultsDashboard({ testId }: { testId: string }) {
   const candidates = useStore((db) =>
     db.candidates.filter((c) => c.test_id === testId),
   )
+  const consents = useStore((db) => db.consents)
   const [selected, setSelected] = useState<Candidate | null>(null)
-  const loading = useSimulatedLoad()
+  const [loading, setLoading] = useState(true)
+  const [answers, setAnswers] = useState<Record<string, AttemptAnswerView[]>>({})
+  const [grading, setGrading] = useState(false)
+
+  useEffect(() => {
+    void loadTestResults(testId)
+      .then((data) => setAnswers(data.answers))
+      .finally(() => setLoading(false))
+  }, [testId])
+
+  const sortedCandidates = useMemo(() => {
+    return [...candidates].sort((a, b) => {
+      if (a.score === null && b.score === null) {
+        return (b.submitted_at ?? "").localeCompare(a.submitted_at ?? "")
+      }
+      if (a.score === null) return 1
+      if (b.score === null) return -1
+      return b.score - a.score
+    })
+  }, [candidates])
 
   const stats = useMemo(() => {
     const submitted = candidates.filter((c) => c.status === "submitted")
@@ -114,11 +158,11 @@ export function ResultsDashboard({ testId }: { testId: string }) {
             scored.reduce((sum, c) => sum + (c.score ?? 0), 0) / scored.length,
           )
         : null
-    const flagged = candidates.filter((c) => c.tab_switch_count > 0).length
+    const flagged = candidates.filter((c) => c.flagged || c.tab_switch_count > 0).length
     return { total: candidates.length, submitted: submitted.length, avg, flagged }
   }, [candidates])
 
-  if (!test) {
+  if (!test && !loading) {
     return (
       <div className="mx-auto w-full max-w-3xl px-4 py-16">
         <Empty>
@@ -134,28 +178,65 @@ export function ResultsDashboard({ testId }: { testId: string }) {
   }
 
   function exportCsv() {
-    if (candidates.length === 0) {
+    if (!test || candidates.length === 0) {
       toast.error("No results to export yet")
       return
     }
-    const csv = toCsv(test!, candidates)
+    const csv = toCsv(test, sortedCandidates, consents, answers)
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
-    a.download = `${test!.title.replace(/\s+/g, "-").toLowerCase()}-results.csv`
+    a.download = `${test.title.replace(/\s+/g, "-").toLowerCase()}-results.csv`
     a.click()
     URL.revokeObjectURL(url)
     toast.success("Results exported")
   }
 
   function copyLink() {
+    if (!test?.token) return
     const origin = typeof window !== "undefined" ? window.location.origin : ""
-    navigator.clipboard.writeText(`${origin}/t/${test!.token}`)
+    navigator.clipboard.writeText(`${origin}/t/${test.token}`)
     toast.success("Candidate link copied")
   }
 
-  const selectedConsent = selected ? getConsent(selected.consent_id) : undefined
+  const selectedAnswers = selected ? answers[selected.id] ?? [] : []
+  const needsReview = selectedAnswers.some(
+    (a) =>
+      (a.type === "short_answer" || a.type === "coding") &&
+      a.is_correct === null,
+  )
+
+  async function saveGrades() {
+    if (!selected || !test) return
+    setGrading(true)
+    try {
+      const grades = selectedAnswers
+        .filter((a) => a.type === "short_answer" || a.type === "coding")
+        .map((a) => ({
+          questionId: a.question_id,
+          isCorrect: a.is_correct,
+          pointsAwarded: a.points_awarded ?? 0,
+        }))
+      const updated = await gradeAttempt({
+        testId: test.id,
+        attemptId: selected.id,
+        grades,
+      })
+      setSelected(updated)
+      const data = await loadTestResults(testId)
+      setAnswers(data.answers)
+      toast.success("Grades saved")
+    } catch (err) {
+      toast.error((err as Error).message)
+    } finally {
+      setGrading(false)
+    }
+  }
+
+  const selectedConsent = selected?.consent_id
+    ? consents[selected.consent_id] ?? getConsent(selected.consent_id)
+    : undefined
 
   const statCards = [
     { label: "Candidates", value: stats.total, icon: Users },
@@ -184,15 +265,15 @@ export function ResultsDashboard({ testId }: { testId: string }) {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-semibold tracking-tight text-balance">
-                {test.title}
+              <h1 className="font-display text-2xl font-semibold tracking-tight text-balance text-ink">
+                {test?.title ?? "Loading…"}
               </h1>
-              <TestStatusBadge status={test.status} />
+              {test && <TestStatusBadge status={test.status} />}
             </div>
             <p className="text-muted-foreground">Results & candidate activity</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={copyLink}>
+            <Button variant="outline" onClick={copyLink} disabled={!test?.token}>
               <LinkIcon data-icon="inline-start" />
               Copy link
             </Button>
@@ -265,7 +346,7 @@ export function ResultsDashboard({ testId }: { testId: string }) {
             ))}
           </div>
 
-          <ResultsSummary test={test} candidates={candidates} />
+          {test && <ResultsSummary test={test} candidates={candidates} />}
 
           <Card>
             <CardHeader>
@@ -284,7 +365,7 @@ export function ResultsDashboard({ testId }: { testId: string }) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {candidates.map((c) => (
+                    {sortedCandidates.map((c) => (
                       <TableRow
                         key={c.id}
                         onClick={() => setSelected(c)}
@@ -329,13 +410,13 @@ export function ResultsDashboard({ testId }: { testId: string }) {
         open={selected !== null}
         onOpenChange={(open) => !open && setSelected(null)}
       >
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="truncate">{selected?.email}</DialogTitle>
             <DialogDescription>Candidate submission detail</DialogDescription>
           </DialogHeader>
           {selected && (
-            <div className="flex flex-col gap-3 text-sm">
+            <div className="flex max-h-[70vh] flex-col gap-3 overflow-y-auto text-sm">
               <DetailRow label="Status">
                 <CandidateStatusBadge status={selected.status} />
               </DetailRow>
@@ -376,6 +457,91 @@ export function ResultsDashboard({ testId }: { testId: string }) {
                   "Not proctored"
                 )}
               </DetailRow>
+
+              {selectedAnswers.length > 0 && (
+                <>
+                  <Separator />
+                  <p className="font-medium">Answers</p>
+                  <div className="flex flex-col gap-3">
+                    {selectedAnswers.map((a, i) => (
+                      <div
+                        key={a.question_id}
+                        className="rounded-lg border border-border p-3"
+                      >
+                        <p className="text-xs text-muted-foreground">
+                          Q{i + 1} · {a.type.replace("_", " ")}
+                        </p>
+                        <p className="mt-1 font-medium">{a.prompt}</p>
+                        <p className="mt-2 whitespace-pre-wrap text-muted-foreground">
+                          {a.response || "(no answer)"}
+                        </p>
+                        {(a.type === "short_answer" || a.type === "coding") && (
+                          <div className="mt-3 flex flex-wrap items-center gap-2">
+                            <Button
+                              size="sm"
+                              variant={
+                                a.is_correct === true ? "default" : "outline"
+                              }
+                              onClick={() => {
+                                setAnswers((prev) => ({
+                                  ...prev,
+                                  [selected.id]: prev[selected.id].map((item) =>
+                                    item.question_id === a.question_id
+                                      ? {
+                                          ...item,
+                                          is_correct: true,
+                                          points_awarded: item.max_points,
+                                        }
+                                      : item,
+                                  ),
+                                }))
+                              }}
+                            >
+                              Correct ({a.max_points} pts)
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant={
+                                a.is_correct === false ? "destructive" : "outline"
+                              }
+                              onClick={() => {
+                                setAnswers((prev) => ({
+                                  ...prev,
+                                  [selected.id]: prev[selected.id].map((item) =>
+                                    item.question_id === a.question_id
+                                      ? {
+                                          ...item,
+                                          is_correct: false,
+                                          points_awarded: 0,
+                                        }
+                                      : item,
+                                  ),
+                                }))
+                              }}
+                            >
+                              Incorrect
+                            </Button>
+                          </div>
+                        )}
+                        {a.is_correct !== null && (
+                          <p className="mt-2 text-xs text-muted-foreground">
+                            {a.points_awarded ?? 0}/{a.max_points} points
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  {needsReview && (
+                    <Button
+                      className="mt-2"
+                      onClick={() => void saveGrades()}
+                      disabled={grading}
+                    >
+                      Save grades
+                    </Button>
+                  )}
+                </>
+              )}
             </div>
           )}
         </DialogContent>
