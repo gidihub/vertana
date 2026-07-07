@@ -1,0 +1,259 @@
+"use client"
+
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import {
+  Plus,
+  Users,
+  Clock,
+  ListChecks,
+  ShieldCheck,
+  MoreHorizontal,
+  BarChart3,
+  Pencil,
+  Link2,
+  Trash2,
+  CalendarClock,
+} from "lucide-react"
+
+import {
+  useStore,
+  setTestStatus,
+  deleteTest,
+} from "@/lib/store"
+import type { Test, TestStatus } from "@/lib/types"
+import { formatDate } from "@/lib/format"
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card"
+import { TestStatusBadge } from "@/components/status-badge"
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from "@/components/ui/empty"
+import { TestCardMockup } from "@/components/empty-mockups"
+import { TestListSkeleton } from "@/components/loading-skeletons"
+import { useSimulatedLoad } from "@/lib/use-loading"
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu"
+
+function StatCard({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className="rounded-xl border border-border bg-card p-4">
+      <div className="text-2xl font-semibold tabular-nums">{value}</div>
+      <div className="text-sm text-muted-foreground">{label}</div>
+    </div>
+  )
+}
+
+function Meta({ icon: Icon, children }: { icon: typeof Users; children: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
+      <Icon className="size-4" />
+      {children}
+    </span>
+  )
+}
+
+export function TestList() {
+  const router = useRouter()
+  const loading = useSimulatedLoad()
+  const tests = useStore((db) => db.tests)
+  const candidates = useStore((db) => db.candidates)
+
+  const countFor = (id: string) => candidates.filter((c) => c.test_id === id).length
+
+  const sorted = [...tests].sort((a, b) => b.created_at.localeCompare(a.created_at))
+  const totalCandidates = candidates.length
+  const activeCount = tests.filter((t) => t.status === "active").length
+
+  function copyLink(test: Test) {
+    const origin = typeof window !== "undefined" ? window.location.origin : ""
+    navigator.clipboard.writeText(`${origin}/t/${test.token}`)
+    toast.success("Candidate link copied to clipboard")
+  }
+
+  function changeStatus(test: Test, status: TestStatus) {
+    setTestStatus(test.id, status)
+    toast.success(`"${test.title}" set to ${status}`)
+  }
+
+  function handleDelete(test: Test) {
+    deleteTest(test.id)
+    toast.success(`Deleted "${test.title}"`)
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight text-balance">
+            Your assessments
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Create tests, share candidate links, and review results.
+          </p>
+        </div>
+        <Button nativeButton={false} render={<Link href="/tests/new" />}>
+          <Plus data-icon="inline-start" />
+          Create test
+        </Button>
+      </div>
+
+      {loading ? (
+        <TestListSkeleton />
+      ) : (
+        <>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <StatCard label="Total tests" value={tests.length} />
+            <StatCard label="Active" value={activeCount} />
+            <StatCard label="Candidates" value={totalCandidates} />
+            <StatCard
+              label="Drafts"
+              value={tests.filter((t) => t.status === "draft").length}
+            />
+          </div>
+
+          {sorted.length === 0 ? (
+        <Empty className="rounded-xl border border-dashed border-border py-10">
+          <EmptyHeader>
+            <EmptyMedia>
+              <TestCardMockup />
+            </EmptyMedia>
+            <EmptyTitle className="text-base">Create your first test</EmptyTitle>
+            <EmptyDescription>
+              Build a test, share its candidate link, and results land here as
+              people submit.
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button nativeButton={false} render={<Link href="/tests/new" />}>
+              <Plus data-icon="inline-start" />
+              Create test
+            </Button>
+          </EmptyContent>
+        </Empty>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {sorted.map((test) => (
+            <Card key={test.id} className="flex flex-col">
+              <CardHeader>
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center gap-2">
+                      <TestStatusBadge status={test.status} />
+                      {test.requires_proctoring && (
+                        <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                          <ShieldCheck className="size-3.5" />
+                          Proctored
+                        </span>
+                      )}
+                    </div>
+                    <CardTitle className="text-lg leading-tight">
+                      <Link
+                        href={`/tests/${test.id}/results`}
+                        className="hover:underline"
+                      >
+                        {test.title}
+                      </Link>
+                    </CardTitle>
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
+                      render={
+                        <Button variant="ghost" size="icon" aria-label="Test actions">
+                          <MoreHorizontal />
+                        </Button>
+                      }
+                    />
+                    <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem onClick={() => router.push(`/tests/${test.id}/results`)}>
+                          <BarChart3 data-icon="inline-start" />
+                          View results
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.push(`/tests/${test.id}/edit`)}>
+                          <Pencil data-icon="inline-start" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => copyLink(test)}>
+                          <Link2 data-icon="inline-start" />
+                          Copy candidate link
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuGroup>
+                        {test.status !== "active" && (
+                          <DropdownMenuItem onClick={() => changeStatus(test, "active")}>
+                            Set active
+                          </DropdownMenuItem>
+                        )}
+                        {test.status !== "draft" && (
+                          <DropdownMenuItem onClick={() => changeStatus(test, "draft")}>
+                            Move to draft
+                          </DropdownMenuItem>
+                        )}
+                        {test.status !== "closed" && (
+                          <DropdownMenuItem onClick={() => changeStatus(test, "closed")}>
+                            Close test
+                          </DropdownMenuItem>
+                        )}
+                      </DropdownMenuGroup>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem
+                          variant="destructive"
+                          onClick={() => handleDelete(test)}
+                        >
+                          <Trash2 data-icon="inline-start" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+                <CardDescription className="line-clamp-2">
+                  {test.description || "No description."}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-wrap gap-x-4 gap-y-2">
+                <Meta icon={ListChecks}>{test.questions.length} questions</Meta>
+                <Meta icon={Users}>{countFor(test.id)} candidates</Meta>
+                <Meta icon={Clock}>{test.time_limit_minutes} min</Meta>
+                {test.deadline && (
+                  <Meta icon={CalendarClock}>Due {formatDate(test.deadline)}</Meta>
+                )}
+              </CardContent>
+              <CardFooter className="mt-auto gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  nativeButton={false}
+                  render={<Link href={`/tests/${test.id}/results`} />}
+                >
+                  View results
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => copyLink(test)}>
+                  <Link2 data-icon="inline-start" />
+                  Share link
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+          )}
+        </>
+      )}
+    </div>
+  )
+}
