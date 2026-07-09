@@ -27,7 +27,7 @@ export default function BlogIndexPage() {
           <p className="text-sm font-semibold uppercase tracking-widest text-pine">
             Resources
           </p>
-          <h1 className="mt-3 max-w-2xl font-display text-4xl font-semibold tracking-tight text-balance text-ink sm:text-5xl">
+          <h1 className="mt-3 max-w-2xl font-sans text-4xl font-semibold tracking-tight text-balance text-ink sm:text-5xl">
             Guides for building a fair, effective hiring process
           </h1>
           <p className="mt-4 max-w-xl text-lg leading-relaxed text-ink-muted text-pretty">
@@ -51,7 +51,7 @@ export default function BlogIndexPage() {
                 </span>
                 <CategoryChip category={featured.category} />
               </div>
-              <h2 className="font-display text-3xl font-semibold tracking-tight text-balance text-ink">
+              <h2 className="font-sans text-3xl font-semibold tracking-tight text-balance text-ink">
                 {featured.title}
               </h2>
               <p className="text-base leading-relaxed text-ink-muted text-pretty">
@@ -67,7 +67,7 @@ export default function BlogIndexPage() {
               </span>
             </div>
             <div className="relative hidden items-center justify-center border-t border-sage-line/70 bg-pine p-12 lg:flex lg:border-l lg:border-t-0">
-              <p className="max-w-xs font-display text-2xl font-medium leading-snug text-pine-foreground/90 text-balance">
+              <p className="max-w-xs font-sans text-2xl font-medium leading-snug text-pine-foreground/90 text-balance">
                 &ldquo;{featured.intent}&rdquo;
               </p>
               <span className="absolute bottom-6 left-12 text-xs uppercase tracking-widest text-pine-foreground/50">
@@ -102,7 +102,7 @@ function PostCard({ post }: { post: BlogPost }) {
       className="group flex flex-col gap-4 rounded-2xl border border-sage-line bg-card p-6 transition-colors hover:border-pine/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pine focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
     >
       <CategoryChip category={post.category} />
-      <h3 className="font-display text-xl font-semibold tracking-tight text-balance text-ink">
+      <h3 className="font-sans text-xl font-semibold tracking-tight text-balance text-ink">
         {post.title}
       </h3>
       <p className="flex-1 text-sm leading-relaxed text-ink-muted text-pretty">

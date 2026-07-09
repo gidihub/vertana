@@ -35,7 +35,7 @@ export function SiteFooter() {
       <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
         <div className="flex flex-col items-start justify-between gap-6 rounded-3xl bg-pine p-8 text-pine-foreground sm:flex-row sm:items-center sm:p-12">
           <div>
-            <h2 className="font-display text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
+            <h2 className="font-sans text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
               Ready to hire on real signal?
             </h2>
             <p className="mt-2 max-w-md text-sm leading-relaxed text-pine-foreground/75">

@@ -3,10 +3,11 @@ import { type NextRequest, NextResponse } from "next/server"
 
 import { getSupabaseAnonKey, getSupabaseUrl } from "@/lib/supabase/env"
 
-const RECRUITER_PREFIXES = ["/dashboard", "/tests"]
+const RECRUITER_PREFIXES = ["/dashboard", "/tests", "/team", "/settings", "/candidates", "/library", "/analytics"]
 const RECRUITER_API_PREFIXES = [
   "/api/tests",
   "/api/org",
+  "/api/team",
   "/api/generate-questions",
   "/api/question-library",
 ]
@@ -65,7 +66,12 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/dashboard/:path*",
+    "/team/:path*",
+    "/settings/:path*",
     "/tests/:path*",
+    "/candidates/:path*",
+    "/library/:path*",
+    "/analytics/:path*",
     "/api/tests/:path*",
     "/api/org",
     "/api/generate-questions",

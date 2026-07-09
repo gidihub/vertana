@@ -5,6 +5,7 @@ import { Clock, ListChecks, CalendarClock, ShieldCheck, ArrowRight } from "lucid
 
 import type { Test } from "@/lib/types"
 import { formatDate } from "@/lib/format"
+import { formatAllottedTimeLabel } from "@/lib/test-timing"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Field, FieldLabel, FieldDescription } from "@/components/ui/field"
@@ -34,7 +35,7 @@ export function StartStep({
 
   const facts = [
     { icon: ListChecks, label: `${test.questions.length} questions` },
-    { icon: Clock, label: `${test.time_limit_minutes} minute limit` },
+    { icon: Clock, label: `${formatAllottedTimeLabel(test)} allotted` },
     {
       icon: CalendarClock,
       label: test.deadline ? `Due ${formatDate(test.deadline)}` : "No deadline",
@@ -44,7 +45,7 @@ export function StartStep({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-display text-2xl text-balance">{test.title}</CardTitle>
+        <CardTitle className="font-sans text-2xl text-balance">{test.title}</CardTitle>
         {test.description && (
           <CardDescription className="text-pretty">
             {test.description}
@@ -70,6 +71,13 @@ export function StartStep({
           <ul className="flex list-disc flex-col gap-1 pl-5 text-sm text-muted-foreground">
             <li>The timer starts as soon as you begin and can&apos;t be paused.</li>
             <li>Answer each question, then submit at the end.</li>
+            {test.forbid_ai_tools && (
+              <li>
+                Please complete this assessment without AI assistants (such as
+                ChatGPT or Copilot). Your answers should reflect your own
+                knowledge and skills.
+              </li>
+            )}
             {test.requires_proctoring && (
               <li className="flex items-center gap-1.5">
                 <ShieldCheck className="size-3.5 text-primary" />

@@ -38,12 +38,27 @@ export async function ensureMonthlyResetsForOrgId(
   const now = Date.now()
   const needsCreditReset = new Date(org.credits_reset_at).getTime() <= now
   const needsAiReset = new Date(org.ai_generations_reset_at).getTime() <= now
+  const needsCodeReset = new Date(org.code_executions_reset_at).getTime() <= now
 
-  if (!needsCreditReset && !needsAiReset) return org
+  if (!needsCreditReset && !needsAiReset && !needsCodeReset) return org
 
   const admin = createAdminClient()
   await admin.rpc("reset_monthly_credits")
   return getOrganizationById(orgId)
+}
+
+export async function recordCodeExecutions(
+  orgId: string,
+  count = 1,
+): Promise<void> {
+  if (count <= 0) return
+  await ensureMonthlyResetsForOrgId(orgId)
+  const admin = createAdminClient()
+  const { error } = await admin.rpc("increment_code_executions", {
+    org_id_input: orgId,
+    count_input: count,
+  })
+  if (error) throw new Error(error.message)
 }
 
 export async function deductCredit(orgId: string): Promise<void> {

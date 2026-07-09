@@ -5,6 +5,7 @@ import {
   questionToRow,
   rowToCandidate,
   rowToConsent,
+  rowToQuestion,
   rowToTest,
   type AnswerRow,
   type AttemptRow,
@@ -12,6 +13,8 @@ import {
   type TestInviteRow,
   type TestRow,
 } from "@/lib/db/mappers"
+import { gradeCodingAnswer } from "@/lib/execution/grade-coding"
+import { recordCodeExecutions } from "@/lib/org"
 import {
   deductCredit,
   ensureMonthlyResets,
@@ -25,6 +28,8 @@ import {
   PLAN_LIMITS,
   type PlanTier,
 } from "@/lib/plans"
+import { sanitizeQuestionsForPlan } from "@/lib/coding/limits"
+import { notifyTestCompletion } from "@/lib/notifications/completion-email"
 import { createAdminClient } from "@/lib/supabase/admin"
 import type { Candidate, ConsentRecord, Test } from "@/lib/types"
 
@@ -79,6 +84,10 @@ export interface AttemptAnswerView {
   is_correct: boolean | null
   points_awarded: number | null
   max_points: number
+  execution_output: string | null
+  execution_status: string | null
+  test_cases_passed: number | null
+  test_cases_total: number | null
 }
 
 export async function fetchShareInvite(
@@ -181,7 +190,10 @@ export async function loadTestsForOrg(): Promise<Test[]> {
   )
 }
 
-export async function saveTestRecord(test: Test): Promise<Test> {
+export async function saveTestRecord(
+  test: Test,
+  meta?: { creatorEmail?: string | null; creatorUserId?: string | null },
+): Promise<Test> {
   const orgId = await getOrgId()
   const org = await ensureMonthlyResets(await getOrganization())
 
@@ -203,6 +215,18 @@ export async function saveTestRecord(test: Test): Promise<Test> {
   }
 
   const supabase = createAdminClient()
+
+  const { data: existingRow } = await supabase
+    .from("tests")
+    .select("created_by")
+    .eq("id", test.id)
+    .maybeSingle()
+
+  let notifyEmails = (test.notify_emails ?? []).filter(Boolean)
+  if (notifyEmails.length === 0 && meta?.creatorEmail) {
+    notifyEmails = [meta.creatorEmail]
+  }
+
   const testRow = {
     id: test.id,
     org_id: orgId,
@@ -214,21 +238,39 @@ export async function saveTestRecord(test: Test): Promise<Test> {
     requires_proctoring: test.requires_proctoring,
     certificate_eligible: test.certificate_eligible,
     certificate_percentile_threshold: test.certificate_percentile_threshold,
+    timing_policy: test.timing_policy ?? "normal",
+    forbid_ai_tools: test.forbid_ai_tools ?? false,
+    notify_emails: notifyEmails,
+    is_pinned: test.is_pinned ?? false,
     status: test.status,
+    created_by:
+      (existingRow?.created_by as string | null | undefined) ??
+      meta?.creatorUserId ??
+      null,
     created_at: test.created_at,
   }
 
   const { error: testError } = await supabase.from("tests").upsert(testRow)
   if (testError) throw new Error(testError.message)
 
-  const questionRows = test.questions.map((q) => questionToRow(q, test.id))
-  const { data: existingQuestions } = await supabase
+  const { data: existingQuestionRows } = await supabase
     .from("questions")
-    .select("id")
+    .select("*")
     .eq("test_id", test.id)
 
+  const existingQuestions = ((existingQuestionRows ?? []) as QuestionRow[]).map(
+    rowToQuestion,
+  )
+  const sanitizedQuestions = sanitizeQuestionsForPlan(
+    test.questions,
+    existingQuestions,
+    org.plan_tier as PlanTier,
+  )
+
+  const questionRows = sanitizedQuestions.map((q) => questionToRow(q, test.id))
+
   const incomingIds = new Set(questionRows.map((q) => q.id))
-  const toDelete = (existingQuestions ?? [])
+  const toDelete = (existingQuestionRows ?? [])
     .map((q) => q.id as string)
     .filter((id) => !incomingIds.has(id))
 
@@ -246,7 +288,13 @@ export async function saveTestRecord(test: Test): Promise<Test> {
     token = await ensureShareInvite(test.id)
   }
 
-  return { ...test, org_id: orgId, token }
+  return {
+    ...test,
+    org_id: orgId,
+    token,
+    notify_emails: notifyEmails,
+    questions: sanitizedQuestions,
+  }
 }
 
 export async function setTestStatusRecord(
@@ -256,6 +304,15 @@ export async function setTestStatusRecord(
   const test = await loadTestById(testId)
   if (!test) throw new Error("Test not found")
   await saveTestRecord({ ...test, status })
+}
+
+export async function setTestPinnedRecord(
+  testId: string,
+  isPinned: boolean,
+): Promise<void> {
+  const test = await loadTestById(testId)
+  if (!test) throw new Error("Test not found")
+  await saveTestRecord({ ...test, is_pinned: isPinned })
 }
 
 export async function deleteTestRecord(testId: string): Promise<void> {
@@ -688,6 +745,35 @@ export async function submitAttemptRecord(input: {
   for (const [questionId, response] of Object.entries(input.answers)) {
     const question = questions.find((q) => q.id === questionId)
     if (!question) continue
+
+    if (question.type === "coding") {
+      const graded = await gradeCodingAnswer({
+        response,
+        testCases: question.test_cases,
+        maxPoints: question.points,
+        orgId,
+      })
+      const { error: answerError } = await supabase.from("answers").upsert(
+        {
+          attempt_id: input.attemptId,
+          question_id: questionId,
+          response,
+          is_correct: graded.isCorrect,
+          points_awarded: graded.pointsAwarded,
+          execution_output: graded.executionOutput,
+          execution_status: graded.executionStatus,
+          test_cases_passed: graded.testCasesPassed,
+          test_cases_total: graded.testCasesTotal,
+        },
+        { onConflict: "attempt_id,question_id" },
+      )
+      if (answerError) {
+        throw new Error(answerError.message)
+      }
+      continue
+      continue
+    }
+
     const graded = gradeAnswer(question, response)
     await supabase.from("answers").upsert(
       {
@@ -747,6 +833,17 @@ export async function submitAttemptRecord(input: {
     consent?.id ?? null,
   )
   const certificate = await evaluateCertificateForAttempt(loaded.test, candidate)
+
+  void notifyTestCompletion({
+    test: {
+      id: loaded.test.id,
+      title: loaded.test.title,
+      notify_emails: loaded.test.notify_emails,
+    },
+    candidate,
+  }).catch((err) => {
+    console.error("[vertana] completion notification failed:", err)
+  })
 
   return { candidate, certificate }
 }
@@ -927,6 +1024,10 @@ export async function loadAttemptAnswers(
       is_correct: answer?.is_correct ?? null,
       points_awarded: answer?.points_awarded ?? null,
       max_points: row.points,
+      execution_output: answer?.execution_output ?? null,
+      execution_status: answer?.execution_status ?? null,
+      test_cases_passed: answer?.test_cases_passed ?? null,
+      test_cases_total: answer?.test_cases_total ?? null,
     }
   })
 }
@@ -1020,4 +1121,38 @@ export function evaluateCertificateLocal(
   const tiers = [1, 5, 10, 25, 50]
   const tier = tiers.find((t) => topPercent <= t) ?? 100
   return { qualifies, band: `Top ${tier}%`, topPercent }
+}
+
+/** Short-answer or coding response awaiting recruiter grading. */
+export function answerNeedsManualScoring(answer: {
+  type: string
+  response: string
+  is_correct: boolean | null
+  points_awarded: number | null
+}): boolean {
+  if (!answer.response.trim()) return false
+  if (answer.type !== "short_answer" && answer.type !== "coding") return false
+  if (answer.is_correct != null && answer.points_awarded != null) return false
+  return answer.is_correct === null || answer.points_awarded === null
+}
+
+/** Ungraded manual answers per test (answer count, not attempt count). */
+export async function countNeedsScoringByTest(): Promise<Record<string, number>> {
+  const tests = await loadTestsForOrg()
+  const counts: Record<string, number> = {}
+
+  for (const test of tests) {
+    const candidates = await loadCandidatesForTest(test.id)
+    const submitted = candidates.filter((c) => c.status === "submitted")
+    let need = 0
+
+    for (const candidate of submitted) {
+      const answers = await loadAttemptAnswers(test.id, candidate.id)
+      need += answers.filter(answerNeedsManualScoring).length
+    }
+
+    if (need > 0) counts[test.id] = need
+  }
+
+  return counts
 }

@@ -50,7 +50,7 @@ export default function CertificatePage({
             <div className="flex size-14 items-center justify-center rounded-full bg-sage text-ink-muted">
               <FileQuestion className="size-7" aria-hidden />
             </div>
-            <h1 className="font-display text-2xl font-semibold tracking-tight text-balance text-ink">
+            <h1 className="font-sans text-2xl font-semibold tracking-tight text-balance text-ink">
               Certificate not available
             </h1>
             <p className="text-pretty text-ink-muted">

@@ -1,15 +1,22 @@
 import { z } from "zod"
 
+export const testCaseSchema = z.object({
+  input: z.string(),
+  expected_output: z.string(),
+})
+
 export const plannedQuestionSchema = z.object({
   type: z.enum(["multiple_choice", "short_answer", "coding"]),
   prompt: z.string(),
   options: z.array(z.string()),
   correct_option_index: z.number().nullable(),
-  correct_answer_exact: z.string().nullable().optional(),
+  // OpenAI strict JSON schema requires every property in `required`; use null when N/A.
+  correct_answer_exact: z.string().nullable(),
   ai_resistance: z.enum(["low", "medium", "high"]),
   estimated_minutes: z.number(),
   difficulty: z.enum(["easy", "medium", "hard"]),
-  points: z.number().optional(),
+  points: z.number().nullable(),
+  test_cases: z.array(testCaseSchema),
 })
 
 export const testPlanSchema = z.object({
@@ -21,6 +28,15 @@ export const testPlanSchema = z.object({
 
 export type PlannedQuestionOutput = z.infer<typeof plannedQuestionSchema>
 export type TestPlanOutput = z.infer<typeof testPlanSchema>
+
+export const testDetailsSuggestionSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  time_limit_minutes: z.number(),
+  suggested_deadline: z.string().nullable(),
+})
+
+export type TestDetailsSuggestion = z.infer<typeof testDetailsSuggestionSchema>
 
 export function fallbackPlanFromBrief(brief: string): TestPlanOutput {
   const lower = brief.toLowerCase()
@@ -45,27 +61,40 @@ export function fallbackPlanFromBrief(brief: string): TestPlanOutput {
         "Avoid post-incident reviews",
       ],
       correct_option_index: 1,
+      correct_answer_exact: null,
       ai_resistance: "low",
       estimated_minutes: 3,
       difficulty: "easy",
+      points: null,
+      test_cases: [],
     },
     {
       type: "short_answer",
       prompt: `Describe how you would scope and deliver a ${role} project with a tight deadline.`,
       options: [],
       correct_option_index: null,
+      correct_answer_exact: null,
       ai_resistance: "medium",
       estimated_minutes: 6,
       difficulty: "medium",
+      points: null,
+      test_cases: [],
     },
     {
       type: "coding",
       prompt: `Live coding: implement a small utility relevant to a ${role} using the constraints in the brief.`,
       options: [],
       correct_option_index: null,
+      correct_answer_exact: null,
       ai_resistance: "high",
       estimated_minutes: 15,
       difficulty: "hard",
+      points: null,
+      test_cases: [
+        { input: "hello", expected_output: "HELLO" },
+        { input: "world", expected_output: "WORLD" },
+        { input: "", expected_output: "" },
+      ],
     },
   ]
 

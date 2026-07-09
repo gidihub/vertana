@@ -42,6 +42,7 @@ export async function requireRecruiter() {
 export async function setupOrganizationForUser(input: {
   userId: string
   orgName: string
+  email?: string | null
 }) {
   const admin = createAdminClient()
 
@@ -58,6 +59,15 @@ export async function setupOrganizationForUser(input: {
       .eq("id", existing.org_id)
       .single()
     return { orgId: existing.org_id as string, orgName: org?.name ?? input.orgName }
+  }
+
+  if (input.email) {
+    const { tryAcceptPendingInviteForEmail } = await import("@/lib/db/team")
+    const joined = await tryAcceptPendingInviteForEmail({
+      userId: input.userId,
+      userEmail: input.email,
+    })
+    if (joined) return joined
   }
 
   // Dev-only: sets plan_tier when a new org is created at signup. Once Stripe/

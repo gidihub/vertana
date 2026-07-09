@@ -21,6 +21,7 @@ export function uid(): string {
 interface DB {
   tests: Test[]
   candidates: Candidate[]
+  needsScoring: Record<string, number>
   consents: Record<string, ConsentRecord>
   organization: Organization | null
   loading: boolean
@@ -30,6 +31,7 @@ interface DB {
 const emptyDb: DB = {
   tests: [],
   candidates: [],
+  needsScoring: {},
   consents: {},
   organization: null,
   loading: true,
@@ -72,13 +74,18 @@ export async function refreshStore(): Promise<void> {
   fetchPromise = (async () => {
     try {
       const [dashboard, orgRes] = await Promise.all([
-        api<{ tests: Test[]; candidates: Candidate[] }>("/api/tests"),
+        api<{
+          tests: Test[]
+          candidates: Candidate[]
+          needs_scoring: Record<string, number>
+        }>("/api/tests"),
         api<{ organization: Organization }>("/api/org"),
       ])
 
       db = {
         tests: dashboard.tests,
         candidates: dashboard.candidates,
+        needsScoring: dashboard.needs_scoring ?? {},
         consents: {},
         organization: orgRes.organization,
         loading: false,
@@ -145,6 +152,14 @@ export async function setTestStatus(id: string, status: TestStatus): Promise<voi
   await refreshStore()
 }
 
+export async function setTestPinned(id: string, isPinned: boolean): Promise<void> {
+  await api(`/api/tests/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify({ is_pinned: isPinned }),
+  })
+  await refreshStore()
+}
+
 export async function deleteTest(id: string): Promise<void> {
   await api(`/api/tests/${id}`, { method: "DELETE" })
   await refreshStore()
@@ -186,6 +201,10 @@ export interface AttemptAnswerView {
   is_correct: boolean | null
   points_awarded: number | null
   max_points: number
+  execution_output: string | null
+  execution_status: string | null
+  test_cases_passed: number | null
+  test_cases_total: number | null
 }
 
 export async function fetchLibraryQuestions(filters?: {
@@ -415,6 +434,10 @@ export function useStore<T>(selector: (db: DB) => T): T {
   }, [])
 
   return useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
+}
+
+export function useNeedsScoring(): Record<string, number> {
+  return useStore((db) => db.needsScoring)
 }
 
 export function useOrganization(): Organization | null {

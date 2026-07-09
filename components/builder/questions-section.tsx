@@ -4,6 +4,8 @@ import { useMemo, useState } from "react"
 import { Plus } from "lucide-react"
 
 import type { AiResistance, Question } from "@/lib/types"
+import { codingQuestionsEnabledForTier, type PlanTier } from "@/lib/plans"
+import { useOrganization } from "@/lib/store"
 import { DescribeGeneratePanel } from "@/components/builder/describe-generate-panel"
 import { LibraryBrowsePanel } from "@/components/builder/library-browse-panel"
 import { QuestionEditor } from "@/components/builder/question-editor"
@@ -53,6 +55,11 @@ export function QuestionsSection({
   onInsert: (generated: Question[]) => void
   onSuggestedTime?: (minutes: number) => void
 }) {
+  const org = useOrganization()
+  const codingEnabled = org
+    ? codingQuestionsEnabledForTier(org.plan_tier as PlanTier)
+    : false
+
   const [tab, setTab] = useState("describe")
   const [filterResistance, setFilterResistance] = useState<AiResistance | "all">(
     "all",
@@ -113,13 +120,18 @@ export function QuestionsSection({
         <TabsContent value="describe" className="pt-4">
           <DescribeGeneratePanel
             testId={testId}
+            codingEnabled={codingEnabled}
             onAccept={handleAccept}
             onSuggestedTime={onSuggestedTime}
           />
         </TabsContent>
 
         <TabsContent value="library" className="pt-4">
-          <LibraryBrowsePanel testId={testId} onAdd={handleLibraryAdd} />
+          <LibraryBrowsePanel
+            testId={testId}
+            codingEnabled={codingEnabled}
+            onAdd={handleLibraryAdd}
+          />
         </TabsContent>
 
         <TabsContent value="manual" className="pt-4">
@@ -199,6 +211,7 @@ export function QuestionsSection({
                   question={q}
                   index={index}
                   total={questions.length}
+                  codingEnabled={codingEnabled}
                   onChange={onUpdate}
                   onRemove={() => onRemove(q.id)}
                   onMove={(dir) => onMove(index, dir)}

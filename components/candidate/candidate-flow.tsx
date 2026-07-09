@@ -34,7 +34,7 @@ export function CandidateFlow({
   const [submitting, setSubmitting] = useState(false)
   const [initialAnswers, setInitialAnswers] = useState<Record<string, string>>({})
   const [initialTabSwitches, setInitialTabSwitches] = useState(0)
-  const startedAtRef = useRef<string>("")
+  const [startedAt, setStartedAt] = useState<string>("")
   const consentAcceptedRef = useRef(false)
 
   async function handleStart(candidateEmail: string) {
@@ -54,7 +54,7 @@ export function CandidateFlow({
         })
         setInitialAnswers(resume.answers)
         setInitialTabSwitches(resume.tabSwitchCount)
-        startedAtRef.current = resume.startedAt ?? new Date().toISOString()
+        setStartedAt(resume.startedAt ?? new Date().toISOString())
         setStep("test")
         return
       }
@@ -62,7 +62,7 @@ export function CandidateFlow({
       if (test.requires_proctoring) {
         setStep("consent")
       } else {
-        startedAtRef.current = new Date().toISOString()
+        setStartedAt(new Date().toISOString())
         setStep("test")
       }
     } catch (err) {
@@ -72,7 +72,7 @@ export function CandidateFlow({
 
   function handleConsentAccept() {
     consentAcceptedRef.current = true
-    startedAtRef.current = new Date().toISOString()
+    setStartedAt(new Date().toISOString())
     setStep("test")
   }
 
@@ -125,6 +125,7 @@ export function CandidateFlow({
             test={test}
             token={token}
             attemptId={attemptId}
+            startedAt={startedAt}
             initialAnswers={initialAnswers}
             initialTabSwitches={initialTabSwitches}
             onSubmit={handleSubmit}

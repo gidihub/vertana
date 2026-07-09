@@ -8,6 +8,7 @@ import type {
   QuestionType,
   Test,
   TestStatus,
+  TestCase,
 } from "@/lib/types"
 
 export interface OrganizationRow {
@@ -20,6 +21,9 @@ export interface OrganizationRow {
   credits_reset_at: string
   ai_generations_used: number
   ai_generations_reset_at: string
+  code_executions_used: number
+  code_executions_reset_at: string
+  tab_switch_threshold: number
 }
 
 export interface TestRow {
@@ -33,6 +37,10 @@ export interface TestRow {
   requires_proctoring: boolean
   certificate_eligible: boolean
   certificate_percentile_threshold: number
+  timing_policy: "strict" | "normal" | "relaxed"
+  forbid_ai_tools: boolean
+  notify_emails: string[]
+  is_pinned: boolean
   status: TestStatus
   created_by: string | null
   created_at: string
@@ -52,6 +60,7 @@ export interface QuestionRow {
   is_library_item: boolean
   library_category: string | null
   estimated_minutes: number | null
+  test_cases: TestCase[]
 }
 
 export type CorrectAnswer =
@@ -86,6 +95,10 @@ export interface AnswerRow {
   response: string
   is_correct: boolean | null
   points_awarded: number | null
+  execution_output: string | null
+  execution_status: string | null
+  test_cases_passed: number | null
+  test_cases_total: number | null
 }
 
 export interface ConsentRow {
@@ -124,6 +137,7 @@ export function rowToQuestion(row: QuestionRow): Question {
     source: row.source,
     library_category: row.library_category,
     estimated_minutes: row.estimated_minutes,
+    test_cases: Array.isArray(row.test_cases) ? row.test_cases : [],
   }
 }
 
@@ -149,6 +163,7 @@ export function questionToRow(q: Question, testId: string): QuestionRow {
     is_library_item: false,
     library_category: q.library_category ?? null,
     estimated_minutes: q.estimated_minutes ?? null,
+    test_cases: q.test_cases ?? [],
   }
 }
 
@@ -168,6 +183,10 @@ export function rowToTest(
     requires_proctoring: row.requires_proctoring,
     certificate_eligible: row.certificate_eligible,
     certificate_percentile_threshold: row.certificate_percentile_threshold,
+    timing_policy: row.timing_policy ?? "normal",
+    forbid_ai_tools: row.forbid_ai_tools ?? false,
+    notify_emails: Array.isArray(row.notify_emails) ? row.notify_emails : [],
+    is_pinned: row.is_pinned ?? false,
     status: row.status,
     token,
     created_at: row.created_at,
@@ -280,7 +299,8 @@ export function computeScore(
   const gradable = questions.filter(
     (q) =>
       q.type === "multiple_choice" ||
-      (q.type === "short_answer" && q.correct_answer?.kind === "exact"),
+      (q.type === "short_answer" && q.correct_answer?.kind === "exact") ||
+      (q.type === "coding" && q.test_cases.length > 0),
   )
   if (gradable.length === 0) return null
 
@@ -290,7 +310,14 @@ export function computeScore(
   for (const q of gradable) {
     total += q.points
     const answer = answerMap.get(q.id)
-    if (answer?.is_correct) earned += q.points
+    if (answer?.points_awarded != null) {
+      const awarded = Number(answer.points_awarded)
+      earned += Number.isFinite(awarded)
+        ? Math.min(Math.max(awarded, 0), q.points)
+        : 0
+    } else if (answer?.is_correct) {
+      earned += q.points
+    }
   }
   return total > 0 ? Math.round((earned / total) * 100) : null
 }

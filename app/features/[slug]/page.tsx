@@ -46,7 +46,7 @@ export default async function FeaturePage({
           <p className="text-sm font-semibold uppercase tracking-widest text-pine">
             {feature.eyebrow}
           </p>
-          <h1 className="mt-3 max-w-3xl font-display text-4xl font-semibold leading-[1.05] tracking-tight text-balance text-ink sm:text-5xl">
+          <h1 className="mt-3 max-w-3xl font-sans text-4xl font-semibold leading-[1.05] tracking-tight text-balance text-ink sm:text-5xl">
             {feature.title}
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted text-pretty">
@@ -113,7 +113,7 @@ export default async function FeaturePage({
       <section className="border-b border-sage-line/70 bg-paper">
         <div className="mx-auto grid w-full max-w-6xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:py-24">
           <div>
-            <h2 className="font-display text-3xl font-semibold tracking-tight text-balance text-ink sm:text-4xl">
+            <h2 className="font-sans text-3xl font-semibold tracking-tight text-balance text-ink sm:text-4xl">
               {feature.detail.heading}
             </h2>
             <p className="mt-4 max-w-xl text-base leading-relaxed text-ink-muted text-pretty">
@@ -157,7 +157,7 @@ export default async function FeaturePage({
       {/* Explore more */}
       <section className="bg-paper">
         <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
-          <h2 className="font-display text-2xl font-semibold tracking-tight text-ink">
+          <h2 className="font-sans text-2xl font-semibold tracking-tight text-ink">
             Explore more of the product
           </h2>
           <div className="mt-6 grid gap-4 sm:grid-cols-3">

@@ -31,7 +31,7 @@ export function HowItWorks() {
           <p className="text-sm font-semibold uppercase tracking-widest text-pine">
             How it works
           </p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-balance text-ink sm:text-4xl">
+          <h2 className="mt-3 font-sans text-3xl font-semibold tracking-tight text-balance text-ink sm:text-4xl">
             From open role to verified shortlist in four steps
           </h2>
         </div>

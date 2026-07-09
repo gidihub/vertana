@@ -1,12 +1,11 @@
 "use client"
 
 import { use, useEffect, useState } from "react"
-import Link from "next/link"
 
 import { fetchTestById, useStore } from "@/lib/store"
 import { RecruiterShell } from "@/components/recruiter-shell"
+import { TestWorkspaceNav } from "@/components/recruiter/test-workspace-nav"
 import { TestBuilder } from "@/components/builder/test-builder"
-import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
 import {
   Empty,
@@ -15,6 +14,8 @@ import {
   EmptyDescription,
   EmptyContent,
 } from "@/components/ui/empty"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export default function EditTestPage({
   params,
@@ -32,31 +33,40 @@ export default function EditTestPage({
       .finally(() => setLoading(false))
   }, [id])
 
-  return (
-    <RecruiterShell>
-      {loading ? (
+  if (loading) {
+    return (
+      <RecruiterShell title="Edit test">
         <div className="flex items-center justify-center py-24">
           <Loader2 className="size-8 animate-spin text-muted-foreground" />
         </div>
-      ) : test ? (
-        <TestBuilder existing={test} />
-      ) : (
-        <div className="mx-auto w-full max-w-3xl px-4 py-16">
-          <Empty>
-            <EmptyHeader>
-              <EmptyTitle>Test not found</EmptyTitle>
-              <EmptyDescription>
-                This test may have been deleted or the link is incorrect.
-              </EmptyDescription>
-            </EmptyHeader>
-            <EmptyContent>
-              <Button nativeButton={false} render={<Link href="/dashboard" />}>
-                Back to tests
-              </Button>
-            </EmptyContent>
-          </Empty>
-        </div>
-      )}
+      </RecruiterShell>
+    )
+  }
+
+  if (!test) {
+    return (
+      <RecruiterShell title="Test not found">
+        <Empty>
+          <EmptyHeader>
+            <EmptyTitle>Test not found</EmptyTitle>
+            <EmptyDescription>
+              This test may have been deleted or the link is incorrect.
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button nativeButton={false} render={<Link href="/dashboard" />}>
+              Back to dashboard
+            </Button>
+          </EmptyContent>
+        </Empty>
+      </RecruiterShell>
+    )
+  }
+
+  return (
+    <RecruiterShell title={test.title} subtitle="Edit test">
+      <TestWorkspaceNav testId={test.id} />
+      <TestBuilder existing={test} />
     </RecruiterShell>
   )
 }

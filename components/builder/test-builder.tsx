@@ -1,12 +1,11 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo, useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { ArrowLeft, Save, Send } from "lucide-react"
+import { Loader2, Save, Send, Sparkles } from "lucide-react"
 import { toast } from "sonner"
 
-import type { Question, Test } from "@/lib/types"
+import type { Question, Test, TimingPolicy } from "@/lib/types"
 import { uid, saveTest } from "@/lib/store"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -27,6 +26,7 @@ import {
   FieldGroup,
 } from "@/components/ui/field"
 import { QuestionsSection } from "@/components/builder/questions-section"
+import { TestSettingsSection } from "@/components/builder/test-settings-section"
 
 function newQuestion(testId: string, position: number): Question {
   return {
@@ -67,9 +67,35 @@ export function TestBuilder({ existing }: { existing?: Test }) {
   const [certThreshold, setCertThreshold] = useState(
     String(existing?.certificate_percentile_threshold ?? 25),
   )
+  const [timingPolicy, setTimingPolicy] = useState<TimingPolicy>(
+    existing?.timing_policy ?? "normal",
+  )
+  const [forbidAiTools, setForbidAiTools] = useState(
+    existing?.forbid_ai_tools ?? false,
+  )
+  const [notifyEmails, setNotifyEmails] = useState<string[]>(
+    existing?.notify_emails ?? [],
+  )
+  const [creatorEmail, setCreatorEmail] = useState<string>()
   const [questions, setQuestions] = useState<Question[]>(
     existing?.questions ?? [],
   )
+  const [suggestingDetails, setSuggestingDetails] = useState(false)
+
+  const canSuggestDetails = useMemo(
+    () => questions.some((q) => q.prompt.trim()),
+    [questions],
+  )
+
+  useEffect(() => {
+    if (existing?.notify_emails?.length) return
+    void fetch("/api/org")
+      .then((res) => res.json())
+      .then((data: { user_email?: string }) => {
+        if (data.user_email) setCreatorEmail(data.user_email)
+      })
+      .catch(() => {})
+  }, [existing?.notify_emails?.length])
   function addQuestion() {
     setQuestions((qs) => [...qs, newQuestion(testId, qs.length)])
   }
@@ -97,6 +123,45 @@ export function TestBuilder({ existing }: { existing?: Test }) {
       ...qs,
       ...generated.map((q, i) => ({ ...q, position: qs.length + i })),
     ])
+  }
+
+  async function suggestDetails() {
+    const eligible = questions.filter((q) => q.prompt.trim())
+    if (!eligible.length) {
+      toast.error("Add at least one question with a prompt first")
+      return
+    }
+
+    setSuggestingDetails(true)
+    try {
+      const res = await fetch("/api/generate-questions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          suggestDetails: true,
+          questions: eligible.map((q) => ({
+            type: q.type,
+            prompt: q.prompt,
+            estimated_minutes: q.estimated_minutes ?? null,
+            difficulty: q.difficulty ?? null,
+          })),
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Request failed")
+
+      setTitle(data.details.title)
+      setDescription(data.details.description)
+      setTimeLimit(String(data.details.time_limit_minutes))
+      if (data.details.suggested_deadline && !deadline) {
+        setDeadline(data.details.suggested_deadline.slice(0, 10))
+      }
+      toast.success("Details suggested from your questions — review before saving")
+    } catch (err) {
+      toast.error((err as Error).message || "Could not suggest details")
+    } finally {
+      setSuggestingDetails(false)
+    }
   }
 
   function validate(): string | null {
@@ -134,6 +199,10 @@ export function TestBuilder({ existing }: { existing?: Test }) {
         Math.max(Number(certThreshold) || 25, 1),
         100,
       ),
+      timing_policy: timingPolicy,
+      forbid_ai_tools: forbidAiTools,
+      notify_emails: notifyEmails,
+      is_pinned: existing?.is_pinned ?? false,
       status,
       token: existing?.token ?? "",
       created_at: existing?.created_at ?? new Date().toISOString(),
@@ -152,34 +221,32 @@ export function TestBuilder({ existing }: { existing?: Test }) {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-8">
-      <div className="flex flex-col gap-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="self-start text-muted-foreground"
-          nativeButton={false}
-          render={<Link href="/dashboard" />}
-        >
-          <ArrowLeft data-icon="inline-start" />
-          Back to tests
-        </Button>
-        <div>
-          <h1 className="font-display text-2xl font-semibold tracking-tight text-balance text-ink">
-            {existing ? "Edit test" : "Create a new test"}
-          </h1>
-          <p className="text-muted-foreground">
-            Configure the assessment, then add questions or generate them with AI.
-          </p>
-        </div>
-      </div>
-
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
       <Card>
-        <CardHeader>
-          <CardTitle>Details</CardTitle>
-          <CardDescription>
-            Basic information candidates will see before they start.
-          </CardDescription>
+        <CardHeader className="flex flex-row items-start justify-between gap-4 space-y-0">
+          <div className="space-y-1">
+            <CardTitle>Details</CardTitle>
+            <CardDescription>
+              Basic information candidates will see before they start. Add
+              questions below, then use Suggest with AI to draft title,
+              description, and time limit.
+            </CardDescription>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="shrink-0 border-primary/30 text-primary hover:bg-primary/5"
+            disabled={!canSuggestDetails || suggestingDetails}
+            onClick={() => void suggestDetails()}
+          >
+            {suggestingDetails ? (
+              <Loader2 className="size-4 animate-spin" data-icon="inline-start" />
+            ) : (
+              <Sparkles className="size-4" data-icon="inline-start" />
+            )}
+            Suggest with AI
+          </Button>
         </CardHeader>
         <CardContent>
           <FieldGroup>
@@ -306,6 +373,16 @@ export function TestBuilder({ existing }: { existing?: Test }) {
           ) : null}
         </CardContent>
       </Card>
+
+      <TestSettingsSection
+        timingPolicy={timingPolicy}
+        onTimingPolicyChange={setTimingPolicy}
+        forbidAiTools={forbidAiTools}
+        onForbidAiToolsChange={setForbidAiTools}
+        notifyEmails={notifyEmails}
+        onNotifyEmailsChange={setNotifyEmails}
+        defaultCreatorEmail={creatorEmail}
+      />
 
       <QuestionsSection
         testId={testId}

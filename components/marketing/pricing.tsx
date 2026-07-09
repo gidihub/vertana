@@ -4,6 +4,9 @@ import { useState } from "react"
 import Link from "next/link"
 import { Check, Users } from "lucide-react"
 
+import { numericText } from "@/lib/design-tokens"
+import { cn } from "@/lib/utils"
+
 type BillingCycle = "monthly" | "annual"
 
 type Tier = {
@@ -100,7 +103,7 @@ export function Pricing() {
           <p className="text-sm font-semibold uppercase tracking-widest text-pine">
             Pricing
           </p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-balance text-ink sm:text-4xl">
+          <h2 className="mt-3 font-sans text-3xl font-semibold tracking-tight text-balance text-ink sm:text-4xl">
             Flat pricing with unlimited seats
           </h2>
           <p className="mt-3 text-sm text-ink-muted">
@@ -178,7 +181,7 @@ export function Pricing() {
                 ) : null}
                 <h3 className="text-lg font-semibold text-ink">{tier.name}</h3>
                 <div className="mt-3 flex items-baseline gap-1.5">
-                  <span className="font-display text-4xl font-semibold text-ink">
+                  <span className={cn("text-4xl font-semibold text-ink", numericText)}>
                     {price}
                   </span>
                   {showCadence ? (

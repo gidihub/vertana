@@ -1,30 +1,25 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Geist, Geist_Mono, Fraunces } from 'next/font/google'
+import { Inter, Geist_Mono } from 'next/font/google'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
-const geistSans = Geist({
+const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-geist-sans',
+  variable: '--font-inter',
+  display: 'swap',
 })
 
 const geistMono = Geist_Mono({
   subsets: ['latin'],
   variable: '--font-geist-mono',
-})
-
-const fraunces = Fraunces({
-  subsets: ['latin'],
-  variable: '--font-fraunces',
-  axes: ['opsz', 'SOFT'],
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
   title: 'Vertana — Recruiting Assessment Platform',
   description:
     'Create, share, and grade candidate assessments with optional proctoring. Built for hiring teams.',
-  generator: 'v0.app',
 }
 
 export const viewport: Viewport = {
@@ -40,7 +35,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`light bg-paper ${geistSans.variable} ${geistMono.variable} ${fraunces.variable}`}
+      className={`light bg-paper ${inter.variable} ${geistMono.variable}`}
     >
       <body className="font-sans antialiased">
         {children}

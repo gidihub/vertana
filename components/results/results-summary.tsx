@@ -1,9 +1,11 @@
 "use client"
 
 import { useMemo } from "react"
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
 import type { Candidate, Test } from "@/lib/types"
+import { numericText } from "@/lib/design-tokens"
+import { cn } from "@/lib/utils"
+import { ScoreDistributionChart } from "@/components/results/score-distribution-chart"
 import {
   Card,
   CardHeader,
@@ -11,24 +13,6 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card"
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  type ChartConfig,
-} from "@/components/ui/chart"
-
-const SCORE_BUCKETS = [
-  { label: "0–20", min: 0, max: 20 },
-  { label: "21–40", min: 21, max: 40 },
-  { label: "41–60", min: 41, max: 60 },
-  { label: "61–80", min: 61, max: 80 },
-  { label: "81–100", min: 81, max: 100 },
-]
-
-const chartConfig = {
-  count: { label: "Candidates", color: "var(--chart-1)" },
-} satisfies ChartConfig
 
 function minutesBetween(start: string | null, end: string | null): number | null {
   if (!start || !end) return null
@@ -44,16 +28,8 @@ export function ResultsSummary({
   test: Test
   candidates: Candidate[]
 }) {
-  const { distribution, completion, timing } = useMemo(() => {
+  const { completion, timing } = useMemo(() => {
     const submitted = candidates.filter((c) => c.status === "submitted")
-    const scored = submitted.filter((c) => c.score !== null)
-
-    const distribution = SCORE_BUCKETS.map((b) => ({
-      range: b.label,
-      count: scored.filter(
-        (c) => (c.score as number) >= b.min && (c.score as number) <= b.max,
-      ).length,
-    }))
 
     const times = submitted
       .map((c) => minutesBetween(c.started_at, c.submitted_at))
@@ -64,7 +40,6 @@ export function ResultsSummary({
         : null
 
     return {
-      distribution,
       completion: {
         invited: candidates.length,
         completed: submitted.length,
@@ -77,7 +52,6 @@ export function ResultsSummary({
     }
   }, [candidates, test.time_limit_minutes])
 
-  const hasScores = distribution.some((d) => d.count > 0)
   const timePct =
     timing.avgMinutes !== null && timing.limit > 0
       ? Math.min(100, Math.round((timing.avgMinutes / timing.limit) * 100))
@@ -85,41 +59,9 @@ export function ResultsSummary({
 
   return (
     <div className="grid gap-4 lg:grid-cols-3">
-      <Card className="lg:col-span-2">
-        <CardHeader>
-          <CardTitle className="text-base">Score distribution</CardTitle>
-          <CardDescription>
-            How graded candidates scored across the auto-graded questions.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {hasScores ? (
-            <ChartContainer config={chartConfig} className="aspect-[16/7] w-full">
-              <BarChart data={distribution} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
-                <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="range"
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                />
-                <YAxis
-                  allowDecimals={false}
-                  tickLine={false}
-                  axisLine={false}
-                  width={32}
-                />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="count" fill="var(--color-count)" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ChartContainer>
-          ) : (
-            <div className="flex aspect-[16/7] items-center justify-center rounded-lg border border-dashed border-border text-sm text-muted-foreground">
-              Scores appear here once auto-graded submissions come in.
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <div className="lg:col-span-2">
+        <ScoreDistributionChart candidates={candidates} />
+      </div>
 
       <Card>
         <CardHeader>
@@ -129,7 +71,7 @@ export function ResultsSummary({
         <CardContent className="flex flex-col gap-6">
           <div>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl font-semibold tabular-nums">
+              <span className={cn("text-3xl font-semibold", numericText)}>
                 {completion.completed}
               </span>
               <span className="text-sm text-muted-foreground">
@@ -142,14 +84,14 @@ export function ResultsSummary({
                 style={{ width: `${completion.rate}%` }}
               />
             </div>
-            <p className="mt-1.5 text-xs text-muted-foreground tabular-nums">
+            <p className={cn("mt-1.5 text-xs text-muted-foreground", numericText)}>
               {completion.rate}% completion rate
             </p>
           </div>
 
           <div>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl font-semibold tabular-nums">
+              <span className={cn("text-3xl font-semibold", numericText)}>
                 {timing.avgMinutes === null ? "—" : `${timing.avgMinutes}m`}
               </span>
               <span className="text-sm text-muted-foreground">
@@ -162,7 +104,7 @@ export function ResultsSummary({
                 style={{ width: `${timePct}%` }}
               />
             </div>
-            <p className="mt-1.5 text-xs text-muted-foreground tabular-nums">
+            <p className={cn("mt-1.5 text-xs text-muted-foreground", numericText)}>
               {timing.avgMinutes === null
                 ? "Timing appears once candidates submit"
                 : `${timePct}% of the time limit used on average`}

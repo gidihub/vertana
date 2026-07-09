@@ -100,7 +100,7 @@ export function Features() {
           <p className="text-sm font-semibold uppercase tracking-widest text-pine">
             What&apos;s inside
           </p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-balance text-ink sm:text-4xl">
+          <h2 className="mt-3 font-sans text-3xl font-semibold tracking-tight text-balance text-ink sm:text-4xl">
             Everything you need to run a fair, verifiable screen
           </h2>
         </div>

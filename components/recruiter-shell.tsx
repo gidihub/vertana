@@ -2,24 +2,41 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import type { ReactNode } from "react"
-import { Coins, Sparkles, LogOut } from "lucide-react"
+import { useEffect, useState, type ReactNode } from "react"
 
-import { Logo } from "@/components/logo"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { useOrganization } from "@/lib/store"
+import { SidebarNav } from "@/components/recruiter/sidebar-nav"
+import { RecruiterTopBar } from "@/components/recruiter/top-bar"
+import { refreshStore, useOrganization } from "@/lib/store"
+import { appShell, linkClass } from "@/lib/design-tokens"
+import { readSidebarCollapsed, writeSidebarCollapsed } from "@/lib/sidebar-prefs"
 import { formatDate } from "@/lib/format"
-import { aiLimitForTier, type PlanTier } from "@/lib/plans"
-import { appHeader, appShell, linkClass } from "@/lib/design-tokens"
 import { createClient } from "@/lib/supabase/client"
-import { useEffect, useState } from "react"
+import { cn } from "@/lib/utils"
 
-export function RecruiterShell({ children }: { children: ReactNode }) {
+export function RecruiterShell({
+  children,
+  title,
+  subtitle,
+  actions,
+}: {
+  children: ReactNode
+  title: string
+  subtitle?: string
+  actions?: ReactNode
+}) {
   const org = useOrganization()
   const router = useRouter()
   const [email, setEmail] = useState<string | null>(null)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+
+  useEffect(() => {
+    setSidebarCollapsed(readSidebarCollapsed())
+  }, [])
+
+  useEffect(() => {
+    void refreshStore()
+  }, [])
 
   useEffect(() => {
     void createClient()
@@ -27,65 +44,80 @@ export function RecruiterShell({ children }: { children: ReactNode }) {
       .then(({ data }) => setEmail(data.user?.email ?? null))
   }, [])
 
+  useEffect(() => {
+    setMobileOpen(false)
+  }, [title])
+
   async function signOut() {
     await fetch("/api/auth/signout", { method: "POST" })
     router.push("/login")
     router.refresh()
   }
 
-  const aiLimit = org ? aiLimitForTier(org.plan_tier as PlanTier) : null
+  function toggleSidebar() {
+    setSidebarCollapsed((prev) => {
+      const next = !prev
+      writeSidebarCollapsed(next)
+      return next
+    })
+  }
 
   return (
-    <div className={appShell}>
-      <header className={appHeader}>
-        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-          <Link
-            href="/dashboard"
-            aria-label="Vertana dashboard"
-            className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pine focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
-          >
-            <Logo size={30} />
-          </Link>
+    <div className={cn(appShell, "flex h-svh overflow-hidden")}>
+      {/* Desktop sidebar */}
+      <aside
+        className={cn(
+          "hidden h-svh shrink-0 flex-col overflow-hidden border-r border-sage-line/70 bg-[#e9ebe5] transition-[width] duration-200 ease-in-out lg:flex",
+          sidebarCollapsed ? "w-14" : "w-[272px]",
+        )}
+        aria-label="Main navigation"
+        aria-expanded={!sidebarCollapsed}
+      >
+        <SidebarNav
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={toggleSidebar}
+          onSignOut={() => void signOut()}
+          userEmail={email}
+        />
+      </aside>
 
-          <div className="flex items-center gap-3">
-            {org && aiLimit !== null && (
-              <Badge
-                variant="outline"
-                className="hidden gap-1.5 border-sage-line text-ink-muted sm:inline-flex"
-              >
-                <Sparkles className="size-3.5" />
-                AI {org.ai_generations_used}/{aiLimit}
-              </Badge>
-            )}
-            {org && (
-              <Badge
-                variant={org.credits_remaining > 0 ? "secondary" : "destructive"}
-                className="hidden gap-1.5 sm:inline-flex"
-              >
-                <Coins className="size-3.5" />
-                {org.credits_remaining} credit{org.credits_remaining === 1 ? "" : "s"} left
-              </Badge>
-            )}
-            <span className="hidden text-sm text-ink-muted sm:inline">
-              {email ?? org?.name ?? "Loading…"}
-            </span>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => void signOut()}
-              aria-label="Sign out"
-            >
-              <LogOut className="size-4" />
-            </Button>
-            <Avatar className="size-8">
-              <AvatarFallback className="bg-sage text-xs text-ink">
-                {(org?.name ?? "V").slice(0, 2).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-          </div>
-        </div>
+      {/* Mobile drawer */}
+      {mobileOpen && (
+        <button
+          type="button"
+          aria-label="Close menu"
+          className="fixed inset-0 z-40 bg-ink/20 backdrop-blur-[1px] lg:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 flex w-[272px] shrink-0 flex-col border-r border-sage-line/70 bg-[#e9ebe5] transition-transform duration-200 lg:hidden",
+          mobileOpen ? "translate-x-0" : "-translate-x-full",
+        )}
+        aria-label="Main navigation"
+        aria-hidden={!mobileOpen}
+      >
+        <SidebarNav
+          onNavigate={() => setMobileOpen(false)}
+          onSignOut={() => void signOut()}
+          userEmail={email}
+        />
+      </aside>
+
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto">
+        <RecruiterTopBar
+          title={title}
+          subtitle={subtitle}
+          actions={actions}
+          menuOpen={mobileOpen}
+          onMenuClick={() => setMobileOpen((open) => !open)}
+          sidebarCollapsed={sidebarCollapsed}
+          onSidebarToggle={toggleSidebar}
+        />
+
         {org && org.credits_remaining <= 0 && (
-          <div className="border-t border-destructive/20 bg-destructive/5 px-4 py-2 text-center text-sm text-destructive">
+          <div className="border-b border-destructive/20 bg-destructive/5 px-4 py-2 text-center text-sm text-destructive sm:px-6">
             No candidate credits remaining.{" "}
             <Link href="/#pricing" className={linkClass}>
               Upgrade your plan
@@ -93,10 +125,11 @@ export function RecruiterShell({ children }: { children: ReactNode }) {
             or wait until {formatDate(org.credits_reset_at)} for your monthly reset.
           </div>
         )}
-      </header>
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
-        {children}
-      </main>
+
+        <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
+          {children}
+        </main>
+      </div>
     </div>
   )
 }

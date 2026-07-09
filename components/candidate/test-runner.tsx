@@ -5,9 +5,16 @@ import { Clock, ChevronLeft, ChevronRight, Eye, Send } from "lucide-react"
 
 import type { Question, Test } from "@/lib/types"
 import { autosaveAnswer, reportTabSwitch } from "@/lib/store"
+import {
+  computeRemainingSeconds,
+  effectiveTimeLimitMinutes,
+  timingPolicyLabel,
+} from "@/lib/test-timing"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
+import { CodeEditorPanel } from "@/components/candidate/code-editor-panel"
+import { codingResponseIsEmpty } from "@/lib/coding/response"
 import { Badge } from "@/components/ui/badge"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Field, FieldLabel } from "@/components/ui/field"
@@ -43,6 +50,7 @@ export function TestRunner({
   test,
   token,
   attemptId,
+  startedAt,
   initialAnswers = {},
   initialTabSwitches = 0,
   onSubmit,
@@ -50,6 +58,7 @@ export function TestRunner({
   test: Test
   token: string
   attemptId: string
+  startedAt?: string
   initialAnswers?: Record<string, string>
   initialTabSwitches?: number
   onSubmit: (result: {
@@ -69,7 +78,10 @@ export function TestRunner({
 
   const [current, setCurrent] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>(initialAnswers)
-  const [remaining, setRemaining] = useState(test.time_limit_minutes * 60)
+  const allottedMinutes = effectiveTimeLimitMinutes(test)
+  const [remaining, setRemaining] = useState(() =>
+    computeRemainingSeconds(test, startedAt),
+  )
   const [tabSwitches, setTabSwitches] = useState(initialTabSwitches)
   const [showTabWarning, setShowTabWarning] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
@@ -83,6 +95,11 @@ export function TestRunner({
   }
 
   useEffect(() => {
+    if (remaining <= 0) {
+      finish()
+      return
+    }
+
     const id = setInterval(() => {
       setRemaining((r) => {
         if (r <= 1) {
@@ -130,6 +147,7 @@ export function TestRunner({
   const q = questions[current]
   const answered = questions.filter((item) => {
     const a = answers[item.id]
+    if (item.type === "coding") return !codingResponseIsEmpty(a)
     return a !== undefined && a !== ""
   }).length
   const isLast = current === questions.length - 1
@@ -160,25 +178,44 @@ export function TestRunner({
               Proctored
             </Badge>
           )}
-        </div>
-        <div
-          className={cn(
-            "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-sm font-semibold tabular-nums",
-            lowTime
-              ? "bg-destructive/10 text-destructive"
-              : "bg-muted text-foreground",
+          {test.forbid_ai_tools && (
+            <Badge variant="outline" className="gap-1 border-primary/30 text-primary">
+              No AI tools
+            </Badge>
           )}
-          role="timer"
-          aria-live="off"
-        >
-          <Clock className="size-4" />
-          {formatClock(remaining)}
+          {test.timing_policy !== "strict" && (
+            <Badge variant="secondary">
+              {timingPolicyLabel(test.timing_policy)} timing
+            </Badge>
+          )}
+        </div>
+        <div className="flex flex-col items-end gap-0.5">
+          <div
+            className={cn(
+              "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-sm font-semibold tabular-nums",
+              lowTime
+                ? "bg-destructive/10 text-destructive"
+                : "bg-muted text-foreground",
+            )}
+            role="timer"
+            aria-live="off"
+            aria-label={`${formatClock(remaining)} remaining of ${allottedMinutes} minutes allotted`}
+          >
+            <Clock className="size-4" />
+            {formatClock(remaining)}
+          </div>
+          <span className="text-xs text-muted-foreground tabular-nums">
+            of {allottedMinutes} min allotted
+          </span>
         </div>
       </div>
 
       <div className="flex flex-wrap gap-1.5">
         {questions.map((item, i) => {
-          const isAnswered = answers[item.id] !== undefined && answers[item.id] !== ""
+          const isAnswered =
+            item.type === "coding"
+              ? !codingResponseIsEmpty(answers[item.id])
+              : answers[item.id] !== undefined && answers[item.id] !== ""
           return (
             <button
               key={item.id}
@@ -255,13 +292,11 @@ export function TestRunner({
           )}
 
           {q.type === "coding" && (
-            <Textarea
-              placeholder="// Write your code here"
+            <CodeEditorPanel
+              key={q.id}
               value={answers[q.id] ?? ""}
-              onChange={(e) => setAnswer(e.target.value)}
-              rows={10}
-              className="font-mono text-sm"
-              spellCheck={false}
+              onChange={setAnswer}
+              token={token}
             />
           )}
         </CardContent>

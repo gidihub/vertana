@@ -40,3 +40,7 @@ export function aiLimitForTier(tier: PlanTier): number {
 export function certificatesEnabledForTier(tier: PlanTier): boolean {
   return tier !== "free"
 }
+
+export function codingQuestionsEnabledForTier(tier: PlanTier): boolean {
+  return tier === "growth" || tier === "custom"
+}

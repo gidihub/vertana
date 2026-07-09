@@ -63,7 +63,7 @@ export default async function BlogArticlePage({
           <span className="mt-6 inline-flex w-fit items-center rounded-full border border-sage-line bg-sage px-3 py-1 text-xs font-semibold text-ink">
             {post.category}
           </span>
-          <h1 className="mt-4 font-display text-4xl font-semibold tracking-tight text-balance text-ink sm:text-5xl">
+          <h1 className="mt-4 font-sans text-4xl font-semibold tracking-tight text-balance text-ink sm:text-5xl">
             {post.title}
           </h1>
           <p className="mt-4 text-lg leading-relaxed text-ink-muted text-pretty">
@@ -140,7 +140,7 @@ export default async function BlogArticlePage({
       {related.length > 0 ? (
         <section className="border-t border-sage-line/70 bg-card">
           <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
-            <h2 className="font-display text-2xl font-semibold tracking-tight text-ink">
+            <h2 className="font-sans text-2xl font-semibold tracking-tight text-ink">
               Keep reading
             </h2>
             <div className="mt-6 grid gap-6 sm:grid-cols-2">
@@ -153,7 +153,7 @@ export default async function BlogArticlePage({
                   <span className="inline-flex w-fit items-center rounded-full border border-sage-line bg-sage px-3 py-1 text-xs font-semibold text-ink">
                     {r.category}
                   </span>
-                  <h3 className="font-display text-lg font-semibold tracking-tight text-balance text-ink">
+                  <h3 className="font-sans text-lg font-semibold tracking-tight text-balance text-ink">
                     {r.title}
                   </h3>
                   <span className="inline-flex items-center gap-2 text-sm font-semibold text-pine">
@@ -179,7 +179,7 @@ function Block({ block }: { block: BlogBlock }) {
       return (
         <h2
           id={toId(block.text)}
-          className="scroll-mt-24 pt-10 font-display text-2xl font-semibold tracking-tight text-ink first:pt-0"
+          className="scroll-mt-24 pt-10 font-sans text-2xl font-semibold tracking-tight text-ink first:pt-0"
         >
           {block.text}
         </h2>
@@ -216,7 +216,7 @@ function Block({ block }: { block: BlogBlock }) {
       return (
         <blockquote className="mt-8 border-l-2 border-pine pl-5">
           <Quote className="size-5 text-pine" aria-hidden />
-          <p className="mt-2 font-display text-xl font-medium leading-snug text-ink text-balance">
+          <p className="mt-2 font-sans text-xl font-medium leading-snug text-ink text-balance">
             {block.text}
           </p>
           {block.cite ? (

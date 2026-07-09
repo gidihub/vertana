@@ -3,6 +3,8 @@
 
 export type TestStatus = "draft" | "active" | "closed"
 
+export type TimingPolicy = "strict" | "normal" | "relaxed"
+
 export type QuestionType = "multiple_choice" | "short_answer" | "coding"
 
 export type AiResistance = "low" | "medium" | "high"
@@ -10,6 +12,11 @@ export type AiResistance = "low" | "medium" | "high"
 export type QuestionSource = "library" | "custom" | "ai_generated"
 
 export type QuestionDifficulty = "easy" | "medium" | "hard"
+
+export interface TestCase {
+  input: string
+  expected_output: string
+}
 
 export type LibraryCategory = "frontend" | "backend" | "data" | "ops"
 
@@ -29,6 +36,10 @@ export interface Organization {
   credits_reset_at: string
   ai_generations_used: number
   ai_generations_reset_at: string
+  code_executions_used: number
+  code_executions_reset_at: string
+  /** Tab switches at or above this count surface an integrity concern badge. */
+  tab_switch_threshold: number
 }
 
 // Table: questions
@@ -47,6 +58,7 @@ export interface Question {
   library_category?: LibraryCategory | string | null
   estimated_minutes?: number | null
   difficulty?: QuestionDifficulty | null
+  test_cases?: TestCase[]
 }
 
 export interface LibraryQuestion extends Question {
@@ -72,6 +84,7 @@ export interface PlannedQuestion {
   estimated_minutes: number
   difficulty: QuestionDifficulty
   points?: number
+  test_cases?: TestCase[]
 }
 
 // Table: tests
@@ -88,6 +101,10 @@ export interface Test {
   // shareable certificate.
   certificate_eligible: boolean
   certificate_percentile_threshold: number // e.g. 25 means "top 25%"
+  timing_policy: TimingPolicy
+  forbid_ai_tools: boolean
+  notify_emails: string[]
+  is_pinned: boolean
   status: TestStatus
   token: string // used for the public candidate link
   created_at: string

@@ -67,7 +67,7 @@ export function CertificateView({ certificate }: { certificate: Certificate }) {
             <span className="flex size-8 items-center justify-center rounded-md bg-pine text-pine-foreground">
               <SquareCheckBig className="size-4.5" aria-hidden />
             </span>
-            <span className="font-display text-xl font-semibold tracking-tight text-ink">
+            <span className="font-sans text-xl font-semibold tracking-tight text-ink">
               Vertana
             </span>
           </div>
@@ -78,7 +78,7 @@ export function CertificateView({ certificate }: { certificate: Certificate }) {
 
           <div className="flex flex-col gap-2">
             <p className="text-sm text-ink-muted">This certifies that</p>
-            <h1 className="font-display text-3xl font-semibold tracking-tight text-balance text-ink sm:text-4xl">
+            <h1 className="font-sans text-3xl font-semibold tracking-tight text-balance text-ink sm:text-4xl">
               {certificate.candidate_name}
             </h1>
           </div>

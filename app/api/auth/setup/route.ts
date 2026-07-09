@@ -21,6 +21,7 @@ export async function POST(req: Request) {
     const result = await setupOrganizationForUser({
       userId: user.id,
       orgName: orgName?.trim() || "My Organization",
+      email: user.email,
     })
 
     return NextResponse.json({ organization: result })

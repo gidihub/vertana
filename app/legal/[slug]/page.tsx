@@ -41,7 +41,7 @@ export default async function LegalPage({
           <p className="text-sm font-semibold uppercase tracking-widest text-pine">
             Legal
           </p>
-          <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight text-balance text-ink sm:text-5xl">
+          <h1 className="mt-3 font-sans text-4xl font-semibold tracking-tight text-balance text-ink sm:text-5xl">
             {doc.title}
           </h1>
           <p className="mt-4 text-lg leading-relaxed text-ink-muted text-pretty">
@@ -86,7 +86,7 @@ export default async function LegalPage({
                 id={toId(section.heading)}
                 className="scroll-mt-24 border-b border-sage-line/70 pb-8 pt-8 first:pt-0 last:border-b-0"
               >
-                <h2 className="font-display text-2xl font-semibold tracking-tight text-ink">
+                <h2 className="font-sans text-2xl font-semibold tracking-tight text-ink">
                   {section.heading}
                 </h2>
                 {section.paragraphs.map((paragraph, i) => (

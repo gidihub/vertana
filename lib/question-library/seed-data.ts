@@ -577,8 +577,8 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
 ]
 
 export const LIBRARY_CATEGORIES: { id: LibraryCategory; label: string }[] = [
-  { id: "frontend", label: "Frontend" },
-  { id: "backend", label: "Backend" },
-  { id: "data", label: "Data" },
+  { id: "frontend", label: "Engineering · Frontend" },
+  { id: "backend", label: "Engineering · Backend" },
+  { id: "data", label: "Data & analytics" },
   { id: "ops", label: "Ops & support" },
 ]

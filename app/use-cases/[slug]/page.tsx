@@ -46,7 +46,7 @@ export default async function UseCasePage({
           <p className="text-sm font-semibold uppercase tracking-widest text-pine">
             {useCase.eyebrow}
           </p>
-          <h1 className="mt-3 max-w-3xl font-display text-4xl font-semibold leading-[1.05] tracking-tight text-balance text-ink sm:text-5xl">
+          <h1 className="mt-3 max-w-3xl font-sans text-4xl font-semibold leading-[1.05] tracking-tight text-balance text-ink sm:text-5xl">
             {useCase.title}
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted text-pretty">
@@ -90,7 +90,7 @@ export default async function UseCasePage({
         <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-8 px-4 py-12 sm:grid-cols-3 sm:px-6">
           {useCase.outcomes.map((o) => (
             <div key={o.label} className="flex flex-col gap-1">
-              <span className="font-display text-3xl font-semibold tracking-tight">
+              <span className="font-sans text-3xl font-semibold tracking-tight">
                 {o.stat}
               </span>
               <span className="text-sm leading-relaxed text-pine-foreground/75">
@@ -108,7 +108,7 @@ export default async function UseCasePage({
             <p className="text-sm font-semibold uppercase tracking-widest text-pine">
               The problem
             </p>
-            <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-balance text-ink sm:text-4xl">
+            <h2 className="mt-3 font-sans text-3xl font-semibold tracking-tight text-balance text-ink sm:text-4xl">
               Why the old way falls short
             </h2>
           </div>
@@ -135,7 +135,7 @@ export default async function UseCasePage({
             <p className="text-sm font-semibold uppercase tracking-widest text-pine">
               How Vertana helps
             </p>
-            <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-balance text-ink sm:text-4xl">
+            <h2 className="mt-3 font-sans text-3xl font-semibold tracking-tight text-balance text-ink sm:text-4xl">
               A screen your whole team can trust
             </h2>
           </div>
@@ -163,7 +163,7 @@ export default async function UseCasePage({
       {/* Explore more */}
       <section className="bg-paper">
         <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
-          <h2 className="font-display text-2xl font-semibold tracking-tight text-ink">
+          <h2 className="font-sans text-2xl font-semibold tracking-tight text-ink">
             More ways teams use Vertana
           </h2>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">

@@ -6,6 +6,7 @@ import {
   loadCandidatesForTest,
   loadTestById,
   saveTestRecord,
+  setTestPinnedRecord,
   setTestStatusRecord,
 } from "@/lib/db/queries"
 import type { Test, TestStatus } from "@/lib/types"
@@ -29,14 +30,17 @@ export async function PUT(
   req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  return handleApiAuth(async () => {
+  return handleApiAuth(async (ctx) => {
     try {
       const { id } = await params
       const test = (await req.json()) as Test
       if (test.id !== id) {
         return NextResponse.json({ error: "ID mismatch" }, { status: 400 })
       }
-      const saved = await saveTestRecord(test)
+      const saved = await saveTestRecord(test, {
+        creatorEmail: ctx.user.email,
+        creatorUserId: ctx.user.id,
+      })
       return NextResponse.json({ test: saved })
     } catch (err) {
       const message = (err as Error).message
@@ -53,8 +57,18 @@ export async function PATCH(
 ) {
   return handleApiAuth(async () => {
     const { id } = await params
-    const { status } = (await req.json()) as { status: TestStatus }
-    await setTestStatusRecord(id, status)
+    const body = (await req.json()) as {
+      status?: TestStatus
+      is_pinned?: boolean
+    }
+
+    if (body.status) {
+      await setTestStatusRecord(id, body.status)
+    }
+    if (typeof body.is_pinned === "boolean") {
+      await setTestPinnedRecord(id, body.is_pinned)
+    }
+
     const test = await loadTestById(id)
     return NextResponse.json({ test })
   })

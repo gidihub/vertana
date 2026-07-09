@@ -14,6 +14,7 @@ import {
 } from "lucide-react"
 import { toast } from "sonner"
 
+import { clampTestCases } from "@/lib/coding/limits"
 import type { PlannedQuestion, Question, TestPlan } from "@/lib/types"
 import { uid } from "@/lib/store"
 import { AiResistanceBadge } from "@/components/builder/ai-resistance-badge"
@@ -68,6 +69,7 @@ function plannedToQuestion(
     source: "ai_generated",
     estimated_minutes: q.estimated_minutes,
     difficulty: q.difficulty,
+    test_cases: q.type === "coding" ? clampTestCases(q.test_cases ?? []) : [],
   }
 }
 
@@ -196,10 +198,12 @@ function PlanQuestionCard({
 
 export function DescribeGeneratePanel({
   testId,
+  codingEnabled,
   onAccept,
   onSuggestedTime,
 }: {
   testId: string
+  codingEnabled: boolean
   onAccept: (questions: Question[]) => void
   onSuggestedTime?: (minutes: number) => void
 }) {
@@ -224,14 +228,17 @@ export function DescribeGeneratePanel({
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Request failed")
 
+      if (!data.plan) {
+        throw new Error("AI returned an empty plan")
+      }
+      if (data.source !== "ai") {
+        throw new Error("Expected AI-generated plan but received non-AI source")
+      }
+
       const next = withTempIds(data.plan as TestPlan)
       setPlan(next)
       setStep("review")
-      toast.success(
-        data.source === "fallback"
-          ? "Draft plan ready (offline templates)"
-          : "Draft plan ready — review before adding",
-      )
+      toast.success("Draft plan ready — review before adding")
     } catch (err) {
       toast.error((err as Error).message || "Could not generate plan")
     } finally {
@@ -282,12 +289,16 @@ export function DescribeGeneratePanel({
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Request failed")
 
+      if (data.source !== "ai" || !data.question) {
+        throw new Error("Expected AI-generated question")
+      }
+
       const replacement = {
         ...data.question,
         tempId: q.tempId,
       } as PlannedQuestion
       updateQuestion(replacement)
-      toast.success("Question swapped for a new draft")
+      toast.success("Question swapped for a new AI draft")
     } catch (err) {
       toast.error((err as Error).message || "Could not regenerate")
     } finally {
@@ -300,14 +311,26 @@ export function DescribeGeneratePanel({
       toast.error("Add at least one question to the plan")
       return
     }
-    onSuggestedTime?.(plan.total_time_minutes)
-    onAccept(
-      plan.questions.map((q, i) => plannedToQuestion(q, testId, i)),
+    const eligible = plan.questions.filter(
+      (q) => codingEnabled || q.type !== "coding",
     )
+    const skippedCoding = plan.questions.length - eligible.length
+    if (eligible.length === 0) {
+      toast.error("Coding questions require a Growth plan. Upgrade to add them.")
+      return
+    }
+    onSuggestedTime?.(plan.total_time_minutes)
+    onAccept(eligible.map((q, i) => plannedToQuestion(q, testId, i)))
     setStep("brief")
     setPlan(null)
     setBrief("")
-    toast.success(`Added ${plan.questions.length} questions to your test`)
+    if (skippedCoding > 0) {
+      toast.success(
+        `Added ${eligible.length} questions (${skippedCoding} coding skipped — Growth plan required)`,
+      )
+    } else {
+      toast.success(`Added ${eligible.length} questions to your test`)
+    }
   }
 
   if (step === "review" && plan) {

@@ -28,7 +28,7 @@ export function TrustSection() {
               <ShieldCheck className="size-4 text-lime" aria-hidden />
               Trust &amp; compliance
             </span>
-            <h2 className="mt-5 font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+            <h2 className="mt-5 font-sans text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
               Verification that respects the candidate
             </h2>
             <p className="mt-4 max-w-md leading-relaxed text-pine-foreground/75 text-pretty">

@@ -10,10 +10,15 @@ import {
   Flag,
   Link as LinkIcon,
   ShieldCheck,
+  ChevronDown,
+  ChevronRight,
+  Pencil,
 } from "lucide-react"
 import { toast } from "sonner"
 
 import type { Candidate, ConsentRecord, Test } from "@/lib/types"
+import { parseCodingResponse } from "@/lib/coding/response"
+import { languageLabel } from "@/lib/coding/languages"
 import {
   useStore,
   getConsent,
@@ -22,7 +27,11 @@ import {
   type AttemptAnswerView,
 } from "@/lib/store"
 import { formatDateTime } from "@/lib/format"
+import { timingPolicyLabel } from "@/lib/test-timing"
+import { funnelForTest } from "@/lib/dashboard/stats"
+import { hasIntegrityConcern } from "@/lib/integrity"
 import { cn } from "@/lib/utils"
+import { numericText } from "@/lib/design-tokens"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
@@ -50,7 +59,9 @@ import {
   EmptyContent,
 } from "@/components/ui/empty"
 import { ResultsPreviewMockup } from "@/components/empty-mockups"
+import { IntegrityConcernBadge } from "@/components/integrity-concern-badge"
 import { ResultsSummary } from "@/components/results/results-summary"
+import { ResultsFunnel } from "@/components/results/results-funnel"
 import { ResultsTableSkeleton } from "@/components/loading-skeletons"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
@@ -121,10 +132,19 @@ function toCsv(
     .join("\n")
 }
 
-export function ResultsDashboard({ testId }: { testId: string }) {
+export function ResultsDashboard({
+  testId,
+  embedded = false,
+}: {
+  testId: string
+  embedded?: boolean
+}) {
   const test = useStore((db) => db.tests.find((t) => t.id === testId))
   const candidates = useStore((db) =>
     db.candidates.filter((c) => c.test_id === testId),
+  )
+  const integrityThreshold = useStore(
+    (db) => db.organization?.tab_switch_threshold ?? 3,
   )
   const consents = useStore((db) => db.consents)
   const [selected, setSelected] = useState<Candidate | null>(null)
@@ -158,9 +178,11 @@ export function ResultsDashboard({ testId }: { testId: string }) {
             scored.reduce((sum, c) => sum + (c.score ?? 0), 0) / scored.length,
           )
         : null
-    const flagged = candidates.filter((c) => c.flagged || c.tab_switch_count > 0).length
+    const flagged = candidates.filter((c) =>
+      hasIntegrityConcern(c.tab_switch_count, integrityThreshold),
+    ).length
     return { total: candidates.length, submitted: submitted.length, avg, flagged }
-  }, [candidates])
+  }, [candidates, integrityThreshold])
 
   if (!test && !loading) {
     return (
@@ -201,10 +223,8 @@ export function ResultsDashboard({ testId }: { testId: string }) {
   }
 
   const selectedAnswers = selected ? answers[selected.id] ?? [] : []
-  const needsReview = selectedAnswers.some(
-    (a) =>
-      (a.type === "short_answer" || a.type === "coding") &&
-      a.is_correct === null,
+  const showSaveGrades = selectedAnswers.some(
+    (a) => a.type === "short_answer" || a.type === "coding",
   )
 
   async function saveGrades() {
@@ -246,31 +266,67 @@ export function ResultsDashboard({ testId }: { testId: string }) {
       value: stats.avg === null ? "—" : `${stats.avg}%`,
       icon: Gauge,
     },
-    { label: "Flagged", value: stats.flagged, icon: Flag },
+    { label: "Integrity flags", value: stats.flagged, icon: Flag },
   ]
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-8">
+    <div
+      className={cn(
+        "flex w-full flex-col gap-6",
+        !embedded && "mx-auto max-w-5xl px-4 py-8",
+      )}
+    >
       <div className="flex flex-col gap-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="self-start text-muted-foreground"
-          nativeButton={false}
-          render={<Link href="/dashboard" />}
-        >
-          <ArrowLeft data-icon="inline-start" />
-          Back to tests
-        </Button>
+        {!embedded && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="self-start text-muted-foreground"
+            nativeButton={false}
+            render={<Link href="/dashboard" />}
+          >
+            <ArrowLeft data-icon="inline-start" />
+            Back to tests
+          </Button>
+        )}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-2">
-              <h1 className="font-display text-2xl font-semibold tracking-tight text-balance text-ink">
-                {test?.title ?? "Loading…"}
-              </h1>
-              {test && <TestStatusBadge status={test.status} />}
-            </div>
-            <p className="text-muted-foreground">Results & candidate activity</p>
+            {!embedded && (
+              <>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h1 className="font-sans text-2xl font-semibold tracking-tight text-balance text-ink">
+                    {test?.title ?? "Loading…"}
+                  </h1>
+                  {test && <TestStatusBadge status={test.status} />}
+                  {test?.forbid_ai_tools && (
+                    <Badge variant="outline" className="border-primary/30 text-primary">
+                      AI tools: not permitted
+                    </Badge>
+                  )}
+                  {test && test.timing_policy !== "normal" && (
+                    <Badge variant="secondary">
+                      {timingPolicyLabel(test.timing_policy)} timing
+                    </Badge>
+                  )}
+                </div>
+                <p className="text-muted-foreground">Results & candidate activity</p>
+              </>
+            )}
+            {embedded && test && (
+              <div className="flex flex-wrap items-center gap-2">
+                <TestStatusBadge status={test.status} />
+                {test.forbid_ai_tools && (
+                  <Badge variant="outline" className="border-primary/30 text-primary">
+                    AI tools: not permitted
+                  </Badge>
+                )}
+                {test.timing_policy !== "normal" && (
+                  <Badge variant="secondary">
+                    {timingPolicyLabel(test.timing_policy)} timing
+                  </Badge>
+                )}
+              </div>
+            )}
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={copyLink} disabled={!test?.token}>
@@ -318,10 +374,19 @@ export function ResultsDashboard({ testId }: { testId: string }) {
             <EmptyTitle className="text-base">No results yet</EmptyTitle>
             <EmptyDescription>
               Scores and activity appear here as soon as candidates start the
-              test. Share the link below to invite your first candidate.
+              test. Share the link below to invite your first candidate, or edit
+              the test questions in the builder.
             </EmptyDescription>
           </EmptyHeader>
-          <EmptyContent>
+          <EmptyContent className="flex flex-wrap justify-center gap-2">
+            <Button
+              variant="outline"
+              nativeButton={false}
+              render={<Link href={`/tests/${testId}/edit`} />}
+            >
+              <Pencil data-icon="inline-start" />
+              Edit test
+            </Button>
             <Button variant="outline" onClick={copyLink}>
               <LinkIcon data-icon="inline-start" />
               Copy candidate link
@@ -340,11 +405,18 @@ export function ResultsDashboard({ testId }: { testId: string }) {
                   <s.icon className="size-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-semibold tabular-nums">{s.value}</p>
+                  <p className={cn("text-2xl font-semibold", numericText)}>{s.value}</p>
                 </CardContent>
               </Card>
             ))}
           </div>
+
+          {test && (
+            <ResultsFunnel
+              stats={funnelForTest(candidates)}
+              description="Invited → started → completed for this assessment."
+            />
+          )}
 
           {test && <ResultsSummary test={test} candidates={candidates} />}
 
@@ -360,8 +432,8 @@ export function ResultsDashboard({ testId }: { testId: string }) {
                       <TableHead>Candidate</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead className="text-right">Score</TableHead>
-                      <TableHead className="text-right">Tab switches</TableHead>
                       <TableHead>Submitted</TableHead>
+                      <TableHead>Integrity</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -377,24 +449,22 @@ export function ResultsDashboard({ testId }: { testId: string }) {
                         </TableCell>
                         <TableCell
                           className={cn(
-                            "text-right font-semibold tabular-nums",
+                            "text-right font-semibold",
+                            numericText,
                             scoreTone(c.score),
                           )}
                         >
                           {c.score === null ? "—" : `${c.score}%`}
                         </TableCell>
-                        <TableCell className="text-right tabular-nums">
-                          {c.tab_switch_count > 0 ? (
-                            <Badge variant="secondary" className="gap-1">
-                              <Flag className="size-3" />
-                              {c.tab_switch_count}
-                            </Badge>
-                          ) : (
-                            <span className="text-muted-foreground">0</span>
-                          )}
-                        </TableCell>
                         <TableCell className="text-muted-foreground">
                           {formatDateTime(c.submitted_at)}
+                        </TableCell>
+                        <TableCell>
+                          {hasIntegrityConcern(c.tab_switch_count, integrityThreshold) ? (
+                            <IntegrityConcernBadge compact />
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -417,6 +487,17 @@ export function ResultsDashboard({ testId }: { testId: string }) {
           </DialogHeader>
           {selected && (
             <div className="flex max-h-[70vh] flex-col gap-3 overflow-y-auto text-sm">
+              {hasIntegrityConcern(selected.tab_switch_count, integrityThreshold) && (
+                <div className="flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2.5">
+                  <IntegrityConcernBadge />
+                  <p className="text-xs text-muted-foreground">
+                    This candidate left the assessment window{" "}
+                    {selected.tab_switch_count} time
+                    {selected.tab_switch_count === 1 ? "" : "s"} during
+                    proctoring. Review their answers before making a decision.
+                  </p>
+                </div>
+              )}
               <DetailRow label="Status">
                 <CandidateStatusBadge status={selected.status} />
               </DetailRow>
@@ -427,15 +508,16 @@ export function ResultsDashboard({ testId }: { testId: string }) {
                 </span>
               </DetailRow>
               <Separator />
-              <DetailRow label="Tab switches">
-                {selected.tab_switch_count > 0 ? (
-                  <Badge variant="secondary" className="gap-1">
-                    <Flag className="size-3" />
-                    {selected.tab_switch_count}
-                  </Badge>
+              <DetailRow label="Integrity">
+                {hasIntegrityConcern(selected.tab_switch_count, integrityThreshold) ? (
+                  <IntegrityConcernBadge />
                 ) : (
-                  "None"
+                  <span className="text-muted-foreground">No concerns</span>
                 )}
+              </DetailRow>
+              <Separator />
+              <DetailRow label="Tab switches">
+                {selected.tab_switch_count}
               </DetailRow>
               <Separator />
               <DetailRow label="Started">
@@ -464,74 +546,28 @@ export function ResultsDashboard({ testId }: { testId: string }) {
                   <p className="font-medium">Answers</p>
                   <div className="flex flex-col gap-3">
                     {selectedAnswers.map((a, i) => (
-                      <div
+                      <AnswerDetail
                         key={a.question_id}
-                        className="rounded-lg border border-border p-3"
-                      >
-                        <p className="text-xs text-muted-foreground">
-                          Q{i + 1} · {a.type.replace("_", " ")}
-                        </p>
-                        <p className="mt-1 font-medium">{a.prompt}</p>
-                        <p className="mt-2 whitespace-pre-wrap text-muted-foreground">
-                          {a.response || "(no answer)"}
-                        </p>
-                        {(a.type === "short_answer" || a.type === "coding") && (
-                          <div className="mt-3 flex flex-wrap items-center gap-2">
-                            <Button
-                              size="sm"
-                              variant={
-                                a.is_correct === true ? "default" : "outline"
-                              }
-                              onClick={() => {
-                                setAnswers((prev) => ({
-                                  ...prev,
-                                  [selected.id]: prev[selected.id].map((item) =>
-                                    item.question_id === a.question_id
-                                      ? {
-                                          ...item,
-                                          is_correct: true,
-                                          points_awarded: item.max_points,
-                                        }
-                                      : item,
-                                  ),
-                                }))
-                              }}
-                            >
-                              Correct ({a.max_points} pts)
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant={
-                                a.is_correct === false ? "destructive" : "outline"
-                              }
-                              onClick={() => {
-                                setAnswers((prev) => ({
-                                  ...prev,
-                                  [selected.id]: prev[selected.id].map((item) =>
-                                    item.question_id === a.question_id
-                                      ? {
-                                          ...item,
-                                          is_correct: false,
-                                          points_awarded: 0,
-                                        }
-                                      : item,
-                                  ),
-                                }))
-                              }}
-                            >
-                              Incorrect
-                            </Button>
-                          </div>
-                        )}
-                        {a.is_correct !== null && (
-                          <p className="mt-2 text-xs text-muted-foreground">
-                            {a.points_awarded ?? 0}/{a.max_points} points
-                          </p>
-                        )}
-                      </div>
+                        answer={a}
+                        index={i}
+                        onGrade={(questionId, isCorrect, points) => {
+                          setAnswers((prev) => ({
+                            ...prev,
+                            [selected.id]: prev[selected.id].map((item) =>
+                              item.question_id === questionId
+                                ? {
+                                    ...item,
+                                    is_correct: isCorrect,
+                                    points_awarded: points,
+                                  }
+                                : item,
+                            ),
+                          }))
+                        }}
+                      />
                     ))}
                   </div>
-                  {needsReview && (
+                  {showSaveGrades && (
                     <Button
                       className="mt-2"
                       onClick={() => void saveGrades()}
@@ -546,6 +582,133 @@ export function ResultsDashboard({ testId }: { testId: string }) {
           )}
         </DialogContent>
       </Dialog>
+    </div>
+  )
+}
+
+function AnswerDetail({
+  answer: a,
+  index: i,
+  onGrade,
+}: {
+  answer: AttemptAnswerView
+  index: number
+  onGrade: (
+    questionId: string,
+    isCorrect: boolean | null,
+    points: number,
+  ) => void
+}) {
+  const [expanded, setExpanded] = useState(false)
+  const coding = a.type === "coding" ? parseCodingResponse(a.response) : null
+  const autoGradedCoding = a.type === "coding" && (a.test_cases_total ?? 0) > 0
+
+  return (
+    <div className="rounded-lg border border-border p-3">
+      <p className="text-xs text-muted-foreground">
+        Q{i + 1} · {a.type.replace("_", " ")}
+      </p>
+      <p className="mt-1 font-medium">{a.prompt}</p>
+
+      {autoGradedCoding && (
+        <p className="mt-2 text-sm font-medium text-primary">
+          {a.test_cases_passed ?? 0}/{a.test_cases_total ?? 0} test cases passed
+          {a.points_awarded != null && (
+            <span className="ml-2 font-normal text-muted-foreground">
+              · {a.points_awarded}/{a.max_points} pts auto-scored
+            </span>
+          )}
+        </p>
+      )}
+
+      {a.type === "coding" ? (
+        <div className="mt-2">
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+          >
+            {expanded ? (
+              <ChevronDown className="size-4" />
+            ) : (
+              <ChevronRight className="size-4" />
+            )}
+            {expanded ? "Hide" : "Show"} submitted code & execution output
+          </button>
+          {expanded && (
+            <div className="mt-2 flex flex-col gap-2">
+              {coding && (
+                <p className="text-xs text-muted-foreground">
+                  Language: {languageLabel(coding.language)}
+                </p>
+              )}
+              <pre className="max-h-48 overflow-auto rounded-md bg-muted p-3 font-mono text-xs whitespace-pre-wrap">
+                {coding?.code || "(no code)"}
+              </pre>
+              {a.execution_output && (
+                <>
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Execution output
+                    {a.execution_status ? ` (${a.execution_status})` : ""}
+                  </p>
+                  <pre className="max-h-48 overflow-auto rounded-md border border-border p-3 font-mono text-xs whitespace-pre-wrap text-muted-foreground">
+                    {a.execution_output}
+                  </pre>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      ) : (
+        <p className="mt-2 whitespace-pre-wrap text-muted-foreground">
+          {a.response || "(no answer)"}
+        </p>
+      )}
+
+      {a.type === "coding" && (
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <span className="text-xs text-muted-foreground">Override score:</span>
+          <Button
+            size="sm"
+            variant={a.is_correct === true ? "default" : "outline"}
+            onClick={() => onGrade(a.question_id, true, a.max_points)}
+          >
+            Full credit ({a.max_points} pts)
+          </Button>
+          <Button
+            size="sm"
+            variant={a.is_correct === false ? "destructive" : "outline"}
+            onClick={() => onGrade(a.question_id, false, 0)}
+          >
+            Zero
+          </Button>
+        </div>
+      )}
+
+      {a.type === "short_answer" && a.is_correct === null && (
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <Button
+            size="sm"
+            variant={a.is_correct === true ? "default" : "outline"}
+            onClick={() => onGrade(a.question_id, true, a.max_points)}
+          >
+            Correct ({a.max_points} pts)
+          </Button>
+          <Button
+            size="sm"
+            variant={a.is_correct === false ? "destructive" : "outline"}
+            onClick={() => onGrade(a.question_id, false, 0)}
+          >
+            Incorrect
+          </Button>
+        </div>
+      )}
+
+      {a.is_correct !== null && (
+        <p className="mt-2 text-xs text-muted-foreground">
+          {a.points_awarded ?? 0}/{a.max_points} points
+        </p>
+      )}
     </div>
   )
 }

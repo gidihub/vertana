@@ -25,7 +25,7 @@ export function Hero() {
             Pre-hire skill assessments
           </span>
 
-          <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.05] tracking-tight text-balance text-ink sm:text-5xl lg:text-6xl">
+          <h1 className="mt-5 font-sans text-4xl font-semibold leading-[1.05] tracking-tight text-balance text-ink sm:text-5xl lg:text-6xl">
             Stop guessing from résumés. Hire on{" "}
             <span className="relative whitespace-nowrap">
               verified
@@ -149,7 +149,7 @@ export function Hero() {
               </span>
               <div>
                 <p className="text-xs text-ink-muted">Verified score</p>
-                <p className="font-display text-lg font-semibold leading-none text-ink">
+                <p className="font-sans text-lg font-semibold leading-none text-ink">
                   92% · Top 5%
                 </p>
               </div>
