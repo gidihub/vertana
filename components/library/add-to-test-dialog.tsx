@@ -85,7 +85,7 @@ export function AddToTestDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md overflow-hidden">
         <DialogHeader>
           <DialogTitle>Add to test</DialogTitle>
           <DialogDescription>
@@ -104,18 +104,29 @@ export function AddToTestDialog({
             .
           </p>
         ) : (
-          <Select value={testId} onValueChange={(v) => setTestId(v ?? "")}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select assessment" />
-            </SelectTrigger>
-            <SelectContent>
-              {tests.map((t) => (
-                <SelectItem key={t.id} value={t.id}>
-                  {t.title}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="space-y-2">
+            <label
+              htmlFor="add-to-test-select"
+              className="text-sm font-medium text-foreground"
+            >
+              Assessment
+            </label>
+            <Select value={testId} onValueChange={(v) => setTestId(v ?? "")}>
+              <SelectTrigger
+                id="add-to-test-select"
+                className="w-full bg-background shadow-sm"
+              >
+                <SelectValue placeholder="Select assessment" />
+              </SelectTrigger>
+              <SelectContent alignItemWithTrigger={false}>
+                {tests.map((t) => (
+                  <SelectItem key={t.id} value={t.id}>
+                    {t.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         )}
 
         <DialogFooter>

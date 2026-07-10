@@ -1,0 +1,493 @@
+[
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "multiple_choice",
+    "prompt": "A customer reports that their file uploads started failing for only one team after an admin changed permissions this morning. The team can still sign in, but every upload returns a 403. What is the best first support action?",
+    "options": [
+      "Confirm the permission change timing, verify which role/group lost access, and escalate with evidence if needed",
+      "Ask the customer to clear cache and try again later",
+      "Open a severity 1 incident immediately without further checks",
+      "Tell the customer the issue is probably on their side because login still works"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "multiple_choice",
+    "prompt": "A ticket is 18 hours old. The SLA says first response within 2 hours and resolution within 24 hours. You have already sent an initial reply, but the customer says there has been no update. What should you do next?",
+    "options": [
+      "Ignore it until engineering closes the bug",
+      "Send a status update with what is known, what is being investigated, and the next checkpoint time",
+      "Mark the ticket solved because the first response SLA was met",
+      "Tell the customer to reopen the ticket if the problem persists"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "multiple_choice",
+    "prompt": "A premium customer says their dashboard loads, but one critical API request times out every 20 to 30 minutes. You suspect a backend dependency issue. Which escalation package is most useful to send engineering?",
+    "options": [
+      "Only the customer name and a note that the product is slow",
+      "A screenshot of the timeout message without any timing details",
+      "Exact timestamps, request IDs, affected endpoint, frequency, and a brief impact summary",
+      "A request asking engineering to investigate all recent deploys"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "multiple_choice",
+    "prompt": "A customer asks why their case is still open. The issue is already in development, and there is no workaround yet. Which update best balances empathy and technical accuracy?",
+    "options": [
+      "We are working on it and will let you know when it is fixed",
+      "Engineering has confirmed a backend regression affecting the export job; next update is by 3 PM UTC, and we will share any workaround if one is found",
+      "This is a known problem, so please be patient",
+      "We cannot share technical details, but rest assured it is being handled"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "short_answer",
+    "prompt": "A customer reports that emailed invoice PDFs are blank, but invoices viewed in the browser display correctly. Write a concise first reply that acknowledges impact, asks for one useful detail, and sets expectation for next steps.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Sorry about that — I can help with the blank PDF issue. Could you send one affected invoice number and the approximate time it was generated? I’ll check whether this is a PDF rendering problem and update you with the next step.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "multiple_choice",
+    "prompt": "You receive multiple tickets within 10 minutes: password reset emails delayed, report exports slow, and a single customer says every page is down. What is the best triage approach?",
+    "options": [
+      "Treat all three as the same incident because they arrived together",
+      "Prioritize the page-is-down report first, then check whether the other tickets share a common dependency or are separate issues",
+      "Work the oldest ticket first regardless of severity",
+      "Reply to all customers that a backend issue is suspected and wait for more reports"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "multiple_choice",
+    "prompt": "A customer says, 'Your app deleted my data.' Your logs show the record was moved to an archive table by an automated retention job. What is the best response?",
+    "options": [
+      "Tell them they are mistaken because the logs prove it",
+      "Explain that the data was archived by the retention policy, confirm whether recovery is possible, and avoid blaming the customer",
+      "Say nothing about the logs and only promise to escalate",
+      "Immediately admit product fault without checking the policy"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "short_answer",
+    "prompt": "A customer writes: 'Your last update was useless. I need this fixed now.' The investigation shows a third-party email provider is delaying verification messages. Draft a reply that explains the root cause clearly without overpromising and includes one concrete next step.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "I’m sorry for the frustration. We’ve confirmed the delay is coming from our email provider, which is slowing verification messages. I can’t promise an exact fix time yet, but we’re monitoring delivery and I’ll update you as soon as we have a recovery estimate or workaround.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "multiple_choice",
+    "prompt": "A ticket has been reassigned three times. Each assignee asks the customer to repeat the same steps, and the customer is getting frustrated. What is the strongest improvement to the ticketing workflow?",
+    "options": [
+      "Add a rule that every assignee must ask the customer the same diagnostic questions",
+      "Require each handoff to include a clear summary, findings so far, and the next owner action",
+      "Close tickets after every reassignment to keep the queue clean",
+      "Wait until the customer escalates before involving engineering"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "multiple_choice",
+    "prompt": "A customer’s webhook deliveries fail only after 30 seconds, and the logs show a proxy timeout at 29.5 seconds. What is the best way to explain the issue to the customer?",
+    "options": [
+      "Your webhook is broken and needs to be recreated",
+      "Our proxy is timing out before your endpoint responds; the request is being cut off at roughly 30 seconds",
+      "The problem is definitely your server, but we cannot confirm why",
+      "Please resubmit the same webhook until it succeeds"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "short_answer",
+    "prompt": "A customer is asking for an escalation because a report is missing data from the last two hours. You found that ingestion is delayed, not lost, and the system is still catching up. Write a concise escalation note to engineering with the most important facts.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Customer reports the report is missing the last 2 hours of data. Investigation shows ingestion delay/catch-up behavior, not confirmed data loss. Please verify the backlog cause, estimated recovery time, and whether any records were dropped. Impact is report accuracy for active customers.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "multiple_choice",
+    "prompt": "A support agent discovers the knowledge base article for SSO setup says 'paste the certificate into the SAML field,' but the product now has separate certificate and issuer fields. What should happen next?",
+    "options": [
+      "Leave the article unchanged because customers rarely read it",
+      "Update the article to match the current UI and note the exact field names and validation steps",
+      "Delete the article so no one follows outdated instructions",
+      "Replace the article with a generic link to the product homepage"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "multiple_choice",
+    "prompt": "A customer on the enterprise plan asks for a timeline. Engineering says the fix may take several days, but there is a safe workaround that reduces the impact. What should support communicate first?",
+    "options": [
+      "Only the workaround, never the fix timeline",
+      "The workaround, the known impact of using it, and the current best estimate without promising a date",
+      "That engineering is busy and cannot share details",
+      "Nothing until the permanent fix is deployed"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "short_answer",
+    "prompt": "A new ticket says 'API broken.' The customer is on a paid plan, production is affected, and they included no logs. Write the next two questions you would ask to triage efficiently.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Which endpoint is failing, and what exact error code or message do you see? Can you share one timestamp and the request ID from a failed call?",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "multiple_choice",
+    "prompt": "A customer claims your last update blamed them. You want to reduce tension while keeping the investigation moving. Which phrasing is best?",
+    "options": [
+      "As stated earlier, the issue is caused by your configuration",
+      "We need a bit more information from your side to continue investigating",
+      "You didn’t provide enough details, so the delay is expected",
+      "This is a simple user error, so please follow the guide again"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "multiple_choice",
+    "prompt": "Your internal monitoring shows elevated latency, but no customer has reported failures yet. What is the best support action?",
+    "options": [
+      "Do nothing until customers complain",
+      "Open a watch item or incident bridge, gather likely customer impact, and prepare a proactive customer update if it degrades further",
+      "Mark the system healthy because there are no tickets",
+      "Tell customers the service is down even without evidence"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "short_answer",
+    "prompt": "A customer asks, 'Why is this taking so long?' You know the team is waiting on a database migration to finish before reprocessing their queue. Write a short explanation that is honest, calm, and technically precise.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "We’re waiting for a database migration to complete before we can safely reprocess the queue. That step is required to avoid duplicate or inconsistent records, and I’ll update you as soon as it finishes and reprocessing begins.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "multiple_choice",
+    "prompt": "A ticket includes a vague request: 'Something changed after Friday's deploy and now reports are weird.' Which follow-up best supports root-cause analysis?",
+    "options": [
+      "Ask whether they are happy with the reports overall",
+      "Ask for the specific report names, what changed in the output, and the first time the issue was observed",
+      "Tell them all deploys are risky and should be avoided",
+      "Request that they open a new ticket for each report"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "multiple_choice",
+    "prompt": "A customer wants you to reopen a closed ticket because they found the issue again two weeks later. The old case had a workaround and a resolved root cause. What should you do?",
+    "options": [
+      "Refuse because closed tickets can never be reopened",
+      "Create a new ticket, link it to the old case, and confirm whether the same root cause is recurring",
+      "Copy the old ticket notes into a chat message and ask them to start over",
+      "Tell them it is a duplicate and close it immediately"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "short_answer",
+    "prompt": "You confirm a bug is caused by a recent release, but the customer only wants to know if their data is safe. Provide a one-sentence customer-facing answer that is accurate and reassuring without speculating.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Based on what we’ve confirmed so far, the issue affects processing/output rather than stored data, and we do not currently see evidence of data loss.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "multiple_choice",
+    "prompt": "A support lead wants to improve the knowledge base for a recurring API auth issue. Which article change is most likely to reduce repeat tickets?",
+    "options": [
+      "Add a long paragraph about the company mission",
+      "Include exact error examples, required headers, common misconfigurations, and how to verify a successful request",
+      "Remove technical detail so the article is easier to read",
+      "Tell readers to contact support for every authentication error"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "short_answer",
+    "prompt": "A customer on a live call says, 'Your app is down, and I need an answer right now.' Your monitoring shows only a single region is failing. Write a concise response that distinguishes the scope of impact and sets the next action.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "I understand the urgency. We’re seeing the failure in one region, not across the entire platform, and I’m checking whether your account traffic is routed there. I’ll confirm scope and the next update as soon as I verify that.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "multiple_choice",
+    "prompt": "A customer’s ticket is approaching the resolution SLA, but engineering has not yet confirmed a fix. Which action is best?",
+    "options": [
+      "Wait silently until the SLA expires",
+      "Send a status update, explain what is still blocked, and if needed reclassify/escalate according to process",
+      "Close the ticket to stop the SLA clock",
+      "Tell the customer the issue is solved to buy time"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "coding",
+    "prompt": "A support inbox exports ticket ages as one integer per line in hours. Write a program that prints how many tickets are: under 24 hours old, between 24 and 72 hours old inclusive, and over 72 hours old. Input ends at EOF. Print the three counts on separate lines in that order.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "5\n24\n72\n80\n13\n",
+        "expected_output": "2\n2\n1\n"
+      },
+      {
+        "input": "0\n23\n25\n73\n",
+        "expected_output": "2\n1\n1\n"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "easy",
+    "points": 3
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "multiple_choice",
+    "prompt": "A paid customer reports that file uploads started failing immediately after an admin changed the team’s SSO settings. The error shown in the UI is just “Upload failed.” Which is the best first support action?",
+    "options": [
+      "Ask for the exact error, reproduce steps, timestamps, and check recent auth/permission changes before escalating if needed.",
+      "Immediately tell the customer the SSO change is the root cause and advise them to revert it.",
+      "Escalate to engineering without collecting more details because the UI error is too vague.",
+      "Tell the customer to wait 24 hours because upload issues after configuration changes usually self-resolve."
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "short_answer",
+    "prompt": "A customer says: “Our nightly invoice export failed again, and finance is waiting on it.” You confirm the export job is failing because the downstream storage provider is returning intermittent 503s. Write a concise reply that: acknowledges impact, states what is known without overpromising, sets expectation for next update timing, and avoids blaming the customer.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Acknowledge the failed export and the finance impact, explain that we’ve confirmed intermittent 503s from the downstream storage provider are causing the failure, share that we’re investigating and monitoring it, and give a concrete next update time (for example, within 30 minutes).",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "multiple_choice",
+    "prompt": "A ticket is 20 hours old. The SLA requires first response within 1 hour and resolution within 24 hours. Engineering says the fix will not be ready before tomorrow, but there is a workaround that restores service for most customers. What is the best support action now?",
+    "options": [
+      "Leave the ticket untouched until engineering provides the final fix, since responding twice can confuse the customer.",
+      "Send a customer update with the workaround, clearly note the workaround’s limitations, and escalate/track the ticket to meet the resolution SLA as closely as possible.",
+      "Close the ticket because a workaround exists, even if the customer has not confirmed it works.",
+      "Reply only after the 24-hour resolution window has passed so the update is definitive."
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "short_answer",
+    "prompt": "A customer reports that email notifications are arriving, but the links inside them open a blank page. Investigation shows the links are correct, but a recent deployment changed the public base URL used in the email template, and some older links still point to the previous domain. Write a brief root-cause update for the customer that separates symptoms from cause and explains the next action.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "The blank page is a symptom of links pointing to the old domain after a recent base-URL change in the email template. We’re updating the template/configuration and checking whether any older emails need a redirect or replacement, and we’ll share the next update once that’s in place.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 8,
+    "difficulty": "hard",
+    "points": 1
+  }
+]

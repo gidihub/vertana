@@ -1,0 +1,1237 @@
+[
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Structured problem-solving] A client's revenue is declining. Which is the strongest first move?",
+    "options": [
+      "Immediately propose cost cuts",
+      "Build an issue tree separating price, volume, and mix effects",
+      "Benchmark against the top competitor",
+      "Interview the CEO about their gut feeling"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Structured problem-solving] A retailer's profit fell 20% year over year despite flat revenue. List the three branches of an issue tree you'd build to diagnose this, and one sub-question under each.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 8
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Structured problem-solving] What does MECE stand for in a consulting context?",
+    "options": [
+      "Mutually Exclusive, Collectively Exhaustive",
+      "Market Entry, Competitive Evaluation",
+      "Multiple Estimates, Combined Evidence",
+      "Measured Efficiency, Cost Effectiveness"
+    ],
+    "correct_option_index": 0,
+    "ai_resistance": "low",
+    "estimated_minutes": 2,
+    "points": 3
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Structured problem-solving] You have two hypotheses for why a SaaS company's churn rose: (A) a pricing change in March, (B) a competitor launch in April. Churn started rising in February. What do you conclude, and what's your next step?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 8
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Structured problem-solving] A hypothesis-driven approach means you should:",
+    "options": [
+      "Gather all possible data before forming any view",
+      "Form a testable answer early, then seek data that could disprove it",
+      "Wait for the client to state their own hypothesis first",
+      "Avoid forming a view until the final week of the engagement"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Structured problem-solving] A manufacturing client wants to enter a new country. Name three distinct dimensions you'd assess before recommending yes/no, avoiding overlap between them.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Structured problem-solving] Given: profit fell, revenue flat, gross margin flat, opex up 15% driven entirely by a new regional office. What's the most useful next question?",
+    "options": [
+      "Is the new office's revenue contribution tracked separately from opex, and what's its expected payback timeline?",
+      "Should the company raise prices?",
+      "What is the CEO's five-year vision?",
+      "How many employees work in the new office?"
+    ],
+    "correct_option_index": 0,
+    "ai_resistance": "high",
+    "estimated_minutes": 4,
+    "points": 7
+  },
+  {
+    "category": "project-program-associate",
+    "type": "coding",
+    "prompt": "[Structured problem-solving] Given a JSON array of {region, revenue, cost} objects, write a function that returns the region with the lowest profit margin (revenue-cost)/revenue. Handle the case of zero revenue by excluding that region.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 14,
+    "points": 10
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Structured problem-solving] Which of these is NOT typically part of a first-week problem-solving approach on a case?",
+    "options": [
+      "Defining the core question precisely",
+      "Building an initial issue tree",
+      "Finalizing the client deliverable's exact slide count",
+      "Identifying what data would prove or disprove key hypotheses"
+    ],
+    "correct_option_index": 2,
+    "ai_resistance": "low",
+    "estimated_minutes": 2,
+    "points": 3
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Structured problem-solving] A client says 'we need to cut costs by 10% across the board.' Why might this be a weak starting hypothesis, and what would you propose instead?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "points": 7
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Structured problem-solving] In a profitability case, if you learn that price per unit is fixed by long-term contracts, which lever should you deprioritize immediately?",
+    "options": [
+      "Volume growth",
+      "Price increases",
+      "Cost reduction",
+      "Product mix shift"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Structured problem-solving] Two teams disagree on the root cause of a delayed product launch: Engineering blames scope creep, Product blames underestimated technical complexity. Design a two-question test that would distinguish between these two explanations using data you'd actually have access to.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 8
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Structured problem-solving] A 'so what' in a consulting deliverable refers to:",
+    "options": [
+      "The literal question the client asked",
+      "The implication or action that follows from a finding",
+      "A slide's page number",
+      "The appendix section"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 2,
+    "points": 3
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Structured problem-solving] You're told 'customer satisfaction dropped.' List two clarifying questions you'd ask before doing any analysis.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Structured problem-solving] A team has spent two days building a detailed model before validating whether the client even has the data to populate it. This is best described as:",
+    "options": [
+      "Good due diligence",
+      "A violation of hypothesis-first, 80/20 sequencing",
+      "Necessary for MECE structuring",
+      "Standard case team practice"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "high",
+    "estimated_minutes": 4,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Structured problem-solving] A private equity client asks you to assess a target company in one week. Name three things you would deliberately NOT do, given the time constraint, and why each is a reasonable tradeoff.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 8
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Market sizing & estimation] Estimate the number of coffee shops in Lagos, Nigeria. Show your approach, not just a final number.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 7,
+    "points": 8
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Market sizing & estimation] Estimate the annual market size (in USD) for diagnostic testing kits in a mid-sized African country of ~30 million people. State your assumptions explicitly.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 7,
+    "points": 8
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Market sizing & estimation] In a market-sizing question, the single most important habit is to:",
+    "options": [
+      "Guess a plausible-sounding final number quickly",
+      "State assumptions explicitly and build up from a clear structure",
+      "Ask the interviewer for the real answer",
+      "Avoid using round numbers"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 2,
+    "points": 3
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Market sizing & estimation] Estimate how many electric vehicle charging stations a country of 50 million people, with 15% EV adoption in 10 years, would need. Walk through your logic.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 8
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Market sizing & estimation] A client wants to know the total addressable market for a B2B SaaS tool selling to mid-sized law firms in the US. What two numbers do you need first, and how would you find each?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Market sizing & estimation] When your market-sizing estimate comes out to $47,382,910 precisely, the best next step is to:",
+    "options": [
+      "Report it exactly as calculated to show precision",
+      "Round to a sensible range (e.g. ~$45-50M) and state the confidence level",
+      "Redo the entire calculation from scratch",
+      "Present it without context"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Market sizing & estimation] Estimate the number of packages delivered daily by all couriers in a city of 5 million people. Then state one real-world data source you'd use to sanity-check your estimate afterward.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 7
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Market sizing & estimation] A sizing estimate assumes '80% of adults own a smartphone.' What's wrong with stating this without justification, and what would fix it?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Market sizing & estimation] Top-down and bottom-up are two approaches to market sizing. A bottom-up approach typically starts from:",
+    "options": [
+      "Total industry revenue reported by analysts",
+      "Individual unit economics (e.g. per-customer spend) built up to a total",
+      "The client's stated revenue target",
+      "A competitor's market share"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 2,
+    "points": 3
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Market sizing & estimation] You're asked to size the market for corporate wellness programs among companies with 500+ employees. Your bottom-up and top-down estimates differ by 3x. What do you do?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 8
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Quantitative reasoning] A product's price increases from $80 to $92. What is the percentage increase?",
+    "options": [
+      "12%",
+      "15%",
+      "17%",
+      "20%"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 2,
+    "points": 3
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Quantitative reasoning] A company's revenue grew from $4.2M to $5.6M over two years. What is the approximate compound annual growth rate?",
+    "options": [
+      "13%",
+      "15%",
+      "18%",
+      "22%"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Quantitative reasoning] A product has a fixed cost of $200,000 and a contribution margin of $40 per unit. How many units must be sold to break even?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Quantitative reasoning] A company's gross margin is 60% and opex is 35% of revenue. What is the operating margin?",
+    "options": [
+      "15%",
+      "20%",
+      "25%",
+      "30%"
+    ],
+    "correct_option_index": 2,
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Quantitative reasoning] If a subscription business has 1,000 customers, 5% monthly churn, and no new signups, roughly how many customers remain after 3 months?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Quantitative reasoning] A discount of 25% is applied, then a further 10% discount on the reduced price. What is the total effective discount?",
+    "options": [
+      "32.5%",
+      "33.5%",
+      "35%",
+      "30%"
+    ],
+    "correct_option_index": 0,
+    "ai_resistance": "low",
+    "estimated_minutes": 2,
+    "points": 4
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Quantitative reasoning] A client's customer acquisition cost is $150 and average customer lifetime value is $450. Is this a healthy ratio for most subscription businesses, and what's a commonly cited rule of thumb?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 9,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Quantitative reasoning] Revenue is $10M. Next year revenue grows 20% and profit margin stays flat at 18% of revenue. What is next year's expected profit?",
+    "options": [
+      "$1.8M",
+      "$2.0M",
+      "$2.16M",
+      "$2.4M"
+    ],
+    "correct_option_index": 2,
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Quantitative reasoning] A retailer sells 3 products with margins of 60%, 40%, and 20%, contributing 20%, 30%, and 50% of revenue respectively. What is the blended gross margin?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 9,
+    "points": 7
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Quantitative reasoning] If headcount costs are 60% of a $2M opex budget, how much is spent on non-headcount opex?",
+    "options": [
+      "$600,000",
+      "$800,000",
+      "$1,200,000",
+      "$1,400,000"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 2,
+    "points": 4
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Quantitative reasoning] A project has a 70% chance of generating $500K and a 30% chance of generating -$100K. What is the expected value?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Quantitative reasoning] A company's inventory turns 8 times per year. If average inventory value is $500,000, what is approximate annual cost of goods sold?",
+    "options": [
+      "$2M",
+      "$3M",
+      "$4M",
+      "$5M"
+    ],
+    "correct_option_index": 2,
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Quantitative reasoning] Explain, without doing the full calculation, how you would mentally estimate 34% of 2,850,000 quickly during a live discussion.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 9,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Quantitative reasoning] A company's payback period on a $1.2M investment generating $300K/year in net cash flow is:",
+    "options": [
+      "3 years",
+      "4 years",
+      "5 years",
+      "6 years"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Quantitative reasoning] Two pricing options: (A) $50/month flat, (B) $30/month plus $0.10 per usage unit. At what monthly usage does option B become more expensive than option A?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 9,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Excel & data analysis] Write the Excel formula to sum values in cells B2 through B50.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "low",
+    "estimated_minutes": 5,
+    "points": 3
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Excel & data analysis] Write an Excel formula using VLOOKUP or INDEX/MATCH to return the value in column C where column A equals the value in cell E1, from a table spanning A2:C500.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Excel & data analysis] Which Excel function returns the number of cells in a range that meet a single condition?",
+    "options": [
+      "SUMIF",
+      "COUNTIF",
+      "IFERROR",
+      "VLOOKUP"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 2,
+    "points": 3
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Excel & data analysis] Write a formula to sum column D where column A = 'North' AND column B = 'Q1', using SUMIFS.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 9,
+    "points": 7
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Excel & data analysis] What does wrapping a formula in IFERROR typically accomplish?",
+    "options": [
+      "Speeds up calculation",
+      "Replaces error values (like #N/A) with a specified fallback",
+      "Automatically fixes broken references",
+      "Sorts data automatically"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "points": 4
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Excel & data analysis] A VLOOKUP formula returns #N/A for some rows even though the lookup value visibly appears in the table. Name two likely causes.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 8
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Excel & data analysis] In a pivot table, which area would you drag a 'Region' field into if you want one column per region?",
+    "options": [
+      "Rows",
+      "Values",
+      "Columns",
+      "Filters"
+    ],
+    "correct_option_index": 2,
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "points": 4
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Excel & data analysis] You have monthly revenue in column B and want a running (cumulative) total in column C. Write the formula for cell C2, assuming it will be dragged down.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Excel & data analysis] A dataset has duplicate rows you want removed based on columns A and B only. Which built-in Excel feature handles this directly?",
+    "options": [
+      "Conditional Formatting",
+      "Remove Duplicates (Data tab)",
+      "Data Validation",
+      "Text to Columns"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Excel & data analysis] A colleague's model shows #REF! errors in 12 cells after they deleted a column. What likely happened, and how would you diagnose which formulas broke?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 7
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Excel & data analysis] Which function would you use to find the average of only the cells that meet a condition?",
+    "options": [
+      "AVERAGEIF",
+      "MEAN",
+      "MEDIAN",
+      "SUMPRODUCT"
+    ],
+    "correct_option_index": 0,
+    "ai_resistance": "low",
+    "estimated_minutes": 2,
+    "points": 3
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Excel & data analysis] Write a formula that returns 'Over Budget' if cell B2 exceeds cell C2, and 'On Track' otherwise.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Excel & data analysis] You need to combine text from three cells (first name, last name, department) into one cell with spaces between. Which is the most robust modern approach?",
+    "options": [
+      "Using + to add the cells",
+      "Using CONCAT or TEXTJOIN with a delimiter",
+      "Manually retyping the combined value",
+      "Using SUMPRODUCT"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Excel & data analysis] A pivot table's totals don't match a manual SUM of the underlying data. Name two possible explanations.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 7
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Excel & data analysis] What is the primary purpose of using $ signs in a cell reference like $A$1?",
+    "options": [
+      "To format the cell as currency",
+      "To lock the reference so it doesn't change when copied",
+      "To indicate an error",
+      "To merge cells"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "points": 4
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Excel & data analysis] You want to flag any row where 'Actual' (column D) is more than 10% below 'Budget' (column C) using conditional formatting. Describe the rule you'd set up, including the formula.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Excel & data analysis] A model's output changes unexpectedly when a colleague opens it. What is the most likely built-in Excel setting responsible?",
+    "options": [
+      "Automatic vs. Manual calculation mode",
+      "Cell font size",
+      "Sheet tab color",
+      "Print area settings"
+    ],
+    "correct_option_index": 0,
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Excel & data analysis] Given a dataset with a 'Date' column stored as text (e.g. '03/14/2026'), describe how you would convert it into a true Excel date so it can be sorted and used in date-based formulas.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 7
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Excel & data analysis] Which chart type is generally best for showing a trend over time?",
+    "options": [
+      "Pie chart",
+      "Line chart",
+      "Scatter plot with no connecting lines",
+      "Stacked bar with 20 categories"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 2,
+    "points": 3
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Excel & data analysis] You've built a 3-statement model and net income doesn't flow correctly into retained earnings on the balance sheet, causing it not to balance. What's the first thing you'd check?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 9,
+    "points": 7
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Deck-building & communication] The strongest slide titles in a consulting deck typically:",
+    "options": [
+      "Describe the chart type used",
+      "State the key takeaway or insight, not just the topic",
+      "Are as short as possible regardless of content",
+      "Match the appendix page numbering"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Deck-building & communication] A slide is titled 'Q3 Revenue by Region.' Rewrite it as an insight-driven 'action title' assuming the data shows the West region grew 40% while all others were flat.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 7
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Deck-building & communication] In the classic pyramid principle for structuring communication, you should generally lead with:",
+    "options": [
+      "All supporting data first, conclusion last",
+      "The main conclusion or recommendation, then supporting reasons",
+      "A chronological narrative of the analysis process",
+      "A list of every option considered"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 2,
+    "points": 4
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Deck-building & communication] A slide has 6 different charts crammed onto it to 'save space.' What's the risk, and what would you recommend instead?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Deck-building & communication] You need to show market share evolving for 4 competitors over 6 years. Which chart type is most appropriate?",
+    "options": [
+      "Pie chart for each year separately",
+      "A single stacked area or line chart over time",
+      "A word cloud",
+      "A single-year bar chart"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Deck-building & communication] A partner asks you to 'tell the story' of a 15-slide deck in 3 sentences before a client meeting. Write a plausible 3-sentence version for a deck concluding that a client should exit a declining business unit.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 8
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Deck-building & communication] A 'waterfall chart' is most appropriate for showing:",
+    "options": [
+      "A single point-in-time comparison across categories",
+      "How a starting value changes through a series of positive and negative contributions to a final value",
+      "Correlation between two variables",
+      "Geographic distribution of data"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Deck-building & communication] Why is putting raw data tables on a client-facing slide (instead of a chart) usually a weaker choice, and when might a table actually be the right call?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Deck-building & communication] An executive summary slide at the front of a deck should generally:",
+    "options": [
+      "Repeat the title page content",
+      "Preview all key findings and the recommendation in one place",
+      "Be left blank until the deck is finalized",
+      "Only include an agenda"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Deck-building & communication] A junior analyst sends you a slide with the title 'Cost Analysis' showing a bar chart of costs by department, with Marketing clearly 3x any other department. Give one specific piece of feedback that would most improve the slide.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 7
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Deck-building & communication] When presenting a recommendation to a skeptical stakeholder, which approach is generally more persuasive?",
+    "options": [
+      "Presenting only the conclusion with no supporting logic",
+      "Showing the logic and evidence that led to the conclusion, anticipating objections",
+      "Avoiding any mention of risks or downsides",
+      "Reading the slide text aloud verbatim"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 2,
+    "points": 4
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Deck-building & communication] You have one slide to convince a CFO to approve a $2M investment. What are the three things that slide must clearly answer?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Deck-building & communication] Font size and color inconsistency across a deck's slides mainly signals:",
+    "options": [
+      "A stylistic choice reflecting different data types",
+      "A lack of attention to detail that can undermine credibility",
+      "Better accessibility",
+      "Faster slide creation"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "points": 4
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Deck-building & communication] A stakeholder pushes back on your recommendation mid-presentation with a valid point you hadn't fully considered. Describe how you'd handle this in the moment, in 2-3 sentences.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 7
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Deck-building & communication] Appendix slides in a client deck should generally contain:",
+    "options": [
+      "The most important findings, moved there to shorten the main deck",
+      "Supporting detail, methodology, and backup data referenced but not central to the main narrative",
+      "Random unused charts",
+      "Nothing - appendices should be avoided entirely"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Business judgment] A client asks you to make their underperforming initiative 'look better' in the final report than the data supports. The best response is to:",
+    "options": [
+      "Comply, since the client is paying for the engagement",
+      "Present the data honestly and discuss the implications directly with the client",
+      "Quietly omit the initiative from the report",
+      "Ask a colleague to write that section instead"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Business judgment] You're two days from a deadline and realize a key data source you used has a significant error affecting your headline conclusion. What do you do?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 7
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Business judgment] When two team members disagree on an analytical approach and both have merit, the most productive next step is usually to:",
+    "options": [
+      "Let the more senior person's view win automatically",
+      "Test both approaches against the actual question and see which better answers it",
+      "Escalate immediately without trying to resolve it",
+      "Avoid the topic in team discussions"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 2,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Business judgment] A client stakeholder is clearly the source of the problem your analysis identifies, and they'll be in the room when you present. How would you frame the finding?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Business judgment] You're assigned more work than you can realistically complete by the deadline. The best first step is to:",
+    "options": [
+      "Work through the night without telling anyone",
+      "Quietly deprioritize some tasks without discussion",
+      "Flag the capacity issue to your manager early, with a proposed prioritization",
+      "Refuse the extra work outright"
+    ],
+    "correct_option_index": 2,
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Business judgment] A client asks for your personal opinion on whether they should lay off a specific team, a decision with real human impact. How do you respond professionally?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 7
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Business judgment] Mid-project, you discover the original problem statement the client gave you was based on a misunderstanding of their own data. The right move is to:",
+    "options": [
+      "Continue with the original scope regardless",
+      "Proactively raise the discrepancy with the client and discuss whether scope should adjust",
+      "Silently adjust the analysis without telling the client",
+      "Wait until the final deliverable to mention it"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Business judgment] Two possible recommendations both solve the client's stated problem, but one is more profitable for your firm's follow-on work. How should this factor into your recommendation?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Business judgment] When receiving critical feedback on your work from a manager, the most productive response is to:",
+    "options": [
+      "Defend every choice immediately",
+      "Listen fully, ask clarifying questions, then revise",
+      "Ignore feedback that feels unfair",
+      "Escalate to a more senior person right away"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 2,
+    "points": 4
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Business judgment] You notice a colleague has been quietly taking credit for your analysis in front of the client team over several weeks. How would you handle this?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 7
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Written synthesis] In 3 sentences or fewer, summarize the following for a CEO who has 30 seconds: 'Our analysis of Q2 data shows that customer acquisition cost rose 22% while lifetime value stayed flat, driven primarily by a shift toward paid social channels which convert at half the rate of organic search, though paid social did contribute to a 15% increase in top-of-funnel awareness metrics.'",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 7,
+    "points": 7
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Written synthesis] Draft a two-sentence message to a client flagging that a project deadline will slip by one week due to a data access delay outside your team's control, without sounding defensive or alarming.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Written synthesis] An executive summary should generally be written:",
+    "options": [
+      "After the full analysis is complete, distilling the key findings",
+      "Before any analysis, as a guess of the likely outcome",
+      "Only if the client specifically requests it",
+      "As a verbatim copy of the introduction"
+    ],
+    "correct_option_index": 0,
+    "ai_resistance": "low",
+    "estimated_minutes": 2,
+    "points": 4
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Written synthesis] Rewrite this sentence to be more concise and direct: 'It is our recommendation, based on the analysis that we have conducted over the past several weeks, that the company should consider potentially exploring the possibility of entering the Southeast Asian market.'",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Written synthesis] A junior team member's email to a client reads: 'So basically what we found is kind of that the numbers don't really add up the way we thought, we think.' Rewrite this in a professional, confident tone in one sentence.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Written synthesis] When writing for a non-technical executive audience, jargon and technical terms should be:",
+    "options": [
+      "Used liberally to demonstrate expertise",
+      "Minimized or explained plainly, focused on implications not mechanics",
+      "Left entirely untranslated from technical team's language",
+      "Replaced only if the executive explicitly complains"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "points": 4
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Written synthesis] Write a one-sentence 'headline' for a slide showing that customer churn is highest in the first 30 days after signup, and that a specific onboarding step correlates with retention.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 7
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Written synthesis] A stakeholder asks for a status update over email. In 2 sentences, write an update covering: on track, one risk, one ask, for a project that is behind by 3 days due to a vendor delay, needing the client to expedite an approval.",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Written synthesis] Active voice ('We recommend X') is generally preferred over passive voice ('It is recommended that X be considered') in business writing because it is:",
+    "options": [
+      "More formal-sounding",
+      "More direct and easier to act on",
+      "Required by most style guides regardless of context",
+      "Always shorter"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 2,
+    "points": 3
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Written synthesis] Condense this into a single clear sentence: 'There are a number of factors that we believe have contributed to the decline, and while we can't be entirely certain which is the most significant, our current thinking leans toward the pricing change being a fairly major contributor, among others.'",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "high",
+    "estimated_minutes": 9,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Chart & data interpretation] A line chart shows Revenue rising steadily while a secondary axis shows Margin % declining over the same period. The most accurate one-line takeaway is:",
+    "options": [
+      "The company is performing worse overall",
+      "Revenue growth is not translating into proportional profitability",
+      "Costs are falling",
+      "The chart has an error"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "points": 5
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Chart & data interpretation] A bar chart uses a truncated y-axis starting at 80 instead of 0 to show a change from 82 to 86. This is most likely to:",
+    "options": [
+      "Accurately represent the data",
+      "Visually exaggerate a small difference",
+      "Have no effect on interpretation",
+      "Only affect colorblind viewers"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "low",
+    "estimated_minutes": 2,
+    "points": 4
+  },
+  {
+    "category": "project-program-associate",
+    "type": "short_answer",
+    "prompt": "[Chart & data interpretation] A scatter plot shows a weak positive correlation between marketing spend and revenue across 40 stores, with wide variance. What's a responsible one-sentence interpretation, avoiding overclaiming causation?",
+    "options": [],
+    "correct_option_index": null,
+    "ai_resistance": "medium",
+    "estimated_minutes": 9,
+    "points": 6
+  },
+  {
+    "category": "project-program-associate",
+    "type": "multiple_choice",
+    "prompt": "[Chart & data interpretation] A pie chart has 14 slices, several under 2% each. The most likely problem with this chart is:",
+    "options": [
+      "Pie charts can't show percentages",
+      "Too many small categories make it hard to read; grouping small slices into 'Other' would help",
+      "The chart should be 3D instead",
+      "Pie charts require exactly 5 categories"
+    ],
+    "correct_option_index": 1,
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "points": 4
+  }
+]

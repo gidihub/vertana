@@ -24,9 +24,11 @@ function minutesBetween(start: string | null, end: string | null): number | null
 export function ResultsSummary({
   test,
   candidates,
+  inviteCount = 0,
 }: {
   test: Test
   candidates: Candidate[]
+  inviteCount?: number
 }) {
   const { completion, timing } = useMemo(() => {
     const submitted = candidates.filter((c) => c.status === "submitted")
@@ -39,18 +41,21 @@ export function ResultsSummary({
         ? Math.round(times.reduce((sum, m) => sum + m, 0) / times.length)
         : null
 
+    const invited = inviteCount
+    const completed = submitted.length
+
     return {
       completion: {
-        invited: candidates.length,
-        completed: submitted.length,
+        invited,
+        completed,
         rate:
-          candidates.length > 0
-            ? Math.round((submitted.length / candidates.length) * 100)
+          invited > 0
+            ? Math.min(100, Math.round((completed / invited) * 100))
             : 0,
       },
       timing: { avgMinutes, limit: test.time_limit_minutes },
     }
-  }, [candidates, test.time_limit_minutes])
+  }, [candidates, inviteCount, test.time_limit_minutes])
 
   const timePct =
     timing.avgMinutes !== null && timing.limit > 0
@@ -66,7 +71,7 @@ export function ResultsSummary({
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Completion</CardTitle>
-          <CardDescription>Progress across everyone invited.</CardDescription>
+          <CardDescription>Progress across invites sent.</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-6">
           <div>

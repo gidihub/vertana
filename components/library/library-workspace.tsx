@@ -20,13 +20,13 @@ import {
   type LibraryBundle,
 } from "@/lib/question-library/bundles"
 import {
-  countByCategory,
+  countByCategoryTree,
   categoryLabel,
   sortLibraryQuestions,
   type LibrarySort,
 } from "@/lib/question-library/display"
 import { fetchLibraryQuestions, useStore } from "@/lib/store"
-import type { AiResistance, LibraryCategory, Question, QuestionType } from "@/lib/types"
+import type { AiResistance, Question, QuestionType } from "@/lib/types"
 import { codingQuestionsEnabledForTier } from "@/lib/plans"
 import { Input } from "@/components/ui/input"
 import {
@@ -54,7 +54,7 @@ export function LibraryWorkspace({
   const [allItems, setAllItems] = useState<Question[]>([])
   const [items, setItems] = useState<Question[]>([])
 
-  const [category, setCategory] = useState<LibraryCategory | "">("")
+  const [category, setCategory] = useState<string | "">("")
   const [search, setSearch] = useState("")
   const [resistance, setResistance] = useState<AiResistance | "">("")
   const [typeFilter, setTypeFilter] = useState<QuestionType | "">("")
@@ -99,7 +99,7 @@ export function LibraryWorkspace({
     }
   }, [category, search, resistance])
 
-  const categoryCounts = useMemo(() => countByCategory(allItems), [allItems])
+  const categoryCounts = useMemo(() => countByCategoryTree(allItems), [allItems])
 
   const displayed = useMemo(() => {
     let list = items
@@ -195,7 +195,7 @@ export function LibraryWorkspace({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {category ? (
+          {category && !addDialogOpen ? (
             <LibraryFilterChip
               label={categoryLabel(category)}
               active
@@ -298,11 +298,13 @@ export function LibraryWorkspace({
 
       <LibraryPreviewDialog
         question={preview}
+        questions={displayed}
         open={preview != null}
         codingEnabled={codingEnabled}
         onOpenChange={(open) => {
           if (!open) setPreview(null)
         }}
+        onNavigate={setPreview}
         onAdd={() => {
           if (preview) openAddFlow([preview])
         }}

@@ -1,0 +1,1301 @@
+[
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "In a React application, you notice that a large component tree re-renders every time an unrelated piece of state updates. Which technique is most appropriate to prevent unnecessary re-renders for performance optimization?",
+    "options": [
+      "Use React.memo to memoize the component and prevent re-renders when props don't change",
+      "Use React.Fragment to group components without adding extra nodes",
+      "Use useEffect to run side effects only when dependencies change",
+      "Use inline functions as event handlers to ensure up-to-date closures"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 5
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "Describe how you would use the Intersection Observer API in a React component to improve performance of lazy-loading images in a feed.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use Intersection Observer to detect when images enter viewport and update state to trigger loading only at that time, avoiding offscreen loads.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "coding",
+    "prompt": "Write a React component in TypeScript named `AccessibleToggle` that renders a toggle switch with proper ARIA roles and keyboard accessibility (space and enter toggle). The component receives a `checked` boolean prop and an `onChange` callback prop that toggles the value. Output \"ON\" or \"OFF\" inside the toggle.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "Render AccessibleToggle with checked=false, user presses space",
+        "expected_output": "ON"
+      },
+      {
+        "input": "AccessibleToggle starts checked=true, user presses enter",
+        "expected_output": "OFF"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 15,
+    "difficulty": "hard",
+    "points": 10
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "You need to measure and optimize First Input Delay (FID) in a React app. Which approach will provide the best insight into user interaction responsiveness?",
+    "options": [
+      "Use the `performance.measureUserAgentSpecificMemory()` API",
+      "Add event listeners with `addEventListener('pointerdown')` and track response time",
+      "Use the web-vitals library and its `onFID` callback to measure input delay",
+      "Use `setTimeout` to delay rendering the first interactive element"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 5
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "What CSS technique would you use to create a responsive grid layout that adapts seamlessly between 1 and 4 columns depending on container width?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use CSS Grid with `grid-template-columns: repeat(auto-fit, minmax(250px, 1fr))` to auto-adjust columns based on container size.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "Given TypeScript interfaces `interface User {id: number; name: string;}` and `interface Admin extends User {admin: true;}`, which is the safest way to type a React prop to accept either a `User` or an `Admin`?",
+    "options": [
+      "Use `user: User | Admin`",
+      "Use `user: User & Admin`",
+      "Use `user: Partial<User> | Partial<Admin>`",
+      "Use `user: unknown` and cast inside the component"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 3
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "coding",
+    "prompt": "Implement a React hook `usePrevious` in TypeScript that returns the previous value of a given state variable. The hook takes a parameter of generic type `T` and returns the previous `T | undefined`.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "Call usePrevious(5) then usePrevious(10)",
+        "expected_output": "5"
+      },
+      {
+        "input": "Initial call with 'a', then 'b', return 'a' for second call",
+        "expected_output": "a"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 8,
+    "difficulty": "medium",
+    "points": 7
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "In React, which of the following is true about the `key` prop on list elements?",
+    "options": [
+      "Keys should be unique only among siblings to help React identify which items changed",
+      "Keys must be globally unique across the whole app",
+      "Using array indexes as keys is always safe and recommended",
+      "React automatically generates keys if none are specified"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 2,
+    "difficulty": "easy",
+    "points": 2
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "How would you ensure that a custom modal component traps keyboard focus correctly to improve accessibility?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "By managing focus cycles inside the modal with keyboard event handlers and using `tabindex` to restrict tabbing within modal elements only.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "Which CSS property combination best avoids layout shifts (contributing to CLS) when loading web fonts?",
+    "options": [
+      "font-display: swap; and reserving space for text",
+      "font-display: auto; and hiding text until font loads",
+      "font-display: block; without fallback fonts",
+      "font-display: fallback; with no font loading strategies"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 4
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "coding",
+    "prompt": "Create a TypeScript function `mergeState` that deeply merges two arbitrary state objects, providing a new object with all nested properties merged (shallow merge on each level is acceptable). Read JSON string from stdin and output the merged JSON string to stdout. Format: input is two JSON objects separated by a newline.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "{\"a\":1,\"b\":{\"c\":2}}\n{\"b\":{\"d\":3},\"e\":4}",
+        "expected_output": "{\"a\":1,\"b\":{\"c\":2,\"d\":3},\"e\":4}"
+      },
+      {
+        "input": "{\"x\":10}\n{\"x\":20,\"y\":30}",
+        "expected_output": "{\"x\":20,\"y\":30}"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 15,
+    "difficulty": "hard",
+    "points": 10
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "In TypeScript React components, why is it preferred to define event handler props as `(event: React.MouseEvent<HTMLButtonElement>) => void` instead of using `any`?",
+    "options": [
+      "Ensures type safety and autocomplete for event properties",
+      "Prevents the event from bubbling",
+      "Forces the use of `bind` on handlers",
+      "Improves runtime performance by type narrowing"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 3
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "Explain a pitfall of using inline arrow functions in JSX props for frequently re-rendered child components.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "They create new function references on each render causing unnecessary child re-renders and performance loss unless memoized.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "Which browser API would best help measure and observe layout shifts contributing to the Cumulative Layout Shift (CLS) metric?",
+    "options": [
+      "MutationObserver",
+      "ResizeObserver",
+      "LayoutShift API via PerformanceObserver",
+      "IntersectionObserver"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 5
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "coding",
+    "prompt": "Implement a React functional component `FilteredList` in TypeScript that accepts props `items: string[]` and `filterText: string`. Render a `<ul>` showing only items that include `filterText` (case-insensitive). Output list item count below the list. Read JSON from stdin with `items` and `filterText`, output rendered HTML string to stdout.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "{\"items\":[\"Apple\",\"Banana\",\"Apricot\"],\"filterText\":\"ap\"}",
+        "expected_output": "<ul><li>Apple</li><li>Apricot</li></ul><p>2 items</p>"
+      },
+      {
+        "input": "{\"items\":[\"Orange\",\"Mango\"],\"filterText\":\"an\"}",
+        "expected_output": "<ul><li>Mango</li></ul><p>1 items</p>"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 15,
+    "difficulty": "medium",
+    "points": 10
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "What is the best practice to manage complex global state that involves asynchronous logic and caching in a React app?",
+    "options": [
+      "Use only React's `useState` and `useEffect` hooks for everything",
+      "Adopt a dedicated state management library like Redux Toolkit Query or React Query",
+      "Store global state in localStorage and rehydrate on every render",
+      "Use context API without memoization for all props"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 5
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "How can you test a React component's UI behavior triggered by a button click using React Testing Library? Provide a concise description.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Render the component, use `fireEvent.click` or `userEvent.click` on the button, then assert the expected UI change or callback effects.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "Which CSS property combination helps improve keyboard user accessibility by making a custom focus ring visible?",
+    "options": [
+      "outline: 2px solid Highlight; outline-offset: 2px;",
+      "border: none; box-shadow: none;",
+      "visibility: hidden;",
+      "opacity: 0.5;"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 3
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "coding",
+    "prompt": "Write a TypeScript utility function `isElementVisible` that takes an `HTMLElement` and returns a boolean indicating if the element is currently visible in the viewport. Check bounding box visibility only.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "<element style=\"display:block;\" at coords visible in viewport>",
+        "expected_output": "true"
+      },
+      {
+        "input": "<element positioned outside viewport>",
+        "expected_output": "false"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "medium",
+    "points": 7
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "Why is lazy-loading below-the-fold images using native `loading='lazy'` preferable to a JavaScript Intersection Observer approach?",
+    "options": [
+      "Better browser compatibility",
+      "Simpler and more performant with browser-native optimizations",
+      "Works without any user interaction",
+      "Loads images before they enter the viewport"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 4
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "What is a common accessibility mistake when implementing custom dropdown components, and how do you fix it?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Not using ARIA roles like `listbox` and `option` with keyboard support; fix by adding proper ARIA roles and keyboard navigation handlers.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "In React, what problem does the `useCallback` hook solve?",
+    "options": [
+      "Memoizes callback functions to prevent unnecessary re-creations and help optimize child components",
+      "Automatically binds methods to component instance",
+      "Schedules callbacks after the DOM mutation phase",
+      "Replaces `setTimeout` for animations"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 3
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "coding",
+    "prompt": "Implement a React component `SearchInput` in TypeScript that debounces user input by 300ms and calls a provided `onSearch` callback only after the user stops typing. Handle fast typing properly. Input is JSON with `searchTerms` array simulating user input separated by 100ms intervals; output is timestamps of `onSearch` calls with query.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "{\"searchTerms\":[\"a\",\"ap\",\"app\",\"appl\",\"apple\"]}",
+        "expected_output": "300ms: apple"
+      },
+      {
+        "input": "{\"searchTerms\":[\"b\",\"ba\",\"ban\",\"bana\",\"banan\",\"banana\"]}",
+        "expected_output": "300ms: banana"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 15,
+    "difficulty": "hard",
+    "points": 10
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "You have a React component using `useState` to manage a list of items. When adding a new item, you notice the entire list re-renders, causing lag on large lists. Which approach best reduces re-renders for unchanged items?",
+    "options": [
+      "Memoize each list item component with `React.memo` and provide stable keys",
+      "Use inline functions for event handlers in JSX",
+      "Avoid keys altogether for faster rendering",
+      "Use state mutation instead of immutable updates"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "When using TypeScript in a React project, what typing strategy ensures that event handlers properly receive native mouse event types for a `<button>` element?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Define handler props as (event: React.MouseEvent<HTMLButtonElement>) => void",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "coding",
+    "prompt": "Write a React functional component in TypeScript named `LazyImage` that accepts a `src` string prop and uses the Intersection Observer API to only load the image source when the component scrolls into view.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "",
+        "expected_output": "<img> element with src set only when visible on viewport (no image loaded initially)"
+      },
+      {
+        "input": "",
+        "expected_output": "Component observes itself, sets img src when intersecting"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 12,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "You want to reduce layout shifts caused by images on a responsive page. Which CSS approach best reserves image space to avoid CLS?",
+    "options": [
+      "Set explicit width and height attributes corresponding to the intrinsic image size",
+      "Use `display: none` on images until fully loaded",
+      "Set images as background images on empty divs with fixed height",
+      "Use `max-width: 100%` without specifying height"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "In a React app, how would you test that clicking a 'Load More' button correctly fetches and displays new list items using React Testing Library?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use userEvent.click to click the button, then assert new items appear in the document",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "Which React hook is best suited to optimize performance by memoizing an expensive calculation that only re-runs when its inputs change?",
+    "options": [
+      "useMemo",
+      "useEffect",
+      "useCallback",
+      "useState"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "coding",
+    "prompt": "Implement a TypeScript function `isFocusable(element: HTMLElement): boolean` that returns `true` if the element can receive keyboard focus, considering tabindex, disabled state, and element types.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "<button disabled></button>",
+        "expected_output": "false"
+      },
+      {
+        "input": "<input tabindex='-1'></input>",
+        "expected_output": "false"
+      },
+      {
+        "input": "<a href='#'></a>",
+        "expected_output": "true"
+      },
+      {
+        "input": "<div tabindex='0'></div>",
+        "expected_output": "true"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 12,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "What browser API provides detailed timing information useful for measuring First Input Delay (FID) in a SPA?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "PerformanceEventTiming in the PerformanceObserver API",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "Which state management approach is most suitable for a React app with complex async data fetching, server-state caching, and UI state synchronization?",
+    "options": [
+      "TanStack Query for server state plus a small client store (e.g. Zustand) for UI state",
+      "React Context with useReducer and custom middleware only",
+      "useState hooks in each component only",
+      "Global variables mutated outside React"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "coding",
+    "prompt": "Write a React component `AccessibleModal` in TypeScript that traps keyboard focus within it when open, and returns focus to the triggering element when closed.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "Open modal and press Tab repeatedly",
+        "expected_output": "Focus cycles only inside modal elements"
+      },
+      {
+        "input": "Close modal",
+        "expected_output": "Focus returns to element that opened modal"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 15,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "You want to make a custom dropdown accessible. What's the common accessibility mistake to avoid, and how do you fix it?",
+    "options": [
+      "Not using ARIA roles and keyboard handlers; fix by adding proper roles and keyboard support",
+      "Overusing native <select> elements; fix by using divs only",
+      "Using only mouse click handlers; fix by ignoring keyboard",
+      "Not styling dropdown; fix by adding styles"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "Describe a CSS technique to improve keyboard focus visibility on custom interactive elements without harming design aesthetics.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use :focus-visible to show an outline or box-shadow only when keyboard focused",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "coding",
+    "prompt": "Implement a TypeScript React hook `useDebouncedEffect` that accepts a callback and dependency array, and only calls the callback after 300ms of no dependency changes.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "Change dependency rapidly",
+        "expected_output": "Callback called once after 300ms of no changes"
+      },
+      {
+        "input": "No changes",
+        "expected_output": "Callback called once on mount"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "In React, what is a common pitfall of passing inline arrow functions as props to frequently re-rendered child components?",
+    "options": [
+      "They break memoization causing extra renders",
+      "They improve performance",
+      "They preserve parent state",
+      "They create permanent closures without state updates"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "How would you programmatically measure and log the Cumulative Layout Shift (CLS) score of a page using browser APIs?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use PerformanceObserver on 'layout-shift' entries and sum their values",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "Which browser API would be ideal for lazy-loading heavy components only when the user scrolls near them in a React app?",
+    "options": [
+      "Intersection Observer API",
+      "WebSocket API",
+      "Geolocation API",
+      "Web Audio API"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "coding",
+    "prompt": "Create a React component `FilterableItemList` in TypeScript that accepts props `items: string[]` and `filter: string`. It should render items including only those containing the filter substring case-insensitively.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "items = ['Apple', 'Banana'], filter = 'a'",
+        "expected_output": "Apple, Banana"
+      },
+      {
+        "input": "items = ['Apple', 'Banana'], filter = 'ap'",
+        "expected_output": "Apple"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 8,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "When profiling a React app, you observe multiple re-renders of components that don't depend on the changed state. What React technique would you apply to prevent this?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Wrap components with React.memo or use useMemo/useCallback to memoize props",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "Which CSS property combination contributes to better accessibility by ensuring that focused elements are clearly visible on keyboard navigation?",
+    "options": [
+      "outline: 2px solid blue; outline-offset: 2px",
+      "opacity: 0.5; user-select: none",
+      "display: none;",
+      "text-decoration: none;"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "coding",
+    "prompt": "Write a TypeScript function `deepMergeStates<T>(state1: T, state2: Partial<T>): T` that deeply merges two state objects, with `state2` properties overriding `state1`. Assume plain objects only.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "state1 = {a:1, b:{c:2}}, state2 = {b:{d:3}}",
+        "expected_output": "{a:1, b:{c:2, d:3}}"
+      },
+      {
+        "input": "state1 = {x:5}, state2 = {y:6}",
+        "expected_output": "{x:5, y:6}"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 15,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "In React, how do you prevent stale closures when using `setTimeout` inside a functional component with state variables?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use refs or functional updates (prev => new) to always get fresh state inside timeout callbacks",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "A React app has poor FID (First Input Delay). Which approach will most directly help measure and improve FID?",
+    "options": [
+      "Using the web-vitals library's FID metric and optimizing event handlers",
+      "Only optimizing images",
+      "Prefetching fonts",
+      "Removing CSS animations"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "What TypeScript typing would you use for a React ref that can hold either an HTMLInputElement or null?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "React.RefObject<HTMLInputElement> (or React.Ref<HTMLInputElement | null>)",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 2,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "You have a React component rendering a large list of items. You notice that even when the list data doesn't change, the individual list item components re-render. Which technique best addresses this issue?",
+    "options": [
+      "Use React.memo on the list item component to prevent unnecessary re-renders.",
+      "Move the list into a separate component to isolate rendering.",
+      "Use inline arrow functions for event handlers inside the list items.",
+      "Convert the list to use indexes as keys instead of unique IDs."
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "In a TypeScript React component, you want to improve accessibility by ensuring keyboard users can clearly see which element is focused. Provide a concise CSS snippet that visually highlights focused elements without drastically changing layout.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "outline: 2px solid #005fcc; outline-offset: 2px;",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "coding",
+    "prompt": "Write a React functional component in TypeScript called `AccessibleTabList` that renders a tablist with three tabs. Implement keyboard navigation: arrow keys move focus between tabs; the selected tab's content is shown. Use appropriate ARIA roles to ensure accessibility. The component manages its own state and renders the content for the selected tab.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "",
+        "expected_output": "Rendered UI with three tabs labeled e.g. \"Tab 1\", \"Tab 2\", \"Tab 3\". Left/right arrow keys shift focus between tabs; pressing Enter or Space selects a tab and its content is visible."
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 15,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "A React component fetches data on mount and stores it in state. The data fetch sets state inside a `.then()` callback. Which is a common pitfall causing memory leaks when the component unmounts quickly?",
+    "options": [
+      "The fetch promise may resolve after unmount, calling setState on an unmounted component.",
+      "Using async/await inside `useEffect` is not allowed in React.",
+      "Not declaring dependencies array in useEffect causes infinite loops.",
+      "Calling setState directly inside the fetch callback without a conditional rendering check."
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "How would you programmatically measure the Cumulative Layout Shift (CLS) metric in a React application using browser APIs? Provide a concise explanation.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use the Layout Shift API via PerformanceObserver listening to 'layout-shift' entries, summing their value property when 'hadRecentInput' is false.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "coding",
+    "prompt": "Implement a TypeScript function named `isVisibleInViewport` that accepts an `HTMLElement` and returns `true` if the element is currently visible within the browser's viewport (partially or fully), and `false` otherwise.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "<element fully visible in viewport>",
+        "expected_output": "true"
+      },
+      {
+        "input": "<element scrolled completely out of viewport>",
+        "expected_output": "false"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 7,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "In a React app, you want to minimize the impact of large CSS files on the initial load without sacrificing style consistency. Which approach best improves Core Web Vitals?",
+    "options": [
+      "Implement CSS code-splitting and lazy-load styles for below-the-fold components.",
+      "Combine all CSS into one large file to reduce HTTP requests.",
+      "Use inline styles for all components to avoid separate CSS files.",
+      "Use only global CSS and avoid CSS modules."
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "Describe a CSS strategy to prevent layout shifts caused by custom fonts loading asynchronously.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use `font-display: optional` or `swap` in @font-face to avoid invisible text and reserve text space.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "coding",
+    "prompt": "Write a React component in TypeScript named `DebouncedSearchInput` that accepts a prop `onSearch(term: string)` and calls this function 500ms after the user stops typing. Ensure input updates immediately but search calls debounce properly.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "User types 'a', 'ab', 'abc' quickly and then pauses for 500ms",
+        "expected_output": "onSearch called once with 'abc'"
+      },
+      {
+        "input": "User types 'x' and pauses 600ms",
+        "expected_output": "onSearch called once with 'x'"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 12,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "While testing a React component, you want to simulate a user interaction where a checkbox is toggled and verify the UI updates accordingly. Which testing-library method best simulates this?",
+    "options": [
+      "Use `fireEvent.click` on the checkbox and then check for the expected UI change.",
+      "Directly change the checkbox's `checked` property and rerender.",
+      "Call the component's internal event handlers manually.",
+      "Use `userEvent.type` on the checkbox input element."
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "You want to improve your React app's First Input Delay (FID) score. Beyond code splitting and lazy-loading, name one practical approach to optimize FID.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use web workers to offload heavy computation from the main thread.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "coding",
+    "prompt": "Implement a TypeScript utility function `flattenStyles` that receives a nested object representing CSS styles (including nested selectors like `&:hover`) and returns a flattened flat object with combined selectors as keys and their style objects as values.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "{ color: 'red', '&:hover': { color: 'blue' }, '@media(max-width: 600px)': { color: 'green' } }",
+        "expected_output": "{ '': { color: 'red' }, ':hover': { color: 'blue' }, '@media(max-width: 600px)': { color: 'green' } }"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 14,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "You need to maintain a complex global state in your React app that includes asynchronous fetches and caching. Which state management approach would best suit this?",
+    "options": [
+      "Use React Query or Redux Toolkit Query integrated with Redux or Context for cache management.",
+      "Use only React Context and useState hooks.",
+      "Store global state in localStorage and read it on startup.",
+      "Use useReducer with no middleware or async helpers."
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "Explain how you would prevent stale closures when using `setTimeout` inside a React functional component that depends on state variables.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use refs to store latest state or reset the timer inside a useEffect that depends on the state.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "coding",
+    "prompt": "Create a React component `ImageWithPlaceholder` in TypeScript that accepts a `src` prop and displays a gray box placeholder of fixed size until the image loads. Once loaded, the actual image replaces the placeholder. Include basic error handling to display an error message if the image fails to load.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "<ImageWithPlaceholder src='https://valid-image-url.jpg'/>",
+        "expected_output": "Placeholder visible until image loads, then image shown."
+      },
+      {
+        "input": "<ImageWithPlaceholder src='https://invalid-url.jpg'/>",
+        "expected_output": "Placeholder replaced by error message on load failure."
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 12,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "You're implementing infinite scroll in a React app, loading more data as the user scrolls. Which browser API best triggers loading just before the user reaches the page bottom?",
+    "options": [
+      "Intersection Observer watching a sentinel element near page bottom.",
+      "Mutation Observer on the scroll container.",
+      "Resize Observer on the scroll container.",
+      "Listening to scroll events and manual throttling."
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "What ARIA role and properties should you add to a custom dropdown to make it accessible to screen readers?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use `role='combobox'`, `aria-expanded`, `aria-controls`, and `aria-activedescendant` to communicate state and active option.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "You want to optimize a React app's performance by memoizing an expensive calculation that depends on multiple values. Which hook is best suited?",
+    "options": [
+      "useMemo",
+      "useCallback",
+      "useEffect",
+      "useState"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "coding",
+    "prompt": "Write a TypeScript function `isElementFocusable` that accepts an `HTMLElement` and returns `true` if the element can receive keyboard focus (i.e., naturally focusable or with tabindex >= 0) and is visible, otherwise `false`.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "<button> element visible",
+        "expected_output": "true"
+      },
+      {
+        "input": "<div tabindex='-1'> element visible",
+        "expected_output": "false"
+      },
+      {
+        "input": "<input disabled>",
+        "expected_output": "false"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 7,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "In CSS, which properties should you set to ensure images reserve space and avoid layout shifts on responsive pages?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Set explicit width and height or use `aspect-ratio` CSS property on images.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "You have a React component that contains a large form with many input fields. To optimize performance, you want to prevent unnecessary re-renders of unrelated form inputs when one field changes its value in the local state. Which React technique best achieves this?",
+    "options": [
+      "Use React.memo on each input component and manage their state individually",
+      "Lift the entire form state to a parent and update it on every change",
+      "Use a single useState hook to manage all input values in one object",
+      "Use context to share form state globally across components"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "In a React application using TypeScript, you've noticed that keyboard focus is lost after a dynamic modal dialog closes, making keyboard users frustrated. Briefly explain how you would programmatically manage focus to improve accessibility when a modal closes.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Save the element that had focus before opening the modal, and when the modal closes, call focus() on that saved element to restore keyboard focus.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "coding",
+    "prompt": "Write a React functional component in TypeScript called `LiveSearchList` that accepts a prop `items: string[]`. It should render a text input for filtering items by name (case-insensitive substring match) and below it render a list of matching items. Implement debounced filtering: the filter should only apply 300ms after the user stops typing. The component should update the list immediately after debounce. Input filters come from stdin as JSON, and output matched items as JSON array to stdout.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "{\"items\":[\"apple\",\"banana\",\"grape\",\"apricot\",\"blueberry\"]}\n[\"ap\"]",
+        "expected_output": "[\"apple\",\"grape\",\"apricot\"]"
+      },
+      {
+        "input": "{\"items\":[\"cat\",\"dog\",\"parrot\"]}\n[\"do\"]",
+        "expected_output": "[\"dog\"]"
+      },
+      {
+        "input": "{\"items\":[\"red\",\"green\",\"blue\"]}\n[\"\"]",
+        "expected_output": "[\"red\",\"green\",\"blue\"]"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 15,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "short_answer",
+    "prompt": "Explain one effective way to improve Core Web Vitals CLS (Cumulative Layout Shift) when using web fonts in a React web app.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use font-display: optional or swap in CSS to ensure text falls back to system fonts immediately and prevent layout shifts when the web font loads.",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  }
+]

@@ -6,9 +6,10 @@
 
 @theme {
   /* Vertana marketing palette — "Ink & Signal"
-     paper #F2F3EF · ink #18231D · pine #0E4A34 · pine-deep #0A3325
-     lime #C4F250 · sage #DDE2D6 */
-  --color-paper: #f2f3ef;
+     paper #F7F6F2 (neutral warm off-white) · ink #18231D · pine #0E4A34 · pine-deep #0A3325
+     lime #C4F250 · sage #DDE2D6 (UI chrome — borders, muted fills) */
+  --color-paper: #f7f6f2;
+  --color-paper-deep: #eeede9;
   --color-ink: #18231d;
   --color-ink-muted: #55655c;
   --color-pine: #0e4a34;
@@ -94,7 +95,7 @@
   --chart-4: var(--color-lime);
   --chart-5: oklch(0.62 0.2 25);
   --radius: 0.625rem;
-  --sidebar: var(--color-paper);
+  --sidebar: var(--color-paper-deep);
   --sidebar-foreground: var(--color-ink);
   --sidebar-primary: var(--color-pine);
   --sidebar-primary-foreground: var(--color-pine-foreground);

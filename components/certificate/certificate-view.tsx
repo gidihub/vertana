@@ -26,7 +26,7 @@ export function CertificateView({ certificate }: { certificate: Certificate }) {
 
   const publicUrl = `${origin}/certificate/${certificate.slug}`
 
-  const embedSnippet = `<a href="${publicUrl}" style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid #cbd2c3;border-radius:9999px;font-family:sans-serif;font-size:14px;color:#18231d;text-decoration:none;background:#f2f3ef">Vertana · ${certificate.skill_name} · ${certificate.percentile_band}</a>`
+  const embedSnippet = `<a href="${publicUrl}" style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid #cbd2c3;border-radius:9999px;font-family:sans-serif;font-size:14px;color:#18231d;text-decoration:none;background:#f7f6f2">Vertana · ${certificate.skill_name} · ${certificate.percentile_band}</a>`
 
   const linkedInUrl = `https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME&name=${encodeURIComponent(
     `${certificate.skill_name} — ${certificate.percentile_band}`,

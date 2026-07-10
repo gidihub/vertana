@@ -13,36 +13,61 @@ import {
 import { cn } from "@/lib/utils"
 import { numericText } from "@/lib/design-tokens"
 
-const STAGE_COLORS = ["bg-chart-1", "bg-chart-4", "bg-chart-3"] as const
+const STAGE_COLORS = [
+  "bg-chart-1",
+  "bg-chart-4",
+  "bg-chart-3",
+  "bg-chart-2",
+  "bg-chart-5",
+  "bg-pine",
+] as const
 
 export function ResultsFunnel({
   stats,
-  description = "Invited → started → completed for this assessment.",
+  description = "Email invites sent → started → completed → recruiter disposition for this assessment.",
+  usesShareLink = false,
 }: {
   stats: TestFunnelStats
   description?: string
+  /** When true, a shared link is also active (not counted in Invited). */
+  usesShareLink?: boolean
 }) {
   const stages = useMemo(() => {
     const invited = Math.max(stats.invited, 1)
+    const pctOfInvited = (value: number) =>
+      stats.invited > 0 ? Math.round((value / invited) * 100) : 0
+
     return [
       { label: "Invited", value: stats.invited, pct: 100 },
-      {
-        label: "Started",
-        value: stats.started,
-        pct: stats.invited > 0 ? Math.round((stats.started / invited) * 100) : 0,
-      },
+      { label: "Started", value: stats.started, pct: pctOfInvited(stats.started) },
       {
         label: "Completed",
         value: stats.completed,
-        pct:
-          stats.invited > 0
-            ? Math.round((stats.completed / invited) * 100)
-            : 0,
+        pct: pctOfInvited(stats.completed),
       },
+      {
+        label: "Shortlisted",
+        value: stats.shortlisted,
+        pct: pctOfInvited(stats.shortlisted),
+      },
+      {
+        label: "Rejected",
+        value: stats.rejected,
+        pct: pctOfInvited(stats.rejected),
+      },
+      { label: "Hired", value: stats.hired, pct: pctOfInvited(stats.hired) },
     ]
   }, [stats])
 
-  const scaleMax = Math.max(stats.invited, 1)
+  const scaleMax = Math.max(
+    stats.invited,
+    stats.started,
+    stats.completed,
+    stats.shortlisted,
+    stats.rejected,
+    stats.hired,
+    1,
+  )
 
   return (
     <Card>
@@ -77,7 +102,29 @@ export function ResultsFunnel({
         ))}
         {stats.invited === 0 ? (
           <p className="text-xs text-muted-foreground">
-            No candidates yet — share the assessment link to start the funnel.
+            No email invites sent yet.
+            {usesShareLink
+              ? " A shared link is active — use email invites above to track outreach in this funnel."
+              : " Send email invites or publish the test to activate the shared link."}
+          </p>
+        ) : stats.started < stats.invited ? (
+          <p className="text-xs text-muted-foreground">
+            {stats.invited - stats.started} email invite
+            {stats.invited - stats.started === 1 ? "" : "s"} not yet started.
+            {usesShareLink
+              ? " Candidates joining via the shared link are tracked under Started, not Invited."
+              : ""}
+          </p>
+        ) : usesShareLink ? (
+          <p className="text-xs text-muted-foreground">
+            Shared link is also active — only email invites count toward Invited.
+          </p>
+        ) : null}
+        {stats.completed > 0 &&
+        stats.shortlisted + stats.rejected + stats.hired === 0 ? (
+          <p className="text-xs text-muted-foreground">
+            Set disposition on the Candidates page or in a candidate&apos;s
+            detail view to populate Shortlisted, Rejected, and Hired.
           </p>
         ) : null}
       </CardContent>

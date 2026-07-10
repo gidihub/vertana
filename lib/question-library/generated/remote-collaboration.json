@@ -1,0 +1,542 @@
+[
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "Your team is fully remote across 5 time zones. A product launch decision needs input from Engineering, Design, and Support by Friday, but a live meeting would force half the team to join at 11 p.m. What is the best async-first approach?",
+    "options": [
+      "Schedule a mandatory live meeting and record it for anyone who cannot attend",
+      "Post a decision memo with the options, tradeoffs, and deadline, then collect written feedback in a shared doc",
+      "Ask each function lead to decide independently and merge the results later",
+      "Wait until everyone is in the same timezone next week so the discussion can happen live"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "You are writing a project update in Slack for stakeholders who are not active every day. Which version is most effective for async communication?",
+    "options": [
+      "\"Quick update: things are moving, more soon\"",
+      "\"We are on track. Some issues came up, but we should be fine.\"",
+      "\"Status: API integration is 80% complete; blocker is vendor auth approval due tomorrow. If approved by 3 p.m. UTC, QA starts Thursday; otherwise launch slips 2 days. Needed: Legal to confirm terms.\"",
+      "\"The team has been busy and everyone is doing their best.\""
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "A manager keeps scheduling 30-minute status meetings for a team that already posts daily written updates in a shared channel. Attendance is slipping and the meetings rarely change decisions. What is the best next step?",
+    "options": [
+      "Keep the meetings but shorten them to 20 minutes",
+      "Replace the meetings with written standups and only meet when a decision or blockage needs synchronous discussion",
+      "Ask everyone to attend one weekly all-hands instead",
+      "Move the meetings to a different time zone so more people can join"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "A colleague in another region asks, \"Can you review my PR today?\" You will be offline for the rest of your day and back online after their morning. What response best supports async coordination?",
+    "options": [
+      "\"I will try to get to it eventually.\"",
+      "\"No, because I am offline.\"",
+      "\"I am offline for the rest of my day. I can review it at 8 a.m. UTC tomorrow; if you need faster feedback, please flag a reviewer in your timezone.\"",
+      "\"Maybe someone else can look at it.\""
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "A new remote hire says they are unsure where to find the latest process for customer escalations, and 3 different teammates have given them 3 different answers in chat. What is the best fix?",
+    "options": [
+      "Tell the new hire to keep asking until they find the right answer",
+      "Create or update a single source of truth for the escalation process and link it from onboarding materials",
+      "Ask each teammate to post their version in the channel for comparison",
+      "Wait until the next team meeting to clarify the process verbally"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "Your team is split across North America and Europe. A recurring meeting is causing repeated after-hours attendance for the same group. What is the best meeting hygiene practice?",
+    "options": [
+      "Keep the meeting fixed so no one has to adjust their schedule",
+      "Rotate the meeting time periodically so the burden of inconvenience is shared more fairly",
+      "Require only senior team members to attend live",
+      "Convert the meeting into a longer live session to make attendance more worthwhile"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "A design review thread has grown to 60 messages with side conversations, emojis, and conflicting interpretations. What should you do to keep the work moving asynchronously?",
+    "options": [
+      "Let the thread continue until consensus appears naturally",
+      "Summarize the key points, open questions, and decision needed in a short written recap, then tag the relevant owners",
+      "Delete the thread and start over without context",
+      "Move all discussion to direct messages so the channel stays clean"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "A teammate in another timezone asks for feedback on a document, and you notice the draft lacks the decision criteria. What is the best feedback style for async work?",
+    "options": [
+      "Reply with only grammar corrections so the document looks polished",
+      "Write a vague comment like \"Needs work\"",
+      "Point out the missing decision criteria, explain why it matters, and suggest the exact section where it should be added",
+      "Ignore it and wait for the author to ask follow-up questions later"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "Your team has a critical incident at 6 a.m. for half the company. You need to align engineers, support, and operations quickly without forcing a large meeting. What is the best async-first action after the initial response channel is created?",
+    "options": [
+      "Ask everyone to join a call immediately regardless of timezone",
+      "Assign a single person to summarize updates and decisions in a running incident doc, with clear timestamps and owners",
+      "Wait until the next daily standup before documenting anything",
+      "Split the incident into separate chats so each function can work independently"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "A project kickoff agenda has 10 items, but only 3 require real-time discussion and decision-making. What is the best way to run the meeting?",
+    "options": [
+      "Cover all 10 items live to ensure everyone hears the same information",
+      "Send pre-read materials in advance, use the meeting only for the 3 decision items, and document outcomes afterward",
+      "Cancel the meeting and ask people to read the notes later",
+      "Turn the whole agenda into a brainstorming session"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "A distributed team is introducing a new onboarding process. Which element most directly supports effective remote onboarding?",
+    "options": [
+      "A welcome video with no written follow-up",
+      "A checklist with links to systems, key docs, first-week goals, and named contacts for each workflow",
+      "A single all-day orientation meeting",
+      "A FAQ that is only updated once a year"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "A stakeholder sends a message at 9 p.m. your time: \"Need your answer on this by morning.\" The request is vague and the decision has team-wide impact. What is the best response?",
+    "options": [
+      "Provide a quick guess so they have something to use",
+      "Say nothing until the next day",
+      "Ask clarifying questions now, state when you can give a complete answer, and note what information is needed to decide well",
+      "Escalate immediately to avoid any delay"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "Your team is debating whether to keep a weekly sync. The agenda is usually status sharing that could be written down, but one agenda item is cross-functional dependency planning. What is the best compromise?",
+    "options": [
+      "Keep the full weekly meeting unchanged",
+      "Cancel the meeting entirely and rely on chat only",
+      "Replace status sharing with async updates, and keep a shorter live meeting only for dependency planning and unblockers",
+      "Increase the meeting to 60 minutes so everyone has time to speak"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "A teammate repeatedly messages you in real time for updates on a task that you already post in a shared tracker. What is the healthiest response for a remote team?",
+    "options": [
+      "Ignore the messages so they learn to stop",
+      "Ask your manager to intervene immediately",
+      "Redirect them to the tracker, explain when updates are posted, and clarify what would justify a direct ping",
+      "Start sending updates in multiple places to make sure they see them"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "You are documenting a new process that affects sales, support, and engineering. Several details are still uncertain, but teams need to start using it next week. What should the document include?",
+    "options": [
+      "Only the final version of the process, even if some steps are unclear",
+      "A clearly labeled draft with current assumptions, open questions, owners, and a revision date",
+      "No document until every uncertainty is resolved",
+      "A chat thread where people can ask about the process whenever needed"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "A remote manager wants to give constructive feedback to an engineer who is in a different timezone. Which message is most effective?",
+    "options": [
+      "\"Your work is not meeting expectations\"",
+      "\"Can you do better next time?\"",
+      "\"In the last two PRs, the acceptance criteria were missing from the implementation notes, which slowed review by a day. Next time, please add them in the PR description before requesting review.\"",
+      "\"I had a feeling something was off, but I can't pinpoint it.\""
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "During onboarding, a new remote employee asks, \"Who decides which tasks I should work on when there are conflicting priorities?\" What is the best organizational practice to document?",
+    "options": [
+      "Tell them to ask whoever messages them first",
+      "Document the decision-making path, escalation path, and priority owner for each workstream",
+      "Have them wait until they learn the team politics",
+      "Let each teammate assign work directly to reduce delays"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "Your team is planning a live workshop. Most participants are distributed, and some cannot attend because of time zone constraints. What is the best meeting design?",
+    "options": [
+      "Use the workshop only for announcements",
+      "Provide pre-work and a shared doc, keep the live session interactive and decision-oriented, and capture outcomes in writing",
+      "Hold the workshop twice with no prep materials",
+      "Make attendance optional but do not share notes afterward"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "A team member keeps leaving decisions undocumented after meetings, and people later disagree about what was agreed. What artifact best prevents this in a remote setting?",
+    "options": [
+      "A social channel for casual reminders",
+      "A decision log with date, context, decision, owner, and any follow-up actions",
+      "A longer meeting next time",
+      "A private note only the manager can see"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "A cross-functional initiative is blocked because one team is waiting on another's approval. The approver is offline for 14 hours due to timezone differences. What should the team do first?",
+    "options": [
+      "Pause all work until the approver returns",
+      "Prepare a concise async approval request with the exact decision needed, context, and deadline, then continue non-blocked work in the meantime",
+      "Schedule a late-night call for everyone",
+      "Ask the most available person to approve on behalf of the approver without context"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "A remote candidate asks what \"good documentation culture\" looks like on your team. Which answer best reflects a strong async-first culture?",
+    "options": [
+      "\"We mainly rely on tribal knowledge, but people are helpful\"",
+      "\"We document decisions, processes, onboarding, and key context where everyone can find them, and we update docs when work changes\"",
+      "\"We only document the final outcome after projects end\"",
+      "\"We prefer live conversation for everything because it is faster\""
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "short_answer",
+    "prompt": "A teammate in another timezone says they cannot attend tomorrow's 2-hour planning meeting. Write a concise response that keeps the work moving asynchronously and respects their schedule.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "No problem — I’ll share the agenda and a pre-read in the doc, and you can add comments before the meeting. I’ll also post a summary afterward so you can review decisions asynchronously.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "easy",
+    "points": 2
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "short_answer",
+    "prompt": "A manager asks you to \"just hop on a call\" to discuss a document review, but the issue can likely be resolved in writing. What is a concise reply that redirects to async while staying collaborative?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Could you add the specific questions or concerns in the doc? I can respond there today, and if we still need a live discussion after that, I’m happy to schedule one.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "short_answer",
+    "prompt": "After a meeting, several people later claim the decision was different from what they remember. What should you add to the team process to prevent this?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "A written decision log or meeting summary with the decision, owner, date, and action items.",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "short_answer",
+    "prompt": "A new remote hire is overwhelmed because they received onboarding links in five different places. What is the best single sentence recommendation for improving onboarding?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Create one onboarding hub with the essential links, first-week tasks, contacts, and priorities in a single place.",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "short_answer",
+    "prompt": "A product team across three continents needs to coordinate a launch approval without forcing everyone into one live meeting. What is a good async coordination plan?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use a shared launch doc with the decision needed, deadline, owners, and explicit approval comments from each function.",
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "Your team uses an async-first workflow. A product requirement is blocked because the marketing lead in another timezone won’t be online for 10 hours. You need an answer before your workday ends, but the question could be resolved without a live call. What is the best next step?",
+    "options": [
+      "Write a concise message with the exact decision needed, context, deadline, and a few options so they can reply async",
+      "Schedule a meeting for tomorrow and ask them to join even if it’s outside their normal hours",
+      "Wait until they are online and pause all related work",
+      "Send a vague ping like “need your thoughts when you can” and continue working"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "short_answer",
+    "prompt": "A remote engineer in a different timezone joins your team and says: “I keep missing important context because decisions happen in chat, docs, and meetings.” What is one concrete thing your team should do to improve this experience?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Maintain a single source of truth for decisions, such as a shared decision log or project doc with links to meeting notes and updates.",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "A recurring 45-minute weekly meeting has turned into a status roundtable. Most updates are already posted in a shared project doc before the meeting, and the only unresolved item is a 10-minute decision. What is the best meeting-hygiene change?",
+    "options": [
+      "Keep the full 45 minutes so everyone stays aligned",
+      "Convert the status portion to async updates and shorten the meeting to focus only on the decision",
+      "Add more attendees so no one misses context",
+      "Move the meeting later in the week to give people more time to prepare"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "During remote onboarding, a new hire asks where to find expectations for their first 30 days, who to ask for help, and how to see recent company decisions. The team wants to reduce repeated questions and help the hire ramp up independently. What should you create or improve first?",
+    "options": [
+      "A welcome document that centralizes onboarding steps, ownership, key links, and decision history",
+      "A longer Slack channel for the new hire to ask anything at any time",
+      "A daily 1-hour onboarding meeting with every team lead",
+      "A list of casual introductions without any written guidance"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  }
+]

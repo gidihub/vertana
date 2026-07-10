@@ -13,7 +13,9 @@ import {
   parseCodingResponse,
   serializeCodingResponse,
 } from "@/lib/coding/response"
+import type { TestCase } from "@/lib/types"
 import { cn } from "@/lib/utils"
+import { numericText } from "@/lib/design-tokens"
 import { Button } from "@/components/ui/button"
 import {
   Select,
@@ -39,15 +41,32 @@ const MONACO_LANGUAGE: Record<CodingLanguageId, string> = {
   typescript: "typescript",
 }
 
+type PreviewRunResult = {
+  index: number
+  passed: boolean
+  status: string
+  input: string
+  expected: string
+  actual: string
+  stderr: string
+}
+
 export function CodeEditorPanel({
   value,
   onChange,
   token,
+  previewQuestionId,
+  previewTestCases,
 }: {
   value: string
   onChange: (value: string) => void
-  token: string
+  /** Required for candidate scratch runs (not metered on preview test runs). */
+  token?: string
+  /** Library preview: run against stored test cases without saving or metering. */
+  previewQuestionId?: string
+  previewTestCases?: TestCase[]
 }) {
+  const isPreview = Boolean(previewQuestionId && previewTestCases?.length)
   const parsed = parseCodingResponse(value)
   const [language, setLanguage] = useState<CodingLanguageId>(
     parsed?.language ?? "javascript",
@@ -60,6 +79,7 @@ export function CodeEditorPanel({
   const [stdout, setStdout] = useState("")
   const [stderr, setStderr] = useState("")
   const [runStatus, setRunStatus] = useState<string | null>(null)
+  const [previewResults, setPreviewResults] = useState<PreviewRunResult[]>([])
 
   const persist = useCallback(
     (nextLanguage: CodingLanguageId, nextCode: string) => {
@@ -97,13 +117,38 @@ export function CodeEditorPanel({
     setStdout("")
     setStderr("")
     setRunStatus(null)
+    setPreviewResults([])
+
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 15000)
+    const timeoutId = setTimeout(() => controller.abort(), 30000)
     try {
+      if (isPreview) {
+        const res = await fetch("/api/question-library/preview-run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            questionId: previewQuestionId,
+            code,
+            language,
+          }),
+          signal: controller.signal,
+        })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.error || "Execution failed")
+        setPreviewResults(data.results ?? [])
+        setStdout(data.output ?? "")
+        setRunStatus(data.status ?? "unknown")
+        return
+      }
+
+      if (!token) {
+        throw new Error("Missing test token for code execution")
+      }
+
       const res = await fetch("/api/execute-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code, language, stdin }),
+        body: JSON.stringify({ code, language, stdin, token }),
         signal: controller.signal,
       })
       const data = await res.json()
@@ -155,7 +200,7 @@ export function CodeEditorPanel({
           ) : (
             <Play className="size-4" data-icon="inline-start" />
           )}
-          Run
+          {isPreview ? "Run tests" : "Run"}
         </Button>
       </div>
 
@@ -178,19 +223,57 @@ export function CodeEditorPanel({
         />
       </div>
 
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-muted-foreground">
-          Custom input (optional, for scratch runs)
-        </label>
-        <Textarea
-          value={stdin}
-          onChange={(e) => setStdin(e.target.value)}
-          rows={2}
-          placeholder="Paste sample input to test your code…"
-          className="font-mono text-sm"
-          spellCheck={false}
-        />
-      </div>
+      {!isPreview ? (
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-medium text-muted-foreground">
+            Custom input (optional, for scratch runs)
+          </label>
+          <Textarea
+            value={stdin}
+            onChange={(e) => setStdin(e.target.value)}
+            rows={2}
+            placeholder="Paste sample input to test your code…"
+            className="font-mono text-sm"
+            spellCheck={false}
+          />
+        </div>
+      ) : (
+        <p className="text-xs text-muted-foreground">
+          Runs against all {previewTestCases?.length ?? 0} stored test case
+          {(previewTestCases?.length ?? 0) === 1 ? "" : "s"}. Preview only —
+          nothing is saved and no execution credits are used.
+        </p>
+      )}
+
+      {isPreview && previewResults.length > 0 ? (
+        <div className="flex flex-col gap-2">
+          {previewResults.map((r) => (
+            <div
+              key={r.index}
+              className={cn(
+                "rounded-lg border px-3 py-2 text-sm",
+                r.passed
+                  ? "border-pine/30 bg-pine/5"
+                  : "border-destructive/30 bg-destructive/5",
+              )}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className="font-medium">
+                  Test {r.index + 1}: {r.passed ? "Pass" : "Fail"}
+                </span>
+                <span className={cn("text-xs text-muted-foreground", numericText)}>
+                  {r.status.replace(/_/g, " ")}
+                </span>
+              </div>
+              {r.stderr ? (
+                <pre className="mt-2 whitespace-pre-wrap font-mono text-xs text-destructive">
+                  {r.stderr}
+                </pre>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      ) : null}
 
       <div className="rounded-lg border border-border bg-card">
         <div className="flex items-center gap-2 border-b border-border px-3 py-2">
@@ -200,7 +283,7 @@ export function CodeEditorPanel({
             <span
               className={cn(
                 "ml-auto rounded px-2 py-0.5 text-xs font-medium",
-                runStatus === "accepted"
+                runStatus === "accepted" || runStatus === "all_passed"
                   ? "bg-primary/10 text-primary"
                   : runStatus === "error" || runStatus.includes("error")
                     ? "bg-destructive/10 text-destructive"
@@ -222,8 +305,9 @@ export function CodeEditorPanel({
           )}
           {!stdout && !stderr && (
             <p className="text-muted-foreground">
-              Run your code to see output here. This is a scratch run — your
-              final answer is graded against hidden test cases on submit.
+              {isPreview
+                ? "Run tests to see pass/fail output for each case."
+                : "Run your code to see output here. This is a scratch run — your final answer is graded against hidden test cases on submit."}
             </p>
           )}
         </div>

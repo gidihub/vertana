@@ -3,6 +3,7 @@ import type {
   LibraryCategory,
   QuestionType,
 } from "@/lib/types"
+import { LIBRARY_CATEGORIES as ALL_LIBRARY_CATEGORIES } from "@/lib/question-library/categories"
 
 export interface SeedLibraryQuestion {
   category: LibraryCategory
@@ -19,7 +20,7 @@ export interface SeedLibraryQuestion {
 export const LIBRARY_SEED: SeedLibraryQuestion[] = [
   // Frontend (12)
   {
-    category: "frontend",
+    category: "frontend-engineering",
     type: "multiple_choice",
     prompt: "What does the React `useEffect` hook primarily handle?",
     options: [
@@ -33,7 +34,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 2,
   },
   {
-    category: "frontend",
+    category: "frontend-engineering",
     type: "multiple_choice",
     prompt:
       "A list re-renders entirely when one item changes. Which pattern most often fixes unnecessary child updates?",
@@ -48,7 +49,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 3,
   },
   {
-    category: "frontend",
+    category: "frontend-engineering",
     type: "short_answer",
     prompt:
       "Explain the difference between controlled and uncontrolled form inputs in React, and when you would choose each.",
@@ -58,7 +59,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 5,
   },
   {
-    category: "frontend",
+    category: "frontend-engineering",
     type: "coding",
     prompt:
       "Given a broken debounce hook that fires on every keystroke, find and fix the closure/stale state bug in the provided snippet (candidate is given the code inline).",
@@ -68,7 +69,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 12,
   },
   {
-    category: "frontend",
+    category: "frontend-engineering",
     type: "multiple_choice",
     prompt: "Which metric is Core Web Vitals' LCP measuring?",
     options: [
@@ -82,7 +83,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 2,
   },
   {
-    category: "frontend",
+    category: "frontend-engineering",
     type: "short_answer",
     prompt:
       "How would you make a data table accessible for keyboard and screen-reader users?",
@@ -92,7 +93,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 6,
   },
   {
-    category: "frontend",
+    category: "frontend-engineering",
     type: "multiple_choice",
     prompt: "In CSS, `display: contents` on a wrapper most affects:",
     options: [
@@ -106,7 +107,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 3,
   },
   {
-    category: "frontend",
+    category: "frontend-engineering",
     type: "coding",
     prompt:
       "Implement a function `groupBy<T>(items: T[], key: keyof T): Record<string, T[]>` with correct typing in TypeScript.",
@@ -116,7 +117,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 10,
   },
   {
-    category: "frontend",
+    category: "frontend-engineering",
     type: "multiple_choice",
     prompt: "What is the main purpose of the `fetch` cache option `no-store` in Next.js App Router data fetching?",
     options: [
@@ -130,7 +131,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 3,
   },
   {
-    category: "frontend",
+    category: "frontend-engineering",
     type: "short_answer",
     prompt:
       "Describe how you would investigate a layout shift (CLS) spike reported in production for a marketing homepage.",
@@ -140,7 +141,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 7,
   },
   {
-    category: "frontend",
+    category: "frontend-engineering",
     type: "multiple_choice",
     prompt: "Which statement about the event loop in browsers is correct?",
     options: [
@@ -154,7 +155,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 4,
   },
   {
-    category: "frontend",
+    category: "frontend-engineering",
     type: "coding",
     prompt:
       "Refactor the provided imperative DOM script into a small React component that preserves focus when the list reorders.",
@@ -166,7 +167,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
 
   // Backend (12)
   {
-    category: "backend",
+    category: "backend-engineering",
     type: "multiple_choice",
     prompt: "What does HTTP status code 409 typically indicate?",
     options: [
@@ -180,7 +181,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 2,
   },
   {
-    category: "backend",
+    category: "backend-engineering",
     type: "short_answer",
     prompt:
       "Explain idempotency and why it matters for payment or webhook retry handlers.",
@@ -190,7 +191,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 5,
   },
   {
-    category: "backend",
+    category: "backend-engineering",
     type: "coding",
     prompt:
       "Write a SQL query to find duplicate emails in an `users` table while excluding soft-deleted rows (`deleted_at is null`).",
@@ -200,16 +201,16 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 8,
   },
   {
-    category: "backend",
+    category: "backend-engineering",
     type: "multiple_choice",
-    prompt: "In PostgreSQL, which isolation level prevents non-repeatable reads but allows phantom reads?",
+    prompt: "In PostgreSQL, which isolation level prevents non-repeatable reads?",
     options: ["Read uncommitted", "Read committed", "Repeatable read", "Serializable"],
     correct_option_index: 2,
     ai_resistance: "medium",
     estimated_minutes: 3,
   },
   {
-    category: "backend",
+    category: "backend-engineering",
     type: "coding",
     prompt:
       "Given a flaky integration test log (provided), identify the race condition in the order-creation service and propose a minimal fix.",
@@ -219,7 +220,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 14,
   },
   {
-    category: "backend",
+    category: "backend-engineering",
     type: "multiple_choice",
     prompt: "What is the primary trade-off of using a message queue between services?",
     options: [
@@ -233,7 +234,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 2,
   },
   {
-    category: "backend",
+    category: "backend-engineering",
     type: "short_answer",
     prompt:
       "How would you design rate limiting for a public API used by both free and paid tiers?",
@@ -243,7 +244,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 8,
   },
   {
-    category: "backend",
+    category: "backend-engineering",
     type: "coding",
     prompt:
       "Implement an in-memory LRU cache with `get` and `put` in O(1) average time (language of candidate's choice).",
@@ -253,7 +254,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 15,
   },
   {
-    category: "backend",
+    category: "backend-engineering",
     type: "multiple_choice",
     prompt: "Which JWT claim is commonly used to identify the subject (user)?",
     options: ["sub", "aud", "iss", "nbf"],
@@ -262,7 +263,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 2,
   },
   {
-    category: "backend",
+    category: "backend-engineering",
     type: "short_answer",
     prompt:
       "Describe blue/green deployment and one operational risk teams often underestimate.",
@@ -272,7 +273,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 5,
   },
   {
-    category: "backend",
+    category: "backend-engineering",
     type: "multiple_choice",
     prompt: "What is the CAP theorem primarily about in distributed systems?",
     options: [
@@ -286,7 +287,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 2,
   },
   {
-    category: "backend",
+    category: "backend-engineering",
     type: "coding",
     prompt:
       "Debug the provided Express middleware chain where authenticated routes intermittently return 401 after token refresh.",
@@ -298,7 +299,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
 
   // Data (12)
   {
-    category: "data",
+    category: "data-analyst",
     type: "multiple_choice",
     prompt: "What does a left join return when there is no match on the right table?",
     options: [
@@ -312,7 +313,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 2,
   },
   {
-    category: "data",
+    category: "data-analyst",
     type: "short_answer",
     prompt:
       "Explain the difference between a fact table and a dimension table in a star schema.",
@@ -322,7 +323,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 5,
   },
   {
-    category: "data",
+    category: "data-analyst",
     type: "coding",
     prompt:
       "Write a window-function query to rank products by revenue within each category for the last 30 days.",
@@ -332,7 +333,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 10,
   },
   {
-    category: "data",
+    category: "data-analyst",
     type: "multiple_choice",
     prompt: "Which scenario best fits a Type II slowly changing dimension?",
     options: [
@@ -346,7 +347,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 3,
   },
   {
-    category: "data",
+    category: "data-analyst",
     type: "short_answer",
     prompt:
       "Given a sudden 40% drop in conversion rate in analytics, list your first three investigative steps before changing product code.",
@@ -356,7 +357,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 7,
   },
   {
-    category: "data",
+    category: "data-analyst",
     type: "multiple_choice",
     prompt: "Precision vs recall: optimizing for fewer false positives emphasizes:",
     options: ["Precision", "Recall", "Both equally always", "Neither"],
@@ -365,7 +366,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 2,
   },
   {
-    category: "data",
+    category: "data-analyst",
     type: "coding",
     prompt:
       "Clean the provided messy CSV sample: parse dates, normalize currency, and flag rows with invalid region codes.",
@@ -375,7 +376,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 12,
   },
   {
-    category: "data",
+    category: "data-analyst",
     type: "multiple_choice",
     prompt: "What is data leakage in machine learning feature engineering?",
     options: [
@@ -389,7 +390,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 3,
   },
   {
-    category: "data",
+    category: "data-analyst",
     type: "short_answer",
     prompt:
       "When would you choose a cohort analysis over a simple daily active users chart?",
@@ -399,7 +400,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 5,
   },
   {
-    category: "data",
+    category: "data-analyst",
     type: "coding",
     prompt:
       "Estimate confidence intervals for conversion rate A vs B from the provided experiment table without assuming normality.",
@@ -409,7 +410,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 14,
   },
   {
-    category: "data",
+    category: "data-analyst",
     type: "multiple_choice",
     prompt: "In dbt, what is the primary purpose of a staging model?",
     options: [
@@ -423,7 +424,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 3,
   },
   {
-    category: "data",
+    category: "data-analyst",
     type: "short_answer",
     prompt:
       "Interpret the provided funnel chart where step 3 drops sharply on mobile only — what hypotheses would you test?",
@@ -435,7 +436,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
 
   // Ops / support (12)
   {
-    category: "ops",
+    category: "customer-technical-support",
     type: "multiple_choice",
     prompt: "A customer cannot log in after a password reset. What is the best first step?",
     options: [
@@ -449,7 +450,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 2,
   },
   {
-    category: "ops",
+    category: "customer-technical-support",
     type: "short_answer",
     prompt:
       "Write a concise, empathetic reply to a customer whose assessment link expired yesterday.",
@@ -459,7 +460,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 5,
   },
   {
-    category: "ops",
+    category: "customer-technical-support",
     type: "multiple_choice",
     prompt: "Severity 1 (production down) should typically trigger:",
     options: [
@@ -473,7 +474,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 2,
   },
   {
-    category: "ops",
+    category: "customer-technical-support",
     type: "short_answer",
     prompt:
       "Given partial outage symptoms (API 503s in one region only), outline your triage checklist for the first 15 minutes.",
@@ -483,7 +484,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 7,
   },
   {
-    category: "ops",
+    category: "customer-technical-support",
     type: "multiple_choice",
     prompt: "What does MTTR measure in incident response?",
     options: [
@@ -497,7 +498,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 2,
   },
   {
-    category: "ops",
+    category: "customer-technical-support",
     type: "coding",
     prompt:
       "Parse the provided nginx access log excerpt and identify the top 3 paths returning 5xx errors.",
@@ -507,7 +508,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 10,
   },
   {
-    category: "ops",
+    category: "customer-technical-support",
     type: "short_answer",
     prompt:
       "How do you balance security (least privilege) with speed when granting temporary production access?",
@@ -517,7 +518,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 6,
   },
   {
-    category: "ops",
+    category: "customer-technical-support",
     type: "multiple_choice",
     prompt: "A runbook should primarily help responders to:",
     options: [
@@ -531,7 +532,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 2,
   },
   {
-    category: "ops",
+    category: "customer-technical-support",
     type: "short_answer",
     prompt:
       "Role-play: a hiring manager insists a candidate's proctoring flag is 'definitely cheating.' How do you respond?",
@@ -541,7 +542,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 8,
   },
   {
-    category: "ops",
+    category: "customer-technical-support",
     type: "multiple_choice",
     prompt: "Which change management practice reduces rollback risk most directly?",
     options: [
@@ -555,7 +556,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 3,
   },
   {
-    category: "ops",
+    category: "customer-technical-support",
     type: "coding",
     prompt:
       "Write a shell one-liner or short script to check disk usage on all mounted volumes and alert if any exceed 85%.",
@@ -565,7 +566,7 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
     estimated_minutes: 8,
   },
   {
-    category: "ops",
+    category: "customer-technical-support",
     type: "short_answer",
     prompt:
       "From the provided customer ticket thread, identify the root cause vs symptoms and propose next actions.",
@@ -576,9 +577,10 @@ export const LIBRARY_SEED: SeedLibraryQuestion[] = [
   },
 ]
 
-export const LIBRARY_CATEGORIES: { id: LibraryCategory; label: string }[] = [
-  { id: "frontend", label: "Engineering · Frontend" },
-  { id: "backend", label: "Engineering · Backend" },
-  { id: "data", label: "Data & analytics" },
-  { id: "ops", label: "Ops & support" },
-]
+export const LIBRARY_CATEGORIES = ALL_LIBRARY_CATEGORIES.filter(
+  (c) => c.parent_id !== null,
+).map((c) => ({
+  id: c.id as LibraryCategory,
+  name: c.name,
+  label: c.name,
+}))

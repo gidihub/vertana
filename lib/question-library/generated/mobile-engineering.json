@@ -1,0 +1,570 @@
+[
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "multiple_choice",
+    "prompt": "An iOS app crashes sporadically right after being backgrounded and then relaunched from a push notification. Logs show work was started in `applicationDidEnterBackground` but never completed. Which change is the most appropriate fix?",
+    "options": [
+      "Move the work to a background task API and ensure it completes or is cancelled within the allowed time",
+      "Increase the app's launch timeout in Xcode scheme settings",
+      "Disable push notifications and restart the app on every launch",
+      "Run the work on the main thread so iOS won't suspend it"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "short_answer",
+    "prompt": "A React Native app shows stale cart totals when the user goes offline, adds items, then comes back online. In one or two sentences, describe a practical sync strategy to prevent overwriting newer local changes with older server data.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use an offline-first queue with locally versioned mutations and conflict detection; when reconnecting, replay pending writes in order and resolve conflicts using timestamps, revision IDs, or server-side merge rules instead of blindly replacing local state.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "multiple_choice",
+    "prompt": "In an Android app, a `WorkManager` job is repeatedly failing to upload photos because the app is in the background and the device is under battery restrictions. Which reason best explains why `WorkManager` is still the right choice despite the delay?",
+    "options": [
+      "It guarantees immediate execution even under all restrictions",
+      "It survives process death and respects system scheduling constraints for deferrable work",
+      "It bypasses Doze mode by running as a foreground service automatically",
+      "It only works when the app is on screen, which reduces battery use"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "coding",
+    "prompt": "You are implementing a mobile offline outbox. Each line of stdin contains either `ADD id` or `SEND id`. `ADD id` enqueues an operation if it is not already queued; `SEND id` removes `id` from the queue if present. After processing all lines, print the queued ids in FIFO order, space-separated, or `EMPTY` if none. Preserve insertion order and ignore duplicate `ADD` for already queued ids.\n\nWrite a program that reads stdin and writes stdout.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "ADD a\nADD b\nADD a\nSEND a\nADD c\n",
+        "expected_output": "b c"
+      },
+      {
+        "input": "ADD 101\nADD 102\nSEND 101\nSEND 999\n",
+        "expected_output": "102"
+      },
+      {
+        "input": "SEND x\nADD x\nADD y\nADD x\n",
+        "expected_output": "x y"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 12,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "short_answer",
+    "prompt": "A Flutter screen feels janky when scrolling a long feed because image decoding happens during frame rendering. Name one concrete change you would make to reduce dropped frames.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Precache or resize images off the main UI thread so decoding does not happen during frame rendering.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "multiple_choice",
+    "prompt": "A team wants to share business logic across iOS and Android, but the app needs highly custom native UI on each platform and strict performance for animated lists. Which approach is most appropriate?",
+    "options": [
+      "Use React Native for everything, including the custom list rendering, without native modules",
+      "Use Flutter because it always provides the best performance for any native UI constraint",
+      "Share only the core logic in a common module and keep the performance-critical UI native",
+      "Rewrite the app as a web view to maximize code reuse"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "multiple_choice",
+    "prompt": "On iOS, a push notification arrives while the app is terminated. The product manager expects the app to silently refresh several screens before the user taps the notification. What is the key constraint to communicate?",
+    "options": [
+      "iOS always allows silent background work after every push notification",
+      "This is only possible if the app is currently visible on screen",
+      "Silent background execution is limited and cannot be relied on for arbitrary long refreshes from a normal notification",
+      "The app can perform unlimited work if the notification includes an image"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "short_answer",
+    "prompt": "A mobile app store reviewer rejects your Android app because it requests permission to read all files on external storage, but the feature only needs a user-selected document. What change should you make to the permission and file access model?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use the system file picker or Storage Access Framework to let the user choose a file, and request only scoped access to that selected document instead of broad storage permission.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "coding",
+    "prompt": "A mobile app batches analytics events before upload. Given a list of event timestamps in milliseconds, print the size of the largest batch where consecutive events are at most 1000 ms apart. Events are already in time order. Read `n` then `n` timestamps. Output one integer.\n\nExample: timestamps `100, 500, 1200` form a batch of size 2 because 100 and 500 differ by 400, but 500 and 1200 differ by 700; all three are within a chain, so the batch size is 3.\n\nWrite a program that reads stdin and writes stdout.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "5\n100\n500\n1200\n1800\n3500\n",
+        "expected_output": "4"
+      },
+      {
+        "input": "3\n10\n2000\n4000\n",
+        "expected_output": "1"
+      },
+      {
+        "input": "6\n0\n300\n700\n1300\n1500\n2600\n",
+        "expected_output": "5"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "multiple_choice",
+    "prompt": "An Android app's startup time regressed after moving database initialization into `Application.onCreate()`. What is the best fix if the database is not needed for the first screen?",
+    "options": [
+      "Keep it in `Application.onCreate()` and add more logging to hide the delay",
+      "Move initialization to the first use site or a deferred background task",
+      "Initialize the database twice so one copy is ready sooner",
+      "Replace the database with in-memory storage only"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "short_answer",
+    "prompt": "A native iOS app uses `UITableView` with remote images, but VoiceOver users report that rows are announced as “button” without meaningful context. What accessibility improvement would you make?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Provide accurate accessibility labels and hints for each row, and ensure the element traits match the actual action instead of a generic button announcement.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "multiple_choice",
+    "prompt": "A React Native app occasionally shows an empty white screen on cold start after a JS bundle update. Which CI/CD safeguard is most valuable?",
+    "options": [
+      "Skip running automated tests to speed up release",
+      "Add a staged rollout with crash monitoring and rollback for bad bundles",
+      "Always force users to reinstall the app after each update",
+      "Disable bundle caching on all devices permanently"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "coding",
+    "prompt": "You are implementing retry delays for push token registration. Given `n` retry attempts, output the delay in seconds for each attempt using exponential backoff starting at 1 second and doubling each time, capped at 60 seconds. Read `n` and print the delays space-separated.\n\nExample: for 5 attempts, output `1 2 4 8 16`.\n\nWrite a program that reads stdin and writes stdout.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "5\n",
+        "expected_output": "1 2 4 8 16"
+      },
+      {
+        "input": "7\n",
+        "expected_output": "1 2 4 8 16 32 60"
+      },
+      {
+        "input": "1\n",
+        "expected_output": "1"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 8,
+    "difficulty": "easy",
+    "points": 3
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "multiple_choice",
+    "prompt": "On Android 13+, users complain they never receive marketing notifications after installing the app. The code successfully registers for FCM tokens. What is the most likely cause?",
+    "options": [
+      "The app forgot to request the POST_NOTIFICATIONS runtime permission",
+      "FCM tokens are only available on iOS",
+      "Android 13 blocks all notifications from backgrounded apps by default with no exception",
+      "The app must use local notifications instead of push notifications"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "short_answer",
+    "prompt": "A Flutter app on low-end devices spends too long building complex widgets every frame during drag gestures. What architecture change would you suggest to improve responsiveness?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Split the heavy subtree into smaller widgets and move expensive work out of build, using const widgets, memoization, or precomputed state so rebuilds are cheaper.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "multiple_choice",
+    "prompt": "A mobile app must work when the network is flaky and eventually reconcile with the server. Which data model choice is most suitable for local persistence?",
+    "options": [
+      "Store only the latest server snapshot and discard local edits",
+      "Keep an append-only log of mutations with IDs and sync status",
+      "Store everything only in memory and rely on app restarts to clear state",
+      "Use a single boolean flag to indicate whether any offline edits exist"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "short_answer",
+    "prompt": "A Kotlin Android feature uses `BroadcastReceiver` to react to network changes, but the behavior is unreliable on newer Android versions. What modern approach would you use instead for monitoring connectivity changes in the app?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use `ConnectivityManager` callbacks or reactive network monitoring APIs scoped to the app lifecycle rather than relying on manifest network-change broadcasts.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "coding",
+    "prompt": "A mobile app shows a badge count based on unread messages. Given the current count `c` and a list of message events, where `+` means one unread message arrived and `-` means one unread message was read, compute the final count. The count must never drop below 0; if an event would make it negative, ignore that event. Read `c`, then `n`, then `n` event symbols separated by spaces or newlines.\n\nWrite a program that reads stdin and writes stdout.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "2\n5\n+ + - - -\n",
+        "expected_output": "0"
+      },
+      {
+        "input": "0\n4\n- + + -\n",
+        "expected_output": "0"
+      },
+      {
+        "input": "3\n6\n+ - + + - -\n",
+        "expected_output": "3"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 8,
+    "difficulty": "easy",
+    "points": 3
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "multiple_choice",
+    "prompt": "Your iOS app uses a large number of custom fonts and images. App Store review flags the binary size as excessive, and some users on cellular are dropping during install. Which optimization is most appropriate?",
+    "options": [
+      "Embed every possible asset to avoid runtime downloads",
+      "Remove all image compression to preserve quality",
+      "Use asset catalog thinning and remove unused font variants/resources",
+      "Split the app into multiple executables"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "short_answer",
+    "prompt": "A product team wants a mobile feature that syncs notes instantly across devices, but the app must still be usable offline. In one concise sentence, what sync pattern would you recommend?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use an offline-first local store with optimistic writes and background conflict-aware synchronization to the server.",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "multiple_choice",
+    "prompt": "A React Native app's release build crashes only on Android when a third-party native module is added. The debug build works. What is the most likely area to inspect first?",
+    "options": [
+      "JavaScript syntax highlighting settings",
+      "Proguard/R8 rules and native dependency compatibility",
+      "The iOS provisioning profile",
+      "The device wallpaper configuration"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "coding",
+    "prompt": "A user can download content for offline use. Given a list of file sizes in MB and a storage budget `B`, choose the maximum number of files that can be cached locally. Read `n`, then `B`, then `n` file sizes. Output the maximum count.\n\nFiles may be cached in any order, but you should maximize the count. Print one integer.\n\nWrite a program that reads stdin and writes stdout.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "5\n10\n4 8 1 2 9\n",
+        "expected_output": "3"
+      },
+      {
+        "input": "4\n7\n5 3 4 2\n",
+        "expected_output": "2"
+      },
+      {
+        "input": "6\n12\n6 1 1 1 7 2\n",
+        "expected_output": "4"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "multiple_choice",
+    "prompt": "A Flutter app needs a feature that depends on a platform-specific capability available only on iOS and Android native SDKs. What is the cleanest integration pattern?",
+    "options": [
+      "Duplicate the feature in Dart using only generic widgets",
+      "Use a platform channel or federated plugin to bridge to native code",
+      "Ship two separate apps and tell users to install both",
+      "Disable the feature on one platform forever"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "short_answer",
+    "prompt": "Your mobile CI pipeline takes 35 minutes because every commit rebuilds iOS and Android from scratch. Name one practical change that usually reduces build time significantly.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Enable dependency and build caching for Gradle/CocoaPods and reuse derived artifacts between runs when the lockfiles or build inputs have not changed.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "multiple_choice",
+    "prompt": "An Android screen that lists 500 chat messages stutters while the user scrolls. Which change is most likely to improve frame rate?",
+    "options": [
+      "Render all rows eagerly so there are fewer layout passes later",
+      "Use view recycling / virtualization and avoid expensive work in bind methods",
+      "Disable images entirely on the list screen",
+      "Increase the screen brightness to reduce UI latency"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "multiple_choice",
+    "prompt": "A React Native app uses push notifications to deep-link into a chat thread. Users report that tapping the notification sometimes opens the app to the wrong screen after they were already editing a draft in the background. Which approach is most reliable for handling the notification tap without losing the current navigation state?",
+    "options": [
+      "Read the notification payload in the launch handler and immediately reset navigation to the target route before the JS app finishes hydrating.",
+      "Queue the notification action until the navigation container is ready, then dispatch a navigation action based on the payload while preserving any existing stack state.",
+      "Ignore taps received while the app is backgrounded and only process notification opens when the app is fully terminated.",
+      "Store the target route in local storage and force a full app restart whenever a notification is tapped."
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "short_answer",
+    "prompt": "An Android app syncs user-created notes. When the device regains connectivity after being offline for hours, some notes are uploaded twice and others overwrite newer server edits. In one concise answer, what sync strategy or data rule would you use to prevent both duplicate uploads and lost updates?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use idempotent client mutations with stable operation IDs plus per-record versioning or conflict detection (for example, last-write-wins only if version matches, otherwise merge or prompt).",
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "coding",
+    "prompt": "You are writing a mobile offline queue reconciler. Each line of stdin is either `ADD id` or `SEND id`. `ADD id` enqueues a pending message with that integer id. `SEND id` means the app attempted to send that message. A send should only succeed if that id is currently in the queue; if it succeeds, remove it. If the id is missing, ignore the send. At the end, print the remaining queued ids in insertion order, space-separated, or `EMPTY` if none remain.\n\nImplement the program in a Swift/Kotlin-style algorithm using stdin/stdout.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "ADD 7\nADD 3\nSEND 7\nADD 9\nSEND 5\n",
+        "expected_output": "3 9"
+      },
+      {
+        "input": "ADD 1\nADD 2\nSEND 2\nSEND 1\n",
+        "expected_output": "EMPTY"
+      },
+      {
+        "input": "ADD 4\nADD 4\nSEND 4\n",
+        "expected_output": "4"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 12,
+    "difficulty": "easy",
+    "points": 2
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "multiple_choice",
+    "prompt": "A Flutter app on low-end devices shows dropped frames while users rapidly scroll a feed of cards. Profiling shows most time is spent rebuilding widgets whose visible output rarely changes, even though only a small part of each card depends on scroll position. What change is most likely to improve smoothness?",
+    "options": [
+      "Move all card state into a global singleton so every widget rebuilds together.",
+      "Split the card into smaller widgets and hoist only the scroll-dependent part into a separate repaint/rebuild boundary.",
+      "Disable image caching so the UI thread spends less time managing memory.",
+      "Replace the feed with a `ListView` that uses `shrinkWrap: true` on every row."
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "short_answer",
+    "prompt": "Your iOS app is frequently rejected because a background refresh task is doing heavy work after launch and causing the app to be terminated for taking too long. What is one practical change you would make to stay within mobile app lifecycle constraints while still keeping data fresh?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Move the heavy work out of app launch/background time into a short task that only fetches minimal data, then defer the rest to BackgroundTasks or the next foreground session.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  }
+]

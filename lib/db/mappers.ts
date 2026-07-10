@@ -1,12 +1,14 @@
 import type { PlanTier } from "@/lib/plans"
 import type {
   Candidate,
+  CandidateDisposition,
   CandidateStatus,
   Certificate,
   ConsentRecord,
   Question,
   QuestionType,
   Test,
+  TestInvite,
   TestStatus,
   TestCase,
 } from "@/lib/types"
@@ -24,6 +26,11 @@ export interface OrganizationRow {
   code_executions_used: number
   code_executions_reset_at: string
   tab_switch_threshold: number
+  stripe_customer_id: string | null
+  stripe_subscription_id: string | null
+  subscription_status: string | null
+  billing_cycle: "monthly" | "annual" | null
+  current_period_end: string | null
 }
 
 export interface TestRow {
@@ -59,8 +66,10 @@ export interface QuestionRow {
   source: "library" | "custom" | "ai_generated"
   is_library_item: boolean
   library_category: string | null
+  category_id: string | null
   estimated_minutes: number | null
   test_cases: TestCase[]
+  created_at?: string
 }
 
 export type CorrectAnswer =
@@ -75,6 +84,23 @@ export interface TestInviteRow {
   status: "active" | "revoked" | "expired"
   expires_at: string | null
   is_share_link: boolean
+  email_status: "pending" | "sent" | "failed" | null
+  email_error: string | null
+  email_sent_at: string | null
+}
+
+export function rowToTestInvite(row: TestInviteRow): TestInvite {
+  return {
+    id: row.id,
+    test_id: row.test_id,
+    candidate_email: row.candidate_email,
+    token: row.token,
+    is_share_link: row.is_share_link,
+    email_status: row.email_status,
+    email_error: row.email_error,
+    email_sent_at: row.email_sent_at,
+    status: row.status,
+  }
 }
 
 export interface AttemptRow {
@@ -86,6 +112,7 @@ export interface AttemptRow {
   score: number | null
   tab_switch_count: number
   flagged: boolean
+  disposition: CandidateDisposition
 }
 
 export interface AnswerRow {
@@ -136,8 +163,10 @@ export function rowToQuestion(row: QuestionRow): Question {
     ai_resistance: row.ai_resistance,
     source: row.source,
     library_category: row.library_category,
+    category_id: row.category_id,
     estimated_minutes: row.estimated_minutes,
     test_cases: Array.isArray(row.test_cases) ? row.test_cases : [],
+    created_at: row.created_at,
   }
 }
 
@@ -162,6 +191,7 @@ export function questionToRow(q: Question, testId: string): QuestionRow {
     source: q.source ?? "custom",
     is_library_item: false,
     library_category: q.library_category ?? null,
+    category_id: q.category_id ?? null,
     estimated_minutes: q.estimated_minutes ?? null,
     test_cases: q.test_cases ?? [],
   }
@@ -218,6 +248,7 @@ export function rowToCandidate(
     consent_id: consentId,
     started_at: row.started_at,
     submitted_at: row.submitted_at,
+    disposition: row.disposition ?? "under_review",
   }
 }
 

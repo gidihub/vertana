@@ -4,12 +4,14 @@ import Link from "next/link"
 import { useMemo, useState } from "react"
 import { Search } from "lucide-react"
 
-import type { Candidate, CandidateStatus, Test } from "@/lib/types"
+import type { Candidate, CandidateDisposition, CandidateStatus, Test } from "@/lib/types"
 import { hasIntegrityConcern } from "@/lib/integrity"
 import { numericText } from "@/lib/design-tokens"
 import { useStore } from "@/lib/store"
+import { CandidateDispositionSelect } from "@/components/candidates/candidate-disposition"
 import { IntegrityConcernBadge } from "@/components/integrity-concern-badge"
 import { CandidateStatusBadge } from "@/components/status-badge"
+import { DISPOSITION_FILTER_OPTIONS } from "@/lib/disposition"
 import { Input } from "@/components/ui/input"
 import {
   Select,
@@ -52,6 +54,9 @@ export function GlobalCandidatesTable() {
   const [statusFilter, setStatusFilter] = useState<CandidateStatus | "all">(
     "all",
   )
+  const [dispositionFilter, setDispositionFilter] = useState<
+    CandidateDisposition | "all"
+  >("all")
 
   const testById = useMemo(
     () => new Map(tests.map((t) => [t.id, t] as const)),
@@ -68,6 +73,12 @@ export function GlobalCandidatesTable() {
       .filter((row) => {
         if (testFilter !== "all" && row.test_id !== testFilter) return false
         if (statusFilter !== "all" && row.status !== statusFilter) return false
+        if (
+          dispositionFilter !== "all" &&
+          (row.disposition ?? "under_review") !== dispositionFilter
+        ) {
+          return false
+        }
         if (!q) return true
         return (
           row.email.toLowerCase().includes(q) ||
@@ -79,7 +90,7 @@ export function GlobalCandidatesTable() {
         const bTime = b.submitted_at ?? b.started_at ?? ""
         return bTime.localeCompare(aTime)
       })
-  }, [candidates, search, statusFilter, testById, testFilter])
+  }, [candidates, dispositionFilter, search, statusFilter, testById, testFilter])
 
   return (
     <div className="flex flex-col gap-4">
@@ -126,6 +137,23 @@ export function GlobalCandidatesTable() {
             ))}
           </SelectContent>
         </Select>
+        <Select
+          value={dispositionFilter}
+          onValueChange={(v) =>
+            setDispositionFilter(v as CandidateDisposition | "all")
+          }
+        >
+          <SelectTrigger className="w-full sm:w-44">
+            <SelectValue placeholder="Disposition" />
+          </SelectTrigger>
+          <SelectContent>
+            {DISPOSITION_FILTER_OPTIONS.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="overflow-x-auto rounded-xl border border-border bg-card">
@@ -135,6 +163,7 @@ export function GlobalCandidatesTable() {
               <TableHead>Candidate</TableHead>
               <TableHead>Test</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Disposition</TableHead>
               <TableHead className="text-right">Score</TableHead>
               <TableHead>Submitted</TableHead>
             </TableRow>
@@ -143,7 +172,7 @@ export function GlobalCandidatesTable() {
             {loading ? (
               <TableRow>
                 <TableCell
-                  colSpan={5}
+                  colSpan={6}
                   className="text-center text-muted-foreground"
                 >
                   Loading candidates…
@@ -152,7 +181,7 @@ export function GlobalCandidatesTable() {
             ) : rows.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={5}
+                  colSpan={6}
                   className="text-center text-muted-foreground"
                 >
                   No candidates match your filters.
@@ -177,6 +206,9 @@ export function GlobalCandidatesTable() {
                     </TableCell>
                     <TableCell>
                       <CandidateStatusBadge status={row.status} />
+                    </TableCell>
+                    <TableCell>
+                      <CandidateDispositionSelect candidate={row} compact />
                     </TableCell>
                     <TableCell className="text-right">
                       {integrity ? (

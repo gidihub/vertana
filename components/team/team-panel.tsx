@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState, type FormEvent } from "react"
 import { Loader2, Mail, UserPlus, X } from "lucide-react"
 import { toast } from "sonner"
 
@@ -60,7 +60,7 @@ export function TeamPanel() {
     void load()
   }, [load])
 
-  async function handleInvite(e: React.FormEvent) {
+  async function handleInvite(e: FormEvent) {
     e.preventDefault()
     const trimmed = email.trim()
     if (!trimmed) return
@@ -132,9 +132,7 @@ export function TeamPanel() {
                       {ROLE_LABELS[member.role] ?? member.role}
                     </p>
                   </div>
-                  <Badge variant="secondary">
-                    {member.role === "owner" ? "Active" : "Active"}
-                  </Badge>
+                  <Badge variant="secondary">Active</Badge>
                 </li>
               ))}
             </ul>

@@ -7,6 +7,7 @@ import {
   rowToConsent,
   rowToQuestion,
   rowToTest,
+  rowToTestInvite,
   type AnswerRow,
   type AttemptRow,
   type QuestionRow,
@@ -30,8 +31,9 @@ import {
 } from "@/lib/plans"
 import { sanitizeQuestionsForPlan } from "@/lib/coding/limits"
 import { notifyTestCompletion } from "@/lib/notifications/completion-email"
+import { sendCandidateInviteEmail } from "@/lib/notifications/candidate-invite-email"
 import { createAdminClient } from "@/lib/supabase/admin"
-import type { Candidate, ConsentRecord, Test } from "@/lib/types"
+import type { Candidate, ConsentRecord, Test, TestInvite } from "@/lib/types"
 
 export class TokenAccessError extends Error {
   code: "invalid" | "closed" | "expired" | "revoked"
@@ -568,6 +570,17 @@ export async function startAttempt(input: {
   const loaded = await loadTestByToken(input.token)
   if (!loaded) throw new TokenAccessError("Invalid test link", "invalid")
 
+  if (
+    !loaded.invite.is_share_link &&
+    loaded.invite.candidate_email &&
+    input.email.toLowerCase() !== loaded.invite.candidate_email.toLowerCase()
+  ) {
+    throw new TokenAccessError(
+      "This assessment link was sent to a different email address.",
+      "invalid",
+    )
+  }
+
   const org = await ensureMonthlyResetsForOrgId(loaded.test.org_id!)
   if (org.credits_remaining <= 0) {
     throw new Error(
@@ -1096,6 +1109,51 @@ export async function updateAttemptGrades(input: {
   )
 }
 
+export async function updateAttemptDisposition(input: {
+  testId: string
+  attemptId: string
+  disposition: Candidate["disposition"]
+}): Promise<Candidate> {
+  const orgId = await getOrgId()
+  const test = await loadTestById(input.testId)
+  if (!test || test.org_id !== orgId) throw new Error("Test not found")
+
+  const supabase = createAdminClient()
+  const { data: attempt, error: loadError } = await supabase
+    .from("attempts")
+    .select("*, test_invites!inner(test_id)")
+    .eq("id", input.attemptId)
+    .maybeSingle()
+
+  if (loadError || !attempt) throw new Error("Candidate not found")
+
+  const invite = attempt.test_invites as { test_id: string }
+  if (invite.test_id !== input.testId) throw new Error("Candidate not found")
+
+  const { data: updated, error } = await supabase
+    .from("attempts")
+    .update({ disposition: input.disposition })
+    .eq("id", input.attemptId)
+    .select("*")
+    .single()
+
+  if (error || !updated) {
+    throw new Error(error?.message ?? "Could not update disposition")
+  }
+
+  const { data: consent } = await supabase
+    .from("consents")
+    .select("id")
+    .eq("attempt_id", input.attemptId)
+    .maybeSingle()
+
+  return rowToCandidate(
+    updated as AttemptRow,
+    test.id,
+    consent?.id ?? null,
+  )
+}
+
 export function evaluateCertificateLocal(
   test: Test,
   candidate: Candidate,
@@ -1134,6 +1192,173 @@ export function answerNeedsManualScoring(answer: {
   if (answer.type !== "short_answer" && answer.type !== "coding") return false
   if (answer.is_correct != null && answer.points_awarded != null) return false
   return answer.is_correct === null || answer.points_awarded === null
+}
+
+/** Email invites per test (excludes the shared link row). */
+export async function countInvitesByTest(): Promise<Record<string, number>> {
+  const tests = await loadTestsForOrg()
+  const testIds = tests.map((t) => t.id)
+  if (!testIds.length) return {}
+
+  const supabase = createAdminClient()
+  const { data, error } = await supabase
+    .from("test_invites")
+    .select("test_id")
+    .in("test_id", testIds)
+    .eq("is_share_link", false)
+
+  if (error) throw new Error(error.message)
+
+  const counts = Object.fromEntries(testIds.map((id) => [id, 0]))
+  for (const row of data ?? []) {
+    const testId = row.test_id as string
+    counts[testId] = (counts[testId] ?? 0) + 1
+  }
+  return counts
+}
+
+export async function loadEmailInvitesForTest(testId: string): Promise<TestInvite[]> {
+  const supabase = createAdminClient()
+  const { data, error } = await supabase
+    .from("test_invites")
+    .select("*")
+    .eq("test_id", testId)
+    .eq("is_share_link", false)
+    .order("email_sent_at", { ascending: false, nullsFirst: false })
+
+  if (error) throw new Error(error.message)
+  return ((data ?? []) as TestInviteRow[]).map(rowToTestInvite)
+}
+
+async function deliverCandidateInviteEmail(input: {
+  inviteId: string
+  to: string
+  testTitle: string
+  timeLimitMinutes: number
+  token: string
+  orgName?: string
+}): Promise<TestInvite> {
+  const supabase = createAdminClient()
+  const send = await sendCandidateInviteEmail({
+    to: input.to,
+    testTitle: input.testTitle,
+    timeLimitMinutes: input.timeLimitMinutes,
+    token: input.token,
+    orgName: input.orgName,
+  })
+
+  const patch = send.ok
+    ? {
+        email_status: "sent" as const,
+        email_error: null,
+        email_sent_at: new Date().toISOString(),
+      }
+    : {
+        email_status: "failed" as const,
+        email_error: send.error ?? "Email send failed",
+        email_sent_at: null,
+      }
+
+  const { data, error } = await supabase
+    .from("test_invites")
+    .update(patch)
+    .eq("id", input.inviteId)
+    .select("*")
+    .single()
+
+  if (error || !data) {
+    throw new Error(error?.message ?? "Could not update invite send status")
+  }
+
+  return rowToTestInvite(data as TestInviteRow)
+}
+
+export async function createCandidateInvite(input: {
+  testId: string
+  email: string
+}): Promise<TestInvite> {
+  const test = await loadTestById(input.testId)
+  if (!test) throw new Error("Test not found")
+  if (test.status !== "active") {
+    throw new Error("Publish this test before inviting candidates by email.")
+  }
+
+  const org = await getOrganization()
+  const email = input.email.trim().toLowerCase()
+  if (!email) throw new Error("Email is required")
+
+  const supabase = createAdminClient()
+  const { data: existing } = await supabase
+    .from("test_invites")
+    .select("id, status")
+    .eq("test_id", input.testId)
+    .eq("is_share_link", false)
+    .ilike("candidate_email", email)
+    .neq("status", "revoked")
+    .maybeSingle()
+
+  if (existing) {
+    throw new Error("An invite already exists for this email on this assessment.")
+  }
+
+  const token = generateToken()
+  const { data: invite, error } = await supabase
+    .from("test_invites")
+    .insert({
+      test_id: input.testId,
+      candidate_email: email,
+      token,
+      is_share_link: false,
+      status: "active",
+      email_status: "pending",
+    })
+    .select("*")
+    .single()
+
+  if (error || !invite) {
+    throw new Error(error?.message ?? "Could not create invite")
+  }
+
+  return deliverCandidateInviteEmail({
+    inviteId: invite.id as string,
+    to: email,
+    testTitle: test.title,
+    timeLimitMinutes: test.time_limit_minutes,
+    token,
+    orgName: org?.name,
+  })
+}
+
+export async function resendCandidateInvite(inviteId: string): Promise<TestInvite> {
+  const supabase = createAdminClient()
+  const orgId = await getOrgId()
+
+  const { data: invite, error } = await supabase
+    .from("test_invites")
+    .select("*")
+    .eq("id", inviteId)
+    .eq("is_share_link", false)
+    .maybeSingle()
+
+  if (error || !invite) throw new Error("Invite not found")
+
+  const test = await loadTestById(invite.test_id as string)
+  if (!test || test.org_id !== orgId) throw new Error("Invite not found")
+
+  await supabase
+    .from("test_invites")
+    .update({ email_status: "pending", email_error: null })
+    .eq("id", inviteId)
+
+  const org = await getOrganization()
+  return deliverCandidateInviteEmail({
+    inviteId,
+    to: (invite.candidate_email as string) ?? "",
+    testTitle: test.title,
+    timeLimitMinutes: test.time_limit_minutes,
+    token: invite.token as string,
+    orgName: org?.name,
+  })
 }
 
 /** Ungraded manual answers per test (answer count, not attempt count). */

@@ -19,6 +19,11 @@ export async function GET() {
         code_executions_used: org.code_executions_used,
         code_executions_reset_at: org.code_executions_reset_at,
         tab_switch_threshold: org.tab_switch_threshold ?? 3,
+        stripe_customer_id: org.stripe_customer_id ?? null,
+        stripe_subscription_id: org.stripe_subscription_id ?? null,
+        subscription_status: org.subscription_status ?? null,
+        billing_cycle: org.billing_cycle ?? null,
+        current_period_end: org.current_period_end ?? null,
       },
     })
   })

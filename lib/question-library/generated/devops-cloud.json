@@ -1,0 +1,726 @@
+[
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "You have a Jenkins pipeline that frequently fails on the deployment stage with a timeout error when deploying to Kubernetes. Which action is most likely to resolve this issue?",
+    "options": [
+      "Increase the timeout value in the Jenkins pipeline stage configuration",
+      "Reduce the number of replicas in the Kubernetes deployment",
+      "Switch from LoadBalancer to NodePort service type",
+      "Disable resource limits on the deployment containers"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "short_answer",
+    "prompt": "Describe one key benefit of using Terraform's state locking feature when multiple operators modify infrastructure concurrently.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Prevents concurrent changes and avoids state corruption by serializing Terraform operations.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "In Kubernetes, a Pod is stuck in 'CrashLoopBackOff' state after deployment of a containerized app. What is the best first step to troubleshoot?",
+    "options": [
+      "Check container logs using 'kubectl logs <pod-name>'",
+      "Increase Pod resource limits",
+      "Delete the Pod and redeploy the Deployment",
+      "Scale the Deployment replicas to zero"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "easy",
+    "points": 2
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "You want to restrict outbound internet access from a Kubernetes namespace except to your internal company registry. Which approach is best?",
+    "options": [
+      "Apply a NetworkPolicy that denies all egress except to the registry IP range",
+      "Use Kubernetes RBAC to deny outbound traffic",
+      "Change pod security context to run as non-root",
+      "Patch the Kubernetes API server to filter outbound connections"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "short_answer",
+    "prompt": "Explain a scenario where using the Terraform 'lifecycle' block with 'ignore_changes' is useful in managing cloud resources.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "When a resource attribute is managed outside Terraform and should not trigger updates during apply.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "coding",
+    "prompt": "Given a YAML snippet representing a Kubernetes Deployment, identify and output the image name of the first container defined in the spec. Your program will receive the YAML on stdin; output the container image string on stdout.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: test-app\nspec:\n  replicas: 2\n  template:\n    spec:\n      containers:\n      - name: app\n        image: myregistry/myapp:1.4\n      - name: sidecar\n        image: myregistry/sidecar:latest\n",
+        "expected_output": "myregistry/myapp:1.4"
+      },
+      {
+        "input": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: dummy\nspec:\n  template:\n    spec:\n      containers:\n      - name: main\n        image: nginx:stable\n",
+        "expected_output": "nginx:stable"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "Your application's readiness probe in Kubernetes is failing intermittently, causing pods to be restarted unnecessarily. What is a plausible cause?",
+    "options": [
+      "The readiness probe timeout is set too low compared to app response time",
+      "The app container is missing environment variables",
+      "Pod resource limits are too high",
+      "ServiceAccount pods lack permissions"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "You want to implement a Canary deployment in Kubernetes to gradually roll out a new version using native Kubernetes features. Which resource or mechanism would you primarily use?",
+    "options": [
+      "Use multiple Deployments and a Service that selects both versions with label selectors",
+      "Deploy a StatefulSet instead of a Deployment",
+      "Use a DaemonSet to deploy canary pods",
+      "Configure liveness probes for the new version"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "short_answer",
+    "prompt": "What is the main purpose of service meshes (like Istio) in cloud-native deployments?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "To manage service-to-service communication, including traffic control, security, and observability.",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "coding",
+    "prompt": "Write a shell script snippet that retries a given Kubernetes job (by job name) until it completes successfully or reaches 5 attempts. It should print 'Succeeded' or 'Failed' accordingly to stdout.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "job-name=my-job\n",
+        "expected_output": "Succeeded"
+      },
+      {
+        "input": "job-name=failing-job\n",
+        "expected_output": "Failed"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 12,
+    "difficulty": "hard",
+    "points": 4
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "In a CI/CD pipeline, which practice reduces the risk of environment drift between staging and production?",
+    "options": [
+      "Using Infrastructure as Code to provision both environments",
+      "Manually updating production servers after staging passes",
+      "Deploying only to production environment",
+      "Using different container images in staging and production"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 2
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "short_answer",
+    "prompt": "When troubleshooting a network connectivity issue in a cloud environment, what is one reason why 'ping' to an IP address might fail but TCP connections on certain ports succeed?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "ICMP (ping) may be blocked by firewall or security group rules while TCP ports remain open.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "You have deployed Prometheus to monitor Kubernetes metrics. To get alerted when node disk usage exceeds 80%, which component would you configure?",
+    "options": [
+      "Alertmanager with alerting rules",
+      "Kube-DNS settings",
+      "Horizontal Pod Autoscaler",
+      "Kubernetes DaemonSet"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "Your Terraform apply failed because of a dependency conflict between modules. What Terraform feature helps you determine the resource dependency graph?",
+    "options": [
+      "terraform graph",
+      "terraform plan",
+      "terraform taint",
+      "terraform import"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "easy",
+    "points": 2
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "short_answer",
+    "prompt": "Briefly explain what 'blameless postmortem' means in the context of incident response and SRE.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "A review that focuses on learning and improvement without assigning individual blame for failures.",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "In a Kubernetes cluster, you want to ensure a Pod cannot be scheduled on the same node as another Pod with label 'app=database'. What should you configure?",
+    "options": [
+      "Add a Pod Anti-Affinity rule",
+      "Add a NetworkPolicy",
+      "Use a DaemonSet",
+      "Configure a ResourceQuota"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "coding",
+    "prompt": "You receive a JSON-formatted log line on stdin with fields 'level' and 'message'. Write a script that filters the logs, outputting only messages with level 'ERROR' to stdout.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "{\"level\":\"INFO\",\"message\":\"started\"}\n{\"level\":\"ERROR\",\"message\":\"failed to connect\"}\n",
+        "expected_output": "failed to connect\n"
+      },
+      {
+        "input": "{\"level\":\"ERROR\",\"message\":\"timeout\"}\n{\"level\":\"WARN\",\"message\":\"retry\"}\n",
+        "expected_output": "timeout\n"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "You want to ensure that sensitive environment variables don't get logged during a Jenkins pipeline run. Which approach is most secure?",
+    "options": [
+      "Use Jenkins credentials plugin to inject variables as secrets",
+      "Echo variables in the pipeline without quotes",
+      "Store secrets in Git repository as plain text",
+      "Set environment variables globally on build agents"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 2
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "While using Terraform with AWS VPC peering, which must you ensure to allow cross-VPC traffic?",
+    "options": [
+      "Route tables include routes to the peered VPC CIDR blocks",
+      "EC2 instance types match in both VPCs",
+      "VPCs have overlapping CIDR blocks",
+      "Security groups are auto-synchronized"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "short_answer",
+    "prompt": "In site reliability engineering, what is an SLO and how does it differ from an SLA?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "SLO is an internal target for service reliability; SLA is a formal external agreement with customers.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "You observe high latency in your Kubernetes services during peak load. Which scaling strategy will best reduce latency?",
+    "options": [
+      "Increase pod replicas with Horizontal Pod Autoscaler",
+      "Switch to a single large pod",
+      "Disable readiness probes",
+      "Scale down the number of pods"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "Which Kubernetes object is specifically designed to securely store and manage sensitive information such as passwords and SSH keys?",
+    "options": [
+      "Secret",
+      "ConfigMap",
+      "Pod",
+      "ServiceAccount"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "coding",
+    "prompt": "Given a simplified Terraform variable definition file from stdin in HCL format, write a program to extract and print all variable names defined. For example, extract 'variable' blocks' names.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "variable \"instance_type\" {\n  default = \"t2.micro\"\n}\nvariable \"region\" {\n  default = \"us-east-1\"\n}\n",
+        "expected_output": "instance_type\nregion\n"
+      },
+      {
+        "input": "variable \"app_port\" {}\n",
+        "expected_output": "app_port\n"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 15,
+    "difficulty": "hard",
+    "points": 4
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "Your team runs CI jobs on multiple cloud regions. One region's pipeline fails at deployment due to DNS resolution errors for internal service endpoints, while others pass. Given this, what is the most likely cause?",
+    "options": [
+      "The region missing private DNS forwarding for VPC endpoints",
+      "Improper container image tags in the failing region",
+      "Misconfigured Kubernetes affinity rules",
+      "Outdated Terraform state files"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "short_answer",
+    "prompt": "You notice CPU throttling on containers running critical microservices in Kubernetes. What is one effective way to reduce CPU throttling without increasing node resources?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Adjust CPU resource requests and limits to better reflect actual usage, avoiding setting limits too low.",
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "You apply a Terraform change that updates a security group ingress rule for HTTP, and all web traffic stops immediately. What is the most probable root cause?",
+    "options": [
+      "Terraform replaced the security group resource, detaching it from running instances",
+      "You applied changes without running terraform plan first",
+      "The new ingress rule uses an overly restrictive or incorrect CIDR block",
+      "Misconfigured AWS IAM permissions on the Terraform role"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "During a Kubernetes rolling update, new pods stay Pending while older pods keep running. What should you inspect first?",
+    "options": [
+      "Describe a Pending pod and read Events for scheduling failures (CPU/memory, quotas, affinity)",
+      "Pod Disruption Budgets on the Deployment",
+      "Horizontal Pod Autoscaler targets",
+      "NetworkPolicy egress rules"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "short_answer",
+    "prompt": "Explain why using immutable container tags (e.g., sha256 digest) is better than using floating tags like 'latest' in CI/CD pipelines.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Immutable tags ensure deployments use exact, unchanging container images, preventing unexpected changes and making rollbacks reliable.",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "coding",
+    "prompt": "You receive a YAML manifest of a Kubernetes Deployment on stdin. It contains multiple containers. Write a program that outputs the names of all containers with a resource limit CPU greater than 500m.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "apiVersion: apps/v1\nkind: Deployment\nspec:\n  template:\n    spec:\n      containers:\n      - name: app1\n        resources:\n          limits:\n            cpu: \"600m\"\n      - name: app2\n        resources:\n          limits:\n            cpu: \"400m\"\n      - name: app3\n        resources:\n          limits:\n            cpu: \"1\"\n",
+        "expected_output": "app1\napp3\n"
+      },
+      {
+        "input": "apiVersion: apps/v1\nkind: Deployment\nspec:\n  template:\n    spec:\n      containers:\n      - name: backend\n        resources:\n          limits:\n            cpu: \"300m\"\n      - name: frontend\n        resources:\n          limits:\n            cpu: \"450m\"\n",
+        "expected_output": ""
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 12,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "Which Kubernetes tool or resource is best suited to reliably track and notify on pod eviction and node drain events for alerting purposes?",
+    "options": [
+      "Kubernetes Event Exporter",
+      "Pod Disruption Budget",
+      "CronJob",
+      "NetworkPolicy"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "short_answer",
+    "prompt": "Describe one reason why it is important to separate application logs and platform or infrastructure logs in a Cloud environment.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Separating logs allows targeted analysis, easier troubleshooting, and clearer ownership boundaries between app and platform teams.",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "coding",
+    "prompt": "Given a simplified shell script snippet that loops over a list of Kubernetes namespaces to restart deployments but restarts incorrectly due to whitespace in names, fix the script using a correct quoting method.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "for ns in $(kubectl get ns -o jsonpath='{.items[*].metadata.name}'); do\n  kubectl rollout restart deployment --namespace=$ns\n done",
+        "expected_output": "for ns in $(kubectl get ns -o jsonpath='{.items[*].metadata.name}'); do\n  kubectl rollout restart deployment --namespace=\"$ns\"\ndone\n"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "In a cloud VPC architecture, you need to allow two VPCs to communicate with each other through a peering connection, but instances using private IPs cannot communicate. What setting is most often missed?",
+    "options": [
+      "Updating route tables to include peering CIDRs",
+      "Configuring NAT gateways",
+      "Enabling public IP addresses on instances",
+      "Running DHCP configuration scripts"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "short_answer",
+    "prompt": "What is an effective SRE strategy to reduce toil related to incident management?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Automate repetitive tasks and implement alerting to reduce manual incident work and improve mean time to resolution.",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "You want to secure communication between microservices over Kubernetes without changing application code. Which approach is simplest to implement?",
+    "options": [
+      "Implement a service mesh like Istio",
+      "Modify application to use TLS",
+      "Use Network Policies with CIDR blocks",
+      "Set up IPsec tunnels manually"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "coding",
+    "prompt": "Write a shell script that reads lines from stdin representing Kubernetes Pod events (format: '<timestamp> <pod_name> <event_type>'), and output only Pod names that have a 'Failed' event at least once.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "2024-01-01T10:00 pod-a Started\n2024-01-01T10:05 pod-b Failed\n2024-01-01T10:10 pod-a Failed\n2024-01-01T10:20 pod-c Started\n",
+        "expected_output": "pod-b\npod-a\n"
+      },
+      {
+        "input": "2024-02-01T08:00 pod-x Started\n2024-02-01T08:10 pod-y Started\n",
+        "expected_output": ""
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "In a Kubernetes cluster, a Deployment is configured with 'maxUnavailable: 0' and 'maxSurge: 3' in its rolling update strategy. What implication does this have during upgrades?",
+    "options": [
+      "No downtime, with up to 3 extra pods started during rollout",
+      "Downtime expected as no pods are available during upgrade",
+      "Rollback disabled automatically",
+      "Upgrade will only update 3 pods total"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "short_answer",
+    "prompt": "In Terraform, when defining modules used by multiple services, why would you want to use 'depends_on' explicitly between module blocks?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "To enforce creation order and prevent race conditions when one module depends on resources created by another.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "Your Prometheus alert is firing for high latency of a service, but the latency metric is only tracked for successful requests, hiding failures. What change best improves observability?",
+    "options": [
+      "Add latency metrics for failed requests separately",
+      "Disable alert temporarily",
+      "Switch to logging only",
+      "Reduce scrape intervals"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "short_answer",
+    "prompt": "Explain a practical approach to ensure incident response teams have consistent, reliable communication during a major cloud outage.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Set up redundant communication channels (e.g., chat, phone bridge), run regular incident drills, and document escalation paths.",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  }
+]

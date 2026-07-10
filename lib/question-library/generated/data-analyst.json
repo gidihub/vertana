@@ -1,0 +1,1239 @@
+[
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "You have two tables: Orders(order_id, customer_id, order_date) and Customers(customer_id, region). You want to find total orders placed in each region in January 2024. Which SQL snippet correctly computes this?",
+    "options": [
+      "SELECT c.region, COUNT(o.order_id) FROM Orders o JOIN Customers c ON o.customer_id = c.customer_id WHERE o.order_date BETWEEN '2024-01-01' AND '2024-01-31' GROUP BY c.region;",
+      "SELECT region, COUNT(order_id) FROM Orders o LEFT JOIN Customers c ON o.customer_id = c.customer_id WHERE order_date BETWEEN '2024-01-01' AND '2024-01-31' GROUP BY region;",
+      "SELECT region, COUNT(*) FROM Customers c JOIN Orders o ON c.customer_id = o.customer_id GROUP BY region HAVING order_date BETWEEN '2024-01-01' AND '2024-01-31';",
+      "SELECT region, COUNT(*) FROM Customers c RIGHT JOIN Orders o ON c.customer_id = o.customer_id WHERE order_date >= '2024-01-01' AND order_date < '2024-02-01' GROUP BY region;"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "You run an A/B test comparing two webpage layouts. The conversion rate for variant A is 5% (1000 visitors), variant B is 6% (950 visitors). How would you assess if the difference is statistically significant at 95% confidence?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use a two-proportion z-test comparing conversion rates with null hypothesis that rates are equal; compute p-value and check if p < 0.05 to confirm significance.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "Write an SQL query that finds the top 3 products by total revenue last quarter, given sales(product_id, sale_date, revenue) where sale_date is a date, revenue is numeric.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "-- sales table contains sales data\n",
+        "expected_output": "product_id | total_revenue\n-----------|--------------\nXYZ123     | 15000\nABC456     | 13000\nDEF789     | 12500\n"
+      },
+      {
+        "input": "-- sales data from last quarter: 2024-01-01 to 2024-03-31\n",
+        "expected_output": "product_id | total_revenue\n-----------|--------------\nP001       | 20000\nP002       | 18000\nP003       | 17000\n"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "During data warehouse design using dbt, which pattern is best to improve query performance while maintaining current and historical data?",
+    "options": [
+      "Using slowly changing dimension Type 2 to capture history while indexing current rows",
+      "Creating aggregate tables pre-joined to reduce query complexity",
+      "Partitioning large fact tables by date and clustering by key columns",
+      "Duplicating dimension tables in each mart for faster joins"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "You receive a dataset where customer purchase timestamps are sometimes missing time zone info or have inconsistent formats. How would you ensure data quality and consistency before analysis?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Normalize timestamps by parsing all formats, convert to a standard timezone (e.g., UTC), and flag or impute missing time zone data; validate consistency before analysis.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "Given a table experiment_results(user_id, variant, converted INT 0/1), write an SQL query to calculate the conversion rate per variant with a 95% Wilson confidence interval for each variant.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "-- sample experiment_results data\n",
+        "expected_output": "variant | conversion_rate | ci_lower | ci_upper\n--------|-----------------|----------|---------\nA       | 0.05            | 0.045    | 0.055\nB       | 0.06            | 0.055    | 0.065\n"
+      },
+      {
+        "input": "-- with variant A=50 conversions/1000, variant B=60/950\n",
+        "expected_output": "variant | conversion_rate | ci_lower | ci_upper\n--------|-----------------|----------|---------\nA       | 0.05            | 0.037    | 0.067\nB       | 0.063           | 0.049    | 0.080\n"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 15,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "You notice sudden spikes in pageviews in your dashboard, but they are not reflected in backend logs. What is the most likely cause?",
+    "options": [
+      "Bot traffic inflating frontend counts",
+      "Cache misses causing double counting",
+      "Backend log ingestion failure",
+      "A/B test variation tracking error"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "Explain how you would use segmentation and funnel analysis together to identify drop-off causes in a checkout funnel.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Segment users by attributes (device, geography) and analyze funnel conversion rates per segment to isolate where and for whom drop-offs are highest, aiding targeted investigation or remediation.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "Write a SQL query that checks for duplicates in a table orders with columns order_id, user_id, order_date. Return order_ids appearing more than once.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "-- sample orders\n",
+        "expected_output": "order_id\n---------\n123\n456\n"
+      },
+      {
+        "input": "-- no duplicates\n",
+        "expected_output": ""
+      }
+    ],
+    "ai_resistance": "low",
+    "estimated_minutes": 5,
+    "difficulty": "easy",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "In an experiment, the average user spends 120 seconds on version A and 135 seconds on version B (n=200 each). Variance for both is similar. You want to test if time spent differs significantly. What test do you use?",
+    "options": [
+      "Two-sample t-test for difference of means",
+      "Chi-squared test for independence",
+      "Wilcoxon signed-rank test for paired samples",
+      "F-test to compare variances"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "A dashboard shows sales by region, but some regions show zero sales despite known activity. What steps do you take to troubleshoot data quality?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Check data pipeline for missing region data or filters excluding regions; validate data source completeness; verify ETL transformations and mapping from source to dashboard.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "Given a table user_actions(user_id, action, action_time), write SQL to find the average time between consecutive actions per user.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "-- Example user_actions\n",
+        "expected_output": "user_id | avg_seconds_between_actions\n--------|------------------------------\n1       | 120\n2       | 450\n"
+      },
+      {
+        "input": "-- Single action users\n",
+        "expected_output": "user_id | avg_seconds_between_actions\n--------|------------------------------\n3       | NULL\n"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 12,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "You want to prevent double counting users who visit multiple pages in a session view dashboard metric. What dimensional modeling approach helps?",
+    "options": [
+      "Use distinct count of user_id per session",
+      "Sum page views per user",
+      "Use a factless fact table tracking sessions only",
+      "Aggregate page views and ignore users"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "Describe how you would validate assumptions in an experiment where users self-select into variant groups instead of being randomly assigned.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Check for baseline differences in key covariates between groups, use propensity score matching or regression adjustment to control for selection bias, and interpret results cautiously.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "difficulty": "hard",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "Write a SQL query using dbt incremental model style that updates a table daily, loading new records from raw_events where event_date is today or newer, avoiding duplicates.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "-- raw_events have event_date column\n",
+        "expected_output": "-- incremental select with where event_date >= last loaded date\n"
+      },
+      {
+        "input": "-- assume last loaded date is easily referenced\n",
+        "expected_output": "SELECT * FROM raw_events WHERE event_date >= (SELECT MAX(event_date) FROM {{ this }});\n"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 15,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "You see a dashboard showing a KPI trending downward over 6 months. To understand if a data source change caused it, what first step should you take?",
+    "options": [
+      "Check ETL logs and data schemas for changes during timeframe",
+      "Survey users about recent changes",
+      "Add smoothing to the dashboard metric",
+      "Ignore and focus on product changes"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "Your company needs a metric showing active users who performed at least two different event types in the past week. How do you define and measure this?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Define active users as users with >=2 distinct event types logged in past 7 days; count distinct user_ids meeting this criterion by querying event logs filtered on event_date and grouping by user_id with HAVING count(distinct event) >= 2.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "Write SQL to detect rows with inconsistent gender data in a customer table that contains multiple rows per customer_id but differing gender values.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "-- sample customer data\n",
+        "expected_output": "customer_id\n-----------\n1001\n1023\n"
+      },
+      {
+        "input": "-- all consistent gender\n",
+        "expected_output": ""
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 8,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "While building a real-time dashboard, what technique helps ensure data freshness without overloading the data warehouse?",
+    "options": [
+      "Use a streaming ETL with micro-batches",
+      "Schedule hourly full table refreshes",
+      "Use only pre-aggregated daily snapshots",
+      "Ignore data freshness to reduce load"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "You find that a user behavior metric is highly skewed with some extreme outliers. How would you report this metric and make statistical comparisons?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use median and interquartile ranges to summarize; apply non-parametric tests like Mann-Whitney U for comparisons; consider transformations or winsorizing if appropriate.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "Write a SQL query to identify potential data quality issues where the total of daily sales differs from the sum of orders in the same day table.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "-- sales_daily(date, total_sales)\n-- orders(order_id, order_date, amount)\n",
+        "expected_output": "date | sales_mismatch\n-----|---------------\n2024-04-01 | TRUE\n2024-04-02 | FALSE\n"
+      },
+      {
+        "input": "-- no mismatches\n",
+        "expected_output": ""
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "In an experiment testing a new feature rollout, why is it important to run the test long enough to cover multiple user cycles?",
+    "options": [
+      "To average out seasonal or behavioral variations",
+      "To collect more data and increase p-value",
+      "To validate experiment code quality",
+      "To reduce variance by ignoring outliers"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "What is a dashboard refresh pattern suitable for business users who expect updated data every morning by 9 AM but not in real-time?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Schedule a daily ETL job to run before 9 AM, populating a reporting table and refreshing the dashboard with the nightly processed data for consistent daily reports.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "Given a table clicks(user_id, page, click_time), write SQL to find the top 5 pages by unique user clicks in the last 7 days.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "-- clicks with click_time in last 7 days\n",
+        "expected_output": "page | unique_users\n-----|-------------\nHome | 500\nSearch | 430\nProduct | 390\nAbout | 200\nContact | 150\n"
+      },
+      {
+        "input": "-- empty clicks\n",
+        "expected_output": ""
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 8,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "You have a large orders table partitioned by order_date and want to optimize a query that aggregates daily revenue for the last 7 days. Which approach is likely to improve query performance the most?",
+    "options": [
+      "Filter on the partition column order_date before aggregation",
+      "Create a new table with pre-aggregated daily revenues and query it",
+      "Use a correlated subquery to calculate daily revenues within the main query",
+      "Add an index on the order_id column to speed up aggregation"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "After launching an A/B experiment, the data team notices a significant imbalance in user demographics between control and treatment groups. Explain a likely cause and how to address it.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "The randomization mechanism likely failed or was not properly stratified; implement stratified randomization or re-randomize ensuring balanced demographics.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "Write an SQL query for a table purchases(user_id, purchase_amount, purchase_date) that returns the moving average of purchase_amount over the last 3 purchases per user, ordered by purchase_date.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "purchases:\nuser_id | purchase_amount | purchase_date\n1 | 10.0 | 2024-01-01\n1 | 20.0 | 2024-01-05\n1 | 30.0 | 2024-01-10\n2 | 15.0 | 2024-01-02\n2 | 25.0 | 2024-01-08",
+        "expected_output": "user_id | purchase_date | moving_avg\n1 | 2024-01-01 | 10.0\n1 | 2024-01-05 | 15.0\n1 | 2024-01-10 | 20.0\n2 | 2024-01-02 | 15.0\n2 | 2024-01-08 | 20.0"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 12,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "You notice that a dashboard metric for daily active users (DAU) is decreasing, but the raw event log shows steady or increasing user activity. What is the most likely explanation?",
+    "options": [
+      "The ETL pipeline updating the DAU metric is delayed or failing",
+      "Users are generating more events, but by fewer unique users",
+      "The dashboard visualization has a bug in the chart settings",
+      "The user_id field in event logs has duplicates inflating counts"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "Explain how you would use the chi-square test in analyzing the results of an experiment testing two different webpage designs for conversion rate differences.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use chi-square to test if the observed conversion frequencies in each group differ significantly from expected frequencies under the null hypothesis of no difference.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "Given a sales table (sale_id, product_id, sale_date, quantity), write SQL to identify products with sales on at least 3 consecutive days in the last month.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "sales:\nsale_id | product_id | sale_date | quantity\n1 | 100 | 2024-04-01 | 5\n2 | 100 | 2024-04-02 | 3\n3 | 100 | 2024-04-03 | 7\n4 | 200 | 2024-04-01 | 1\n5 | 200 | 2024-04-03 | 4\n6 | 300 | 2024-04-05 | 2\n7 | 300 | 2024-04-06 | 3\n8 | 300 | 2024-04-07 | 6",
+        "expected_output": "product_id\n100\n300"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 15,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "Your data warehouse uses dbt incremental models to load daily new data from raw_events. You realize data quality issues in historical records. Which pattern helps you correct and reprocess historical data efficiently?",
+    "options": [
+      "Use a full-refresh to rebuild the entire model from scratch",
+      "Implement a late-arriving data pattern that reprocesses specific historical partitions",
+      "Run an on-demand script to update the base raw_events table only",
+      "Archive historical data and keep only recent months in the warehouse"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "Describe a reliable method to detect and handle duplicate records in a large customer_transactions table that lacks a primary key.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Identify duplicates by grouping on all relevant columns or a hash of concatenated fields and retain only one record per group, then delete or flag duplicates.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "Write an SQL query that calculates the average session duration per user given a sessions table(user_id, session_start, session_end). Output user_id and avg_session_duration (in minutes).",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "sessions:\nuser_id | session_start | session_end\n1 | 2024-01-01 10:00:00 | 2024-01-01 10:30:00\n1 | 2024-01-02 11:00:00 | 2024-01-02 11:45:00\n2 | 2024-01-03 09:00:00 | 2024-01-03 09:20:00",
+        "expected_output": "user_id | avg_session_duration\n1 | 37.5\n2 | 20"
+      }
+    ],
+    "ai_resistance": "medium",
+    "estimated_minutes": 8,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "You are tasked with building a dashboard that updates automatically every hour but relies on expensive queries on raw data. What is the best approach to ensure timely updates without overloading the warehouse?",
+    "options": [
+      "Use pre-aggregated summary tables updated via incremental dbt models",
+      "Run live queries on raw data only during off-peak hours",
+      "Increase compute resources to handle the query load",
+      "Reduce dashboard update frequency to once per day"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "How would you validate the assumption of independence between two categorical variables before applying an A/B test analysis?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use statistical tests like chi-square for independence on contingency tables or check correlation metrics to confirm variables don't influence each other.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "The users_events table(user_id, event_type, event_timestamp) logs user actions. Write SQL that counts unique users who performed at least two different event_types within the same day.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "users_events:\nuser_id | event_type | event_timestamp\n1 | 'click' | 2024-04-01 10:00:00\n1 | 'purchase' | 2024-04-01 12:00:00\n2 | 'click' | 2024-04-01 11:00:00\n2 | 'click' | 2024-04-01 15:00:00\n3 | 'view' | 2024-04-02 09:00:00\n3 | 'purchase' | 2024-04-02 10:00:00",
+        "expected_output": "count\n2"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "A dashboard metric shows sales per region, but one important region has zero sales despite known activity. What is the best first step to troubleshoot?",
+    "options": [
+      "Check the ETL process for filtering or transformation errors affecting that region",
+      "Verify the dashboard visualization code for bugs",
+      "Confirm the region code mapping matches between source and dashboard",
+      "Check if the sales date filters exclude that region's recent data"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "Explain how to apply segmentation in funnel analysis to identify specific user groups causing large drop-offs in a signup process.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Divide users into meaningful segments (e.g., device type, geography), then calculate funnel conversion rates by segment to pinpoint groups with abnormal drop-offs.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "Write an SQL query to detect days where the total daily sales amount differs by more than 5% compared to the sum of individual order amounts for those days given orders(order_id, order_date, order_amount) and payments(payment_id, order_id, payment_amount).",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "orders:\norder_id | order_date | order_amount\n1 | 2024-04-01 | 100\n2 | 2024-04-01 | 50\n3 | 2024-04-02 | 70\n\npayments:\npayment_id | order_id | payment_amount\n1 | 1 | 95\n2 | 2 | 48\n3 | 3 | 75",
+        "expected_output": "order_date\n2024-04-02"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 15,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "When performing an experiment analysis, why is it important to run the test long enough to cover multiple user cycles?",
+    "options": [
+      "To ensure enough data to detect statistically significant effects",
+      "To account for seasonality and behavior changes over time",
+      "To reduce the impact of Look-Er Effect where users modify behavior after first exposure",
+      "All of the above"
+    ],
+    "correct_option_index": 3,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "You notice a metric with high skew and extreme outliers. How would you report this metric to stakeholders and handle the outliers technically?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Report median and percentiles alongside mean; consider transformation or winsorizing to reduce outlier impact in analysis and visualization.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "Write an SQL query that detects inconsistent gender data in a customers table where a customer_id may have multiple rows with different gender values.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "customers:\ncustomer_id | gender\n1 | 'M'\n1 | 'F'\n2 | 'F'\n3 | 'M'\n3 | 'M'\n4 | NULL",
+        "expected_output": "customer_id\n1"
+      }
+    ],
+    "ai_resistance": "medium",
+    "estimated_minutes": 8,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "You are designing a data warehouse schema in dbt and want to make querying fast for business users. Which pattern best balances fast reads with flexibility in analysis?",
+    "options": [
+      "Create centralized fact tables with denormalized dimension data",
+      "Use normalized 3NF schema to reduce data duplication",
+      "Build star schema with conformed dimensions and aggregates",
+      "Store data in raw form and query ad hoc as needed"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "How do you assess data freshness in a real-time streaming pipeline vs batch ETL pipeline for a business-critical dashboard?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Measure latency from data generation to availability in dashboard; streaming pipelines generally have milliseconds to minutes latency, batch pipelines have fixed delays based on batch frequency.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "Given a log table(event_time TIMESTAMP, user_id, event_type), write SQL to find the average time difference in seconds between consecutive events for each user.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "log:\nevent_time | user_id | event_type\n2024-05-01 10:00:00 | 1 | 'login'\n2024-05-01 10:05:00 | 1 | 'click'\n2024-05-01 10:10:00 | 2 | 'login'\n2024-05-01 10:20:00 | 1 | 'logout'\n2024-05-01 10:25:00 | 2 | 'click'",
+        "expected_output": "user_id | avg_time_diff_seconds\n1 | 600\n2 | 900"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 12,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "If you want a metric counting users who visited multiple distinct pages in the same session without double counting, which dimensional modeling strategy is best?",
+    "options": [
+      "Use a session dimension with one row per session, counting distinct users",
+      "Use a user dimension and sum page visits directly",
+      "Build a bridge table linking users and pages visited per session",
+      "Keep a denormalized wide table with one column per page"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "You spot that a certain experiment’s user assignment isn’t random but users self-select variants. How does this impact result validity, and how do you address it?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Self-selection creates selection bias, invalidating causal inference; use observational study adjustments like propensity score matching or collect randomized assignment data.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "Write an SQL query using dbt incremental model style that appends only new records from raw_events(event_id, event_timestamp) to a final_events table, assuming event_id is unique.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "Existing final_events:\nevent_id | event_timestamp\n1 | 2024-01-01 00:00:00\n2 | 2024-01-02 00:00:00\n\nraw_events:\nevent_id | event_timestamp\n2 | 2024-01-02 00:00:00\n3 | 2024-01-03 00:00:00\n4 | 2024-01-04 00:00:00",
+        "expected_output": "event_id | event_timestamp\n1 | 2024-01-01 00:00:00\n2 | 2024-01-02 00:00:00\n3 | 2024-01-03 00:00:00\n4 | 2024-01-04 00:00:00"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 8,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "You observe that a key dashboard metric is unexpectedly zero for a recent date while historical data looks fine. Which is the most reliable initial SQL query to diagnose if the data load for that date failed?",
+    "options": [
+      "SELECT COUNT(*) FROM sales WHERE sale_date = 'YYYY-MM-DD';",
+      "SELECT MAX(sale_date) FROM sales;",
+      "SELECT sale_date, COUNT(*) FROM sales GROUP BY sale_date ORDER BY sale_date DESC LIMIT 5;",
+      "SELECT DISTINCT sale_date FROM sales ORDER BY sale_date DESC;"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "You’re analyzing an A/B test where the conversion rate of the test variant is 12% (n=500) and control is 10% (n=600). The p-value is 0.08. What would be your concise interpretation regarding statistical significance?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "The difference is not statistically significant at the 0.05 level; we cannot reject the null hypothesis that conversion rates are the same.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "Given a table user_events(user_id INT, event_type VARCHAR, event_time TIMESTAMP), write SQL to find the top 3 users with the highest number of distinct event types in the last 30 days.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "-- Assume current_date = '2024-06-30'\nuser_events:\n(1, 'click', '2024-06-29 10:00:00')\n(1, 'purchase', '2024-06-15 12:00:00')\n(2, 'click', '2024-06-25 14:00:00')\n(2, 'click', '2024-06-25 15:00:00')\n(3, 'purchase', '2024-06-10 10:00:00')\n(3, 'view', '2024-06-20 09:00:00')\n(3, 'click', '2024-06-22 16:00:00')\n(4, 'purchase', '2024-06-29 11:00:00')\n\n-- Expected output:\n3, 3\n1, 2\n2, 1",
+        "expected_output": "3, 3\n1, 2\n2, 1"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "Your company uses dbt incremental models to update sales_daily from raw_sales. You discover some records were updated retroactively in raw_sales but incremental logic uses 'max(date)' filter. What's the best approach to ensure data correctness?",
+    "options": [
+      "Rely on incremental load only; no change needed.",
+      "Add a full-refresh once per week.",
+      "Add a \"reprocessing\" step that reprocesses recent days beyond max(date) to catch late changes.",
+      "Switch to full-refresh daily for simplicity."
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "You find a metric calculated as average revenue per user has a highly skewed distribution with many outliers. How would you best report this metric to leadership?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Report median revenue per user and include percentiles or a trimmed mean to reduce outlier impact.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "Given a table experiment_results(user_id INT, variant VARCHAR, conversion BOOLEAN, event_time DATE), write SQL to calculate the daily conversion rate for each variant over the past 14 days.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "-- experiment_results:\n(1, 'A', true, '2024-06-28')\n(2, 'A', false, '2024-06-28')\n(3, 'B', true, '2024-06-28')\n(3, 'B', true, '2024-06-27')\n(4, 'B', false, '2024-06-27')\n\n-- Expected output:\ndate, variant, conversion_rate\n2024-06-27, B, 0.5\n2024-06-28, A, 0.5\n2024-06-28, B, 1.0\n\n-- Rows for each date/variant with conversion_rate = (conversions/users)",
+        "expected_output": "2024-06-27,B,0.5\n2024-06-28,A,0.5\n2024-06-28,B,1.0"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 12,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "A dashboard shows sudden missing data from one data source component after a pipeline upgrade. Which approach is best to isolate the issue?",
+    "options": [
+      "Restart the pipeline immediately.",
+      "Query the data source logs for error messages during the upgrade.",
+      "Rollback the data warehouse to a previous backup.",
+      "Ask product management if users see issues."
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "Explain one method to handle late-arriving data in a daily sales ETL pipeline to ensure accurate reporting.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use a data partition with a configurable delay (e.g., process yesterday's data 1–2 days later) or reprocess recent partitions to include late data.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "You have a sales table (order_id INT, product_id INT, sale_date DATE, quantity INT). Write SQL to find products with sales on at least 4 distinct calendar weeks within the past 12 weeks.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "-- sales:\n(1, 101, '2024-04-01', 5)  -- week 14\n(2, 101, '2024-04-10', 3)  -- week 15\n(3, 101, '2024-04-20', 2)  -- week 16\n(4, 101, '2024-05-05', 4)  -- week 18\n(5, 102, '2024-04-03', 1)\n(6, 102, '2024-04-10', 1)\n(7, 102, '2024-04-17', 2)\n-- Expected output:\n101\n-- Because it has sales in weeks 14, 15, 16, and 18\n",
+        "expected_output": "101"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 15,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "You create a new dashboard metric that joins two large tables on user_id, but the dashboard performance is very slow. What is the best initial optimization?",
+    "options": [
+      "Add indexes on the join keys in both tables.",
+      "Reduce the join to only recent data relevant to the dashboard.",
+      "Switch to a dashboard tool that caches results.",
+      "Use distinct instead of joins to aggregate separately."
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "In a two-variant A/B test, you detect significant imbalance in user attributes between variants despite random assignment. What data issue might this indicate?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Possible issues with randomization method, such as non-random assignment, leakage, or data joining errors leading to biased groups.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "Given a table log_events(user_id INT, session_id INT, event_time TIMESTAMP), write SQL to calculate the average session duration per user over the last 7 days.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "-- log_events:\n(1, 10, '2024-06-23 10:00:00')\n(1, 10, '2024-06-23 10:30:00')\n(1, 11, '2024-06-24 11:00:00')\n(1, 11, '2024-06-24 11:20:00')\n(2, 20, '2024-06-22 09:00:00')\n(2, 20, '2024-06-22 09:45:00')\n\n-- Expected output:\nuser_id, avg_session_duration_seconds\n1, 1500\n2, 2700\n\n-- Session duration = max(event_time)-min(event_time) per session\n-- Then average per user",
+        "expected_output": "1,1500\n2,2700"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 15,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "Which statistical test should you use to compare the distribution of a continuous metric that is not normally distributed between two independent groups in an experiment?",
+    "options": [
+      "Two-sample t-test",
+      "Chi-square test",
+      "Mann-Whitney U test",
+      "ANOVA"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "Describe a good approach to monitor data freshness for a near real-time events table feeding a dashboard.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Track the timestamp of the latest ingested event and alert if lag exceeds threshold; use heartbeat or watermark metrics to monitor pipeline delays.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "Given an orders table(order_id INT, user_id INT, order_date DATE), write SQL to select users who have placed orders on at least 3 different days in the last 30 days.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "-- orders:\n(1, 10, '2024-06-01')\n(2, 10, '2024-06-05')\n(3, 10, '2024-06-10')\n(4, 11, '2024-06-02')\n(5, 11, '2024-06-02')\n(6, 12, '2024-06-01')\n(7, 12, '2024-05-20')\n\n-- Expected output:\n10",
+        "expected_output": "10"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "In a segmentation funnel analysis, you see a large drop-off in one segment compared to others. What is the best next step?",
+    "options": [
+      "Ignore segments with drop-offs to focus on overall funnel.",
+      "Investigate the user behavior and attributes in that segment more closely.",
+      "Combine that segment with similar ones to smooth data.",
+      "Remove outliers from the dataset."
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "short_answer",
+    "prompt": "Explain why an experiment’s test duration should cover multiple user cycles.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "To capture natural variability in user behavior over time and ensure results aren’t biased by short-term trends or seasonality.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "In a data warehouse table sessions(user_id INT, session_start TIMESTAMP, session_end TIMESTAMP), write SQL to find users with at least one session longer than 2 hours in the past month.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "-- sessions:\n(1, '2024-05-15 10:00:00', '2024-05-15 12:30:00')\n(1, '2024-06-10 09:00:00', '2024-06-10 10:00:00')\n(2, '2024-06-01 11:00:00', '2024-06-01 12:15:00')\n(3, '2024-06-20 08:00:00', '2024-06-20 11:00:00')\n\n-- Expected output:\n1\n3",
+        "expected_output": "1\n3"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 12,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "Your data pipeline uses dbt models to implement star schema in the warehouse. Which pattern helps with easy incremental data loads for dimension tables?",
+    "options": [
+      "Build full-refresh models only.",
+      "Use snapshots for slowly changing dimensions.",
+      "Load dimension tables daily without deduplication.",
+      "Use incremental models with merge strategies on natural keys."
+    ],
+    "correct_option_index": 3,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "Your data warehouse team is redesigning how they use dbt incremental models to process daily user event data. They notice that during certain days, the incremental models occasionally reprocess large volumes of unchanged data, causing slowdowns. Which of the following dbt incremental strategies best reduces this unnecessary reprocessing?",
+    "options": [
+      "Use a `unique_key` and `is_incremental()` to insert only new records and filter on last updated timestamp.",
+      "Disable incremental models and switch to full-refresh runs every day.",
+      "Partition the base table by event_date but do not filter incremental models on event_date.",
+      "Store incremental models as views instead of tables to always reflect latest data."
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "coding",
+    "prompt": "You have an experiment_results table with columns: user_id (INT), variant (VARCHAR), conversion (BOOLEAN), and event_time (DATE). Write an SQL query to calculate the conversion rate and 95% confidence interval for each variant using a normal approximation. The output should have columns: variant, conversion_rate, ci_lower, ci_upper. Assume large sample sizes and use z=1.96 for the confidence interval.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "experiment_results:\nuser_id | variant | conversion | event_time\n1       | control | true       | 2023-05-01\n2       | control | false      | 2023-05-01\n3       | test    | true       | 2023-05-01\n4       | test    | true       | 2023-05-01\n5       | test    | false      | 2023-05-01",
+        "expected_output": "variant | conversion_rate | ci_lower | ci_upper\ncontrol | 0.5             | 0.0      | 1.0\ntest    | 0.6667          | 0.0992   | 1.2342"
+      },
+      {
+        "input": "experiment_results:\nuser_id | variant | conversion | event_time\n1       | A       | true       | 2023-01-01\n2       | A       | true       | 2023-01-01\n3       | A       | false      | 2023-01-01\n4       | B       | false      | 2023-01-01\n5       | B       | false      | 2023-01-01\n6       | B       | false      | 2023-01-01",
+        "expected_output": "variant | conversion_rate | ci_lower | ci_upper\nA       | 0.6667          | 0.2074   | 1.1259\nB       | 0.0             | 0.0      | 0.0"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 15,
+    "difficulty": "hard",
+    "points": 3
+  }
+]

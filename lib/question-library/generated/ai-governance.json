@@ -1,0 +1,554 @@
+[
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "Your company is rolling out a 2026 customer-support chatbot for EU users. The bot will draft responses, but agents must approve anything that mentions refunds, cancellations, or legal claims. Which control best fits a human-in-the-loop governance design?",
+    "options": [
+      "Let the bot auto-send all answers unless the customer complains",
+      "Require agent review only for chats longer than 10 turns",
+      "Route all high-impact or legally sensitive drafts to a human for final approval before sending",
+      "Allow the bot to respond freely, but log the conversation after the fact"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "A sales team wants to paste full customer contracts into a public LLM to summarize obligations. The vendor says prompts may be retained for product improvement unless the customer pays extra. What is the best enterprise response?",
+    "options": [
+      "Approve it because the LLM is only summarizing text",
+      "Allow it only for contracts under 10 pages",
+      "Block the use of that public LLM for contract text and require an enterprise-approved service with non-retention controls",
+      "Permit it if employees delete the chat history afterward"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "An internal hiring tool uses an LLM to rank candidates based on resumes and interview notes. The tool is found to downgrade applicants who had non-standard career breaks, even when qualifications are strong. What is the most appropriate governance action?",
+    "options": [
+      "Ignore the issue because the model is not making final decisions",
+      "Treat it as a fairness risk, suspend deployment, and validate the ranking logic and training data for bias",
+      "Fix it by removing all candidates with gaps from the dataset",
+      "Reduce the number of ranking criteria to make the model faster"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "A vendor offers an AI meeting assistant that records executive calls, generates summaries, and extracts action items. The vendor cannot clearly explain where audio is stored, how long transcripts are retained, or whether data is used to train other models. What should the procurement team do first?",
+    "options": [
+      "Approve it since meeting summaries are low risk",
+      "Request a security questionnaire only",
+      "Pause adoption until retention, storage, training-use, and deletion terms are contractually clarified",
+      "Allow a pilot but prohibit all summaries"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "A product team wants to ship a generative AI feature that drafts customer-facing troubleshooting steps. During testing, the model sometimes invents unsupported steps and cites nonexistent product settings. Which control is most effective to reduce harm before launch?",
+    "options": [
+      "Lower the model temperature and ship immediately",
+      "Add retrieval from approved documentation plus a validation layer that blocks unsupported claims",
+      "Hide the citations from users so they do not notice errors",
+      "Use a longer prompt describing the company brand voice"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "A global bank is considering an LLM vendor that subcontracts data processing to another provider in a different region. The bank needs to answer auditors on where prompts and outputs may flow. Which document is most important to request?",
+    "options": [
+      "A marketing brochure explaining the model roadmap",
+      "A data processing and subprocessor disclosure covering storage, transfer locations, and retention",
+      "A list of the vendor's top customers",
+      "A screenshot of the vendor's chat UI"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "An employee asks an enterprise chatbot to summarize a confidential incident report. The prompt includes patient names, a timeline, and root-cause notes. Which practice best reduces privacy risk while still enabling analysis?",
+    "options": [
+      "Replace the whole report with an image so the model cannot read it",
+      "Redact direct identifiers and other unnecessary personal data before sending the prompt",
+      "Ask the model not to remember the content",
+      "Use the same prompt but send it from a personal account"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "A compliance team is drafting an acceptable use policy for employees using external LLMs. Which rule is most important for enterprise control of prompt handling?",
+    "options": [
+      "Employees may use any model as long as they are productive",
+      "Do not enter confidential, regulated, or client-identifiable information into unapproved tools",
+      "All prompts must be at least 200 words long",
+      "Use AI only for brainstorming, never for writing"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "short_answer",
+    "prompt": "In 2025, your finance team uses an AI assistant to draft quarterly earnings commentary. The assistant sometimes introduces forward-looking statements that were not approved by legal. What is one governance control you would add before allowing broad use?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Require legal/compliance review of AI-generated external statements before publication.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "A vendor evaluation checklist asks how the model logs prompts, outputs, user IDs, approval status, and overrides for regulated workflows. Why is this audit trail important?",
+    "options": [
+      "It improves model creativity",
+      "It supports traceability, incident investigation, and regulatory evidence of human oversight",
+      "It reduces token costs",
+      "It eliminates the need for model testing"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "An EU-facing HR screening tool is classified as high-risk under your internal policy. The business wants to launch with only quarterly monitoring because daily reviews are too expensive. What is the best governance response?",
+    "options": [
+      "Approve quarterly monitoring because cost matters most",
+      "Escalate because high-risk use cases need stronger controls, documented oversight, and ongoing monitoring commensurate with risk",
+      "Allow launch if candidates consent",
+      "Switch the language to English only to reduce risk"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "An engineering team plans to let an LLM generate SQL queries against production data. The model may occasionally infer unrelated tables and expose more customer records than intended. What is the safest design choice?",
+    "options": [
+      "Give the model full database admin rights",
+      "Use a read-only, least-privilege service account with query allowlists and output filtering",
+      "Let the model connect through a developer laptop",
+      "Trust the model because it has been benchmarked"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "A customer success team wants to use a public chatbot to summarize support tickets. The tickets often contain addresses, order numbers, and health-related notes. Which action best aligns with responsible data handling?",
+    "options": [
+      "Allow it for tickets with fewer than five fields",
+      "Require automated redaction or a private, enterprise-controlled model before any ticket text is sent",
+      "Tell agents to avoid looking at the ticket before pasting it",
+      "Permit it only after the bot is trained on support tone"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "A legal team asks whether a vendor's model is transparent enough for a regulated decision workflow. The vendor provides no information on training data sources, evaluation results, or known failure modes. What is the biggest governance gap?",
+    "options": [
+      "No colorful UI",
+      "Insufficient model documentation for risk assessment and due diligence",
+      "The vendor uses cloud hosting",
+      "The model answers too quickly"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "short_answer",
+    "prompt": "A customer support bot is hallucinating refund policies during a holiday promotion. The bot has access to approved policy docs, but it still invents details. Name one technical control and one process control you would implement.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Technical: retrieval with citation/grounding checks; Process: human review for policy-sensitive responses.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "Your company wants employees to use consumer chatbots for brainstorming but not for code that will be deployed. Which policy wording is most appropriate?",
+    "options": [
+      "All AI use is banned",
+      "AI may be used for ideation, but any generated code must be reviewed, tested, and approved before deployment",
+      "Employees may deploy any AI-generated code if it compiles",
+      "Only interns may use AI tools"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "A model is used to suggest credit-limit adjustments. In testing, it performs well overall but is notably less accurate for one age group. What is the best interpretation?",
+    "options": [
+      "Overall accuracy is enough; subgroup performance does not matter",
+      "This indicates a potential fairness issue that needs subgroup analysis and remediation",
+      "The model is acceptable if the age group is small",
+      "It proves the model is unbiased because it is statistical"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "A vendor says its generative AI service is SOC 2 certified, so no further review is needed. Which statement is most accurate?",
+    "options": [
+      "SOC 2 automatically covers AI bias and hallucinations",
+      "SOC 2 is useful, but you still need AI-specific assessment for model behavior, data handling, and intended use",
+      "SOC 2 means the model is legally compliant everywhere",
+      "SOC 2 replaces internal policy"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "short_answer",
+    "prompt": "Your marketing team wants to use an LLM to generate personalized outreach based on CRM notes. What is one privacy safeguard you would require before rollout?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Minimize or mask personal data in prompts and restrict the model to approved CRM fields only.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "An employee pastes a proprietary code snippet into a public AI coding assistant and later discovers the assistant generated similar code for another user. What is the primary enterprise risk?",
+    "options": [
+      "Brand color mismatch",
+      "Confidential information leakage and potential IP exposure",
+      "Lower inference latency",
+      "Overfitting to comments"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "You are selecting a vendor for an AI agent that will open support tickets, issue refunds up to a threshold, and email customers. What is the most important safeguard for authorization?",
+    "options": [
+      "A larger prompt window",
+      "Role-based permissions and step-up approval for any action with financial impact",
+      "A cheerful chatbot persona",
+      "A weekly newsletter about AI"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "Under a 2026 enterprise AI policy, which logging practice is most helpful for reconstructing a harmful output from a deployed LLM application?",
+    "options": [
+      "Only the final user-visible answer",
+      "Prompt, retrieved context, model version, system instructions hash, user identity, and approval/override events",
+      "A screenshot of the homepage",
+      "The vendor's general uptime stats"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "short_answer",
+    "prompt": "A procurement team is comparing two LLM vendors for a regulated workflow. One offers configurable data retention, no training on customer prompts, audit logs, and region pinning. Give one reason these features matter.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "They reduce privacy, compliance, and traceability risk in regulated use.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "coding",
+    "prompt": "You are building a simple policy gate for enterprise AI prompts. Read an integer n, then n prompt strings. For each prompt, output BLOCKED if it contains any of these substrings case-insensitively: 'ssn', 'patient', 'credit card', or 'confidential'. Otherwise output ALLOWED. Print one result per line. Programs read stdin and write stdout.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "4\nSummarize this confidential acquisition memo\nDraft a marketing slogan\nFind the patient id in this note\nUpdate the FAQ\n",
+        "expected_output": "BLOCKED\nALLOWED\nBLOCKED\nALLOWED\n"
+      },
+      {
+        "input": "3\nshow SSN format examples\ncredit Card refund policy\ninternal roadmap\n",
+        "expected_output": "BLOCKED\nBLOCKED\nALLOWED\n"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 12,
+    "difficulty": "easy",
+    "points": 3
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "In 2026, your EU customer-ops team wants to use a hosted LLM to summarize live chat transcripts before an agent responds. The vendor says prompts are retained for 30 days for abuse monitoring, and the transcript often includes names, booking IDs, and health-related complaints. What is the best governance decision before rollout?",
+    "options": [
+      "Approve it if agents are told not to paste passwords, because the vendor retention is only 30 days",
+      "Require a data protection review, minimize/redact personal and sensitive fields, and confirm the vendor's retention, transfer, and training-use terms",
+      "Proceed, because summarization is a low-risk internal productivity use case",
+      "Block all LLM use involving chat transcripts, regardless of controls"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "A product team plans to let an LLM draft responses in a claims-adjustment workflow. The model will decide whether to approve, deny, or send a claim to a reviewer. Under an enterprise human-in-the-loop policy, which control is most important before launch?",
+    "options": [
+      "Allow fully automated decisions as long as the model confidence is above 80%",
+      "Require a human reviewer to approve any claim decision and log model suggestions, reviewer overrides, and rationale",
+      "Let the model decide, then sample 1% of decisions for later quality review",
+      "Publish a disclaimer that the tool is experimental and therefore exempt from review"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "short_answer",
+    "prompt": "A procurement lead is comparing two LLM vendors for a 2026 enterprise deployment. Vendor A says customer prompts may be used to improve its models unless the customer opts out; Vendor B contractually prohibits training on customer content, supports region pinning, and provides per-request audit logs. Give one concise reason Vendor B is the safer choice for a regulated enterprise workflow.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Vendor B offers stronger data protection and auditability: no training on customer content, regional controls, and per-request logs for traceability.",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "A European retailer is evaluating a vendor for an employee-facing LLM that drafts performance-review notes and promotion recommendations. The vendor provides a model card, SOC 2 report, and uptime SLA, but no information about bias testing, subgroup performance, or how the model handles protected characteristics. What is the most appropriate gap to flag?",
+    "options": [
+      "The vendor lacks an SLA, which is the only required document for AI governance",
+      "The vendor has not shown evidence of fairness evaluation and risk controls for a high-impact use case",
+      "The vendor should be rejected because all employee-facing AI is banned in the EU",
+      "The model card is unnecessary if the system is only used by HR staff"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "short_answer",
+    "prompt": "Your legal team asks whether an internal LLM that helps draft policy language could fall under the EU AI Act. The system is not used to make decisions, but employees may rely on its outputs in compliance documents. What is the most important governance principle to state in one sentence?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Assess the use case by actual impact and controls, not just whether a human is nominally involved; document risk, oversight, and intended use.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "coding",
+    "prompt": "You are building a simple enterprise AI prompt gate. Read an integer n, then n prompt lines. For each prompt, output ALLOW if it contains no prohibited data, otherwise REDACT. Treat a prompt as prohibited if it contains any of these case-insensitive substrings: 'ssn', 'credit card', 'password', 'medical record'. Output one result per line in the same order.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "4\nSummarize the customer email\nInclude SSN in the draft\nReset the password for user 7\nReview medical record summary\n",
+        "expected_output": "ALLOW\nREDACT\nREDACT\nREDACT\n"
+      },
+      {
+        "input": "3\ncredit card chargeback issue\nNo sensitive data here\nmedical Record copied accidentally\n",
+        "expected_output": "REDACT\nALLOW\nREDACT\n"
+      },
+      {
+        "input": "2\nPASSWORD rotation plan\nSSn is missing\n",
+        "expected_output": "REDACT\nREDACT\n"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "easy",
+    "points": 2
+  }
+]

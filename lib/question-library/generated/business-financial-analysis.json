@@ -1,0 +1,713 @@
+[
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "A subscription SaaS company grew monthly recurring revenue from $400k to $520k in one quarter, but net new ARR was only $60k. The CFO says expansion revenue is driving growth. Which observation best supports that statement?",
+    "options": [
+      "Churned ARR was negative $60k, so expansion must be $120k",
+      "New ARR was $60k and churn was $0, so the extra growth came from expansion",
+      "Gross new ARR was $60k and churn was $0, so expansion ARR was roughly $60k",
+      "Gross new ARR was $120k and churn was $60k, so expansion ARR was roughly $60k"
+    ],
+    "correct_option_index": 3,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "A retail business sells one product for $80. Variable product cost is $32, shipping is $6 per unit, and payment fees are 3% of revenue. If fixed monthly overhead is $140,000, what is the monthly break-even unit volume, approximately?",
+    "options": [
+      "2,857 units",
+      "3,704 units",
+      "4,167 units",
+      "5,000 units"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "short_answer",
+    "prompt": "You are reviewing a forecast for a marketplace business. Orders were 100k last quarter, AOV was $45, take rate was 12%, and contribution margin was 55%. Next quarter, management forecasts 120k orders, AOV flat, take rate flat, and contribution margin down to 50% because of higher incentives. What is the forecasted contribution profit next quarter?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "$1.35M",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "A DTC company's gross margin fell from 62% to 54% QoQ. Revenue rose 18%, units rose 3%, and average selling price rose 14%. Which explanation is most consistent with the data?",
+    "options": [
+      "The company likely increased discounting and fulfillment or freight costs outpaced pricing",
+      "The company likely sold fewer units at higher prices, causing fixed costs to rise",
+      "The company likely improved procurement efficiency, but revenue recognition changed",
+      "The gross margin decline must be fully explained by lower ASP"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "A finance team builds a three-driver revenue model for a B2B software product: paying customers, average seats per customer, and price per seat. If revenue is consistently overforecast while customer count is accurate, what is the most likely model issue?",
+    "options": [
+      "The customer count driver is stale and should be reduced",
+      "Seats per customer or price per seat assumptions are too high",
+      "The model should be replaced with a top-down GDP-based forecast",
+      "Revenue is likely being overstated because churn was omitted from EBITDA"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "short_answer",
+    "prompt": "A company budgets $9.0M of opex for Q4. Actual opex is $9.8M. Volume-related costs were $0.3M above plan, pricing-related costs were $0.2M above plan, and the remainder was hiring timing. What is the hiring timing variance?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "$0.3M unfavorable",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "A board deck shows CAC payback worsening from 10 months to 16 months, while logo retention improved from 91% to 95% and NRR improved from 108% to 114%. What is the best narrative?",
+    "options": [
+      "The business is unhealthy because payback worsened, regardless of retention",
+      "The business likely shifted toward larger customers or longer sales cycles, improving quality but reducing near-term efficiency",
+      "The business is likely underpricing and should immediately raise prices by 25%",
+      "The improvements in retention are irrelevant because CAC payback is the only metric that matters"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "hard",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "A manufacturing company planned 50,000 units at $12 contribution margin per unit. It actually sold 46,000 units at $11.20 margin per unit. What is the total contribution profit variance vs plan?",
+    "options": [
+      "-$18,800",
+      "-$19,200",
+      "-$21,200",
+      "-$24,000"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "short_answer",
+    "prompt": "A CFO wants a one-sentence board-ready explanation for why EBITDA was $2M below budget even though revenue was only $0.5M below budget. Provide a concise narrative that connects the variance to margin or cost structure.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "EBITDA missed budget mainly because gross margin and operating leverage underperformed, so a modest revenue shortfall translated into a much larger profit miss.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "An online lender's portfolio has 2% monthly default rate on average loan principal. If originations rise 30% next month and default rate is unchanged, what happens to expected monthly credit losses?",
+    "options": [
+      "They stay flat because the default rate is unchanged",
+      "They rise by 30% because losses scale with originations",
+      "They rise by 2 percentage points because risk is constant",
+      "They fall because higher originations dilute delinquency"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "A subscription business has the following monthly unit economics per customer: ARPU $100, gross margin 70%, onboarding cost $120 upfront, and average monthly logo churn 4%. Ignoring discounts, which metric is most important to determine whether the acquisition is attractive?",
+    "options": [
+      "Gross margin only",
+      "Average revenue per user only",
+      "Customer lifetime value relative to acquisition cost, using churn to estimate lifetime",
+      "Onboarding cost divided by ARPU"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "short_answer",
+    "prompt": "A company had 80,000 active users at the start of the quarter. It acquired 20,000 new users and lost 8,000 during the quarter. What was the ending active user count?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "92,000",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 2,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "A company forecasts revenue using: starting customers × retention × average spend. In the prior quarter, actual revenue beat forecast by 12%. Which diagnostic is the best first step if starting customers matched plan exactly?",
+    "options": [
+      "Check whether retention assumptions or average spend assumptions were too low",
+      "Increase the discount rate to reflect higher uncertainty",
+      "Remove retention from the model because it is redundant",
+      "Switch from bottom-up forecasting to a market-sizing approach"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "A grocery delivery startup increases delivery fees, causing order volume to drop 8% but average revenue per order to increase 15%. Variable fulfillment cost per order is unchanged. What is the most likely effect on contribution margin dollars if the business was previously near break-even?",
+    "options": [
+      "Contribution margin dollars will definitely decline because volume fell",
+      "Contribution margin dollars may increase if the higher revenue per order more than offsets lower volume",
+      "Contribution margin dollars must remain unchanged because pricing and volume offset",
+      "Contribution margin dollars will become negative because fees increased"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "short_answer",
+    "prompt": "A SaaS company's NRR is 102%, gross retention is 88%, and new logo growth is slowing. What does this combination imply about the customer base in one concise sentence?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Existing customers are expanding enough to offset churn in revenue terms, but the customer base has meaningful logo attrition and weaker acquisition momentum.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "hard",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "In an Excel forecast, revenue is calculated as units sold × price. The analyst hardcodes a 10% annual growth rate into revenue rather than linking units and price drivers. What is the main risk?",
+    "options": [
+      "The sheet will become slower to calculate",
+      "The forecast will be less auditable and less responsive to operational changes",
+      "Revenue will automatically equal EBITDA",
+      "The model will always overstate revenue by 10%"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "A company's monthly fixed costs are $240,000. Each product sold contributes $18 after variable costs. If management wants $90,000 monthly operating profit, what unit volume is required?",
+    "options": [
+      "13,333 units",
+      "16,667 units",
+      "18,333 units",
+      "20,000 units"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "short_answer",
+    "prompt": "A sales team beat quota by 15%, but revenue only beat plan by 4%. Give one likely explanation in a short phrase.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Lower average selling price or heavier discounting than assumed.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "A consumer app's forecast uses weekly active users, conversion rate, and monthly subscription price. If WAU grew as planned but revenue missed by 9%, which metric is the most likely source of the miss?",
+    "options": [
+      "Conversion rate or realized price",
+      "Cash burn",
+      "Headcount growth",
+      "Days sales outstanding"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "A board asks why EBITDA margin expanded 200 bps while revenue growth slowed from 28% to 14%. Which answer is strongest?",
+    "options": [
+      "The company improved operating leverage and controlled opex growth better than revenue growth",
+      "Slower revenue growth always causes EBITDA margin expansion",
+      "EBITDA margin expanded because capex increased",
+      "The company must have reclassified expenses into COGS"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "coding",
+    "prompt": "You are given a simple break-even model. Input contains fixed_cost, price_per_unit, and variable_cost_per_unit. Output the minimum whole number of units needed to reach break-even profit of 0. Assume contribution margin per unit is positive. Use stdin/stdout.\n\nWrite a program that prints the smallest integer units such that units * (price_per_unit - variable_cost_per_unit) >= fixed_cost.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "240000 60 24\n",
+        "expected_output": "6667\n"
+      },
+      {
+        "input": "140000 80 38\n",
+        "expected_output": "3112\n"
+      },
+      {
+        "input": "90000 18 9\n",
+        "expected_output": "10000\n"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "short_answer",
+    "prompt": "A company's actual revenue is $52M versus a budget of $50M. Price contributed +$1.5M, volume contributed +$0.8M, and mix contributed -$0.3M. What is the total revenue variance explained by these drivers?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "+$2.0M",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "A marketplace tracks take rate, gross merchandise value (GMV), and active buyers. GMV is on plan, active buyers are 6% above plan, but revenue is 4% below plan. What is the most likely explanation?",
+    "options": [
+      "Take rate is below plan or mix shifted toward lower-take-rate transactions",
+      "GMV must be incorrectly measured because revenue cannot miss if GMV is on plan",
+      "Active buyers do not matter because only GMV drives revenue",
+      "The business likely has higher fixed costs than expected"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "A CFO wants a driver-based forecast for headcount expense. Which model structure is most useful for board-level planning?",
+    "options": [
+      "Total annual headcount expense = prior year expense × 1.12",
+      "Headcount expense = number of employees × average fully loaded cost by function, with hiring plan timing",
+      "Headcount expense = EBITDA × margin assumption",
+      "Headcount expense = revenue × take rate"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "short_answer",
+    "prompt": "In a quarterly review, gross margin improved by 250 bps but operating margin fell by 100 bps. Give one plausible concise explanation.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Sales and marketing or G&A grew faster than gross profit, offsetting the gross margin improvement.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "A B2B software company is building next quarter's revenue forecast. Current monthly recurring revenue is $3.2M. Management expects logo count to grow 4%, average revenue per customer to rise 2%, and gross churn to stay flat. Which modeling approach is most appropriate if the CFO wants the forecast to clearly explain the drivers of change to the board?",
+    "options": [
+      "Forecast revenue as a single top-line growth rate applied to current revenue",
+      "Model revenue as customers × ARPA, with separate assumptions for new logos, churn, and expansion",
+      "Use last quarter's revenue growth rate plus a seasonal adjustment",
+      "Forecast only from sales bookings and assume revenue is a fixed percentage of bookings"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "short_answer",
+    "prompt": "A subscription business had 10,000 customers at the start of the month. It added 900 new customers, lost 400, and ended with 10,500 customers. What was gross customer retention for the month? Provide your answer as a percentage to one decimal place.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "96.0%",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "A marketplace reported quarterly GMV of $48M and take rate of 11%. Next quarter, GMV is forecast to grow 8%, but take rate is expected to decline to 10.5% because of seller incentives. What is the best board-level interpretation?",
+    "options": [
+      "Revenue will grow faster than GMV because the take rate is lower",
+      "Revenue growth will likely be slower than GMV growth due to take-rate compression",
+      "Revenue will remain flat if GMV grows and take rate falls by the same amount",
+      "Take-rate changes do not matter if GMV is growing"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "A consumer subscription app has the following monthly KPI tree: visits → sign-up conversion → trial starts → paid conversion → ARPU. Traffic is ahead of plan, but revenue is behind plan. Which KPI most directly explains the revenue miss if the other funnel steps are on target?",
+    "options": [
+      "Traffic quality or paid conversion rate",
+      "Gross margin",
+      "Operating leverage",
+      "Deferred revenue balance"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "short_answer",
+    "prompt": "A company budgeted $12.0M of revenue and actually delivered $11.1M. Price was favorable by $0.4M, volume was unfavorable by $1.0M, and mix was favorable by $0.1M. What is the unexplained variance? Give the amount and whether it is favorable or unfavorable.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "$0.2M unfavorable",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "A CFO sees gross margin improve from 42% to 46% while EBITDA margin declines from 8% to 5%. Which explanation is most plausible?",
+    "options": [
+      "Unit economics improved, but operating expenses grew faster than revenue",
+      "Revenue declined sharply, causing margins to compress across the P&L",
+      "COGS increased faster than revenue, but EBITDA stayed flat",
+      "Both gross margin and EBITDA margin improved, but the percentages were misread"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "An Excel model uses an assumption cell for annual price increase. The analyst hardcodes 6% in the revenue formula across 18 worksheets instead of linking to the assumption cell. What is the main risk?",
+    "options": [
+      "The model will automatically update all scenarios correctly",
+      "A change in pricing assumptions will be hard to propagate and may create inconsistent outputs",
+      "The workbook will calculate too slowly for board use",
+      "The formula is more transparent because the input is visible everywhere"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "short_answer",
+    "prompt": "A retailer sells a product for $100. Unit variable cost is $58, and shipping plus payment fees are $7 per order. What is contribution margin per order?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "$35",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "A board packet shows that revenue beat plan by 3%, but EBIT missed plan by 12%. The variance bridge attributes the miss mainly to higher marketing spend required to support the sales beat. Which narrative is best?",
+    "options": [
+      "The business is underperforming because revenue did not grow enough",
+      "Commercial execution was strong, but growth came with lower near-term operating efficiency",
+      "The revenue beat proves the expense overrun was not important",
+      "Marketing spend is always bad when EBIT misses"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "short_answer",
+    "prompt": "A product team wants a simple unit economics model for a paid app. Each paid user generates $18 of monthly revenue, variable support and payment costs are $5 per user, and onboarding cost is $24 per new user acquired. What is the payback period in months if gross contribution per month is used to recover onboarding cost?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "2.0 months",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "A SaaS company has the following changes versus plan: new bookings +10%, churn worse than plan, average contract value flat, and total ARR only +2% versus plan. Which diagnosis is most likely?",
+    "options": [
+      "Expansion and retention are both outperforming plan",
+      "New logo strength is being offset by elevated churn",
+      "Price increases are masking a weak sales funnel",
+      "There is no meaningful issue because bookings exceeded plan"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "You are asked to produce a 13-week cash forecast for a services business with uneven client payments. Which driver is most important to model explicitly at weekly granularity?",
+    "options": [
+      "Average headline revenue growth rate",
+      "Collection timing by invoice age and payment terms",
+      "Annual gross margin target",
+      "Year-end bonus accrual only"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "short_answer",
+    "prompt": "A company forecasts EBITDA using revenue, gross margin, and opex. Revenue is $20M, gross margin is 55%, and opex is $7.5M. What is EBITDA?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "$3.5M",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "coding",
+    "prompt": "Write a program that reads three numbers from stdin: fixed_cost, price_per_unit, and variable_cost_per_unit. Output the break-even number of units, rounded up to the nearest whole unit. If the contribution margin is zero or negative, output IMPOSSIBLE. Assume inputs are integers. Example: fixed_cost=1000, price=25, variable_cost=15 gives break-even of 100 units.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "1000 25 15",
+        "expected_output": "100"
+      },
+      {
+        "input": "750 20 12",
+        "expected_output": "94"
+      },
+      {
+        "input": "500 10 10",
+        "expected_output": "IMPOSSIBLE"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "A hardware company’s gross margin improved because procurement negotiated lower component costs, but unit volumes fell and fixed manufacturing overhead per unit rose. What is the most likely reason operating margin did not improve as much as gross margin?",
+    "options": [
+      "Fixed costs were spread over fewer units, offsetting part of the gross margin gain",
+      "Revenue recognition moved from cash basis to accrual basis",
+      "The company must have increased prices too aggressively",
+      "Higher gross margin always implies higher operating margin"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "hard",
+    "points": 1
+  }
+]

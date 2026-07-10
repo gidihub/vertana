@@ -20,6 +20,7 @@ import {
 export function DashboardAnalytics() {
   const tests = useStore((db) => db.tests)
   const candidates = useStore((db) => db.candidates)
+  const inviteCounts = useStore((db) => db.inviteCounts)
   const loading = useStore((db) => db.loading)
 
   const defaultId = useMemo(() => pickDefaultTestId(tests), [tests])
@@ -31,7 +32,20 @@ export function DashboardAnalytics() {
     [activeId, candidates],
   )
 
-  const funnel = useMemo(() => funnelForTest(testCandidates), [testCandidates])
+  const funnel = useMemo(
+    () =>
+      activeId
+        ? funnelForTest(testCandidates, inviteCounts[activeId] ?? 0)
+        : {
+            invited: 0,
+            started: 0,
+            completed: 0,
+            shortlisted: 0,
+            rejected: 0,
+            hired: 0,
+          },
+    [activeId, inviteCounts, testCandidates],
+  )
   const selectedTest = tests.find((t) => t.id === activeId)
 
   if (loading || tests.length === 0) return null
@@ -61,7 +75,8 @@ export function DashboardAnalytics() {
         <div className="grid gap-4 lg:grid-cols-2">
           <ResultsFunnel
             stats={funnel}
-            description={`Funnel for “${selectedTest.title}”. Invited = candidates who accessed the link.`}
+            description="Email invites sent → started → completed → recruiter disposition for this assessment."
+            usesShareLink={selectedTest.status === "active"}
           />
           <ScoreDistributionChart candidates={testCandidates} compact />
         </div>

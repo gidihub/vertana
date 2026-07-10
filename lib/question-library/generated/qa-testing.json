@@ -1,0 +1,732 @@
+[
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "multiple_choice",
+    "prompt": "You are designing a test strategy for a new microservices-based application. Which approach is most effective to ensure quick feedback on integration issues?",
+    "options": [
+      "Integrate all microservices and perform end-to-end testing only after full development is complete",
+      "Use contract testing between services alongside unit and component tests",
+      "Rely solely on manual exploratory testing of service interactions",
+      "Run only UI tests that simulate service behavior through the front end"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "multiple_choice",
+    "prompt": "An automation framework you built is flaky on CI but stable locally. Which is the best immediate step to diagnose the flakiness?",
+    "options": [
+      "Add longer implicit waits to every step",
+      "Run tests in debug mode on CI to capture logs and screenshots",
+      "Reduce the number of tests to only critical paths",
+      "Switch from headless to headed browser mode"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 7,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "short_answer",
+    "prompt": "Describe one practical method to identify flaky tests in a large automated test suite.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Run the automated test suite multiple times on a clean environment and flag tests that fail intermittently across runs.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "multiple_choice",
+    "prompt": "You need to test a REST API endpoint that provides user data. The endpoint depends on external third-party services. How can you isolate your API tests effectively?",
+    "options": [
+      "Test only on production environment data",
+      "Mock external service responses to control test conditions",
+      "Disable tests that require external services",
+      "Test only the UI that consumes the API"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "easy",
+    "points": 2
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "short_answer",
+    "prompt": "What is a regression test suite, and how should it evolve over time?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "A regression test suite is a set of tests checking that existing functionality isn't broken by changes; it should evolve to include tests for all critical areas and adapt as features change.",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "multiple_choice",
+    "prompt": "During release, a quality gate includes 90% automated test pass rate and zero critical bugs. One test intermittently fails causing build blockage. What immediate action should be taken?",
+    "options": [
+      "Remove the flaky test so release can proceed",
+      "Investigate and fix the flaky test promptly or quarantine it before gating",
+      "Ignore the failure once if it passes on rerun",
+      "Lower the pass rate threshold temporarily"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 8,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "short_answer",
+    "prompt": "How can accessibility testing be integrated into an existing UI automation framework?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "By incorporating accessibility testing tools or libraries into the UI automation scripts that check for common issues like ARIA attributes and color contrast during test runs.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "multiple_choice",
+    "prompt": "Which scenario best shows when to use end-to-end UI testing over API testing?",
+    "options": [
+      "Validating UI layout compliance with design standards",
+      "Verifying data processing logic in the backend",
+      "Testing internal API contract with the client",
+      "Simulating user complete workflow from login to checkout"
+    ],
+    "correct_option_index": 3,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "coding",
+    "prompt": "Write a program that reads test execution results as lines \"test_name pass/fail\" and outputs the number of passed and failed tests separately.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "loginTest pass\ncheckoutTest fail\nsearchTest pass\n",
+        "expected_output": "Passed: 2\nFailed: 1\n"
+      },
+      {
+        "input": "apiTest fail\nuiTest fail\n",
+        "expected_output": "Passed: 0\nFailed: 2\n"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "easy",
+    "points": 3
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "short_answer",
+    "prompt": "Explain why flaky tests pose a threat to reliable continuous integration.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Flaky tests cause nondeterministic failures that can block releases, waste developer time investigating false negatives, and reduce trust in automated testing.",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "multiple_choice",
+    "prompt": "An automation test framework needs to run the same test across multiple browsers and devices. Which design pattern supports this with minimal duplicate code?",
+    "options": [
+      "Page Object Model with environment abstraction",
+      "Singleton pattern for test data",
+      "Monolithic test scripts with hardcoded browser checks",
+      "Use only one browser and ignore others to save effort"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "multiple_choice",
+    "prompt": "Your team wants to prevent a release if accessibility violations exist. Which tool integration fits best in the release quality gate?",
+    "options": [
+      "Linting tools during code commit",
+      "Automated accessibility scan in CI pipeline with thresholds",
+      "Manual review by QA during pilot phase",
+      "Load testing before final release"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "short_answer",
+    "prompt": "When automating UI tests, how would you handle dynamic elements whose IDs change on every page load?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use stable selectors like CSS classes, XPath based on element hierarchy or attribute values that don't change, or implement waits for element presence.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "coding",
+    "prompt": "Write a program that takes a list of test case run durations (in seconds) and prints the average duration rounded to two decimals.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "2.3\n3.7\n4\n",
+        "expected_output": "Average duration: 3.33\n"
+      },
+      {
+        "input": "10\n15\n",
+        "expected_output": "Average duration: 12.50\n"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 8,
+    "difficulty": "easy",
+    "points": 3
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "multiple_choice",
+    "prompt": "A regression test suite takes too long to run before every deployment. What is the best improvement strategy?",
+    "options": [
+      "Run fewer tests by removing all edge cases",
+      "Parallelize tests and prioritize critical tests for quick feedback",
+      "Run only UI tests to cover user flows",
+      "Skip regression tests for minor releases"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "short_answer",
+    "prompt": "What is a 'release quality gate' in the context of software testing?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "A release quality gate is a set of predefined criteria (like test pass rates, bug counts, performance thresholds) that must be met before software can be released.",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "multiple_choice",
+    "prompt": "You observe that UI tests fail randomly due to timing issues on slow test environments. Which is the best test stability improvement?",
+    "options": [
+      "Add fixed long sleep delays after every step",
+      "Implement dynamic waits that wait until elements are present/ready",
+      "Run tests only during off-hours when resources are free",
+      "Reduce test coverage to only short scenarios"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "multiple_choice",
+    "prompt": "Which is a key advantage of using API testing over UI testing in continuous integration?",
+    "options": [
+      "API tests are visually appealing",
+      "API tests run faster and are less flaky than UI tests",
+      "API tests require no authentication",
+      "API tests cover UI layout"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "coding",
+    "prompt": "Write a program that reads lines describing test case results in format \"TEST_NAME STATUS\" where STATUS is PASS or FAIL. The program should print the first failed test name or \"ALL PASSED\" if none failed.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "login PASS\npayment FAIL\nsearch PASS\n",
+        "expected_output": "payment\n"
+      },
+      {
+        "input": "setup PASS\nconnect PASS\n",
+        "expected_output": "ALL PASSED\n"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "short_answer",
+    "prompt": "Outline an approach to test accessibility for a web application that uses a lot of dynamic content updating.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use automated accessibility tools that check ARIA live regions and dynamic content updates, combined with manual testing using screen readers to verify announced changes.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 8,
+    "difficulty": "hard",
+    "points": 3
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "short_answer",
+    "prompt": "Describe one way to use test automation results in release decision making.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use automated test results as quality metrics, such as pass/fail rates and coverage, to decide if software meets predefined quality gates for release.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "multiple_choice",
+    "prompt": "Your API automation tests need to verify performance without external dependencies slowing tests. What is a good strategy?",
+    "options": [
+      "Mock third-party APIs to simulate responses",
+      "Remove all performance testing",
+      "Test only on production environment",
+      "Add random delays to simulate real-world traffic"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "multiple_choice",
+    "prompt": "A UI test intermittently fails on a login page due to a modal popup appearing sometimes. How can you handle this?",
+    "options": [
+      "Ignore the modal and assume it will be gone soon",
+      "Add logic to detect and close the modal before continuing",
+      "Delete the test since it's unreliable",
+      "Run tests only when modal is disabled"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "coding",
+    "prompt": "Write a program that reads a sequence of test result lines \"testName,status\" and reports the percentage of tests that passed, rounded down.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "login,pass\nsearch,fail\nbuy,pass\n",
+        "expected_output": "66%\n"
+      },
+      {
+        "input": "setup,pass\nconnect,pass\nlogout,pass\n",
+        "expected_output": "100%\n"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "easy",
+    "points": 3
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "multiple_choice",
+    "prompt": "You have a web application with rapidly changing UI components and need to automate tests reliably. Which strategy best reduces flaky UI test failures?",
+    "options": [
+      "Use explicit waits to handle dynamic element states",
+      "Hard-code sleep intervals between steps",
+      "Avoid UI testing and rely solely on API tests",
+      "Run tests only on the most stable environment"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "short_answer",
+    "prompt": "Describe a test strategy to ensure high-quality release gates for an e-commerce platform where uptime is critical and multiple teams deploy features daily.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Implement automated regression and smoke tests with service-level monitoring; require all tests and security checks pass before merging; use feature toggles for gradual rollouts and rollback.",
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "hard",
+    "points": 1
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "multiple_choice",
+    "prompt": "API tests for a microservice show intermittent failures due to an unstable third-party dependency. Which approach best maintains test reliability?",
+    "options": [
+      "Mock the third-party API responses during testing",
+      "Increase timeouts to wait for third-party responses",
+      "Run API tests only when third-party services are stable",
+      "Switch entirely to UI testing for integration validation"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "short_answer",
+    "prompt": "You notice a high rate of flaky tests in your automated suite caused by test data collisions. What practical steps would you take to reduce flakiness?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Isolate test data per test using unique identifiers or mocks, reset state between tests, and avoid shared dependencies to prevent collisions.",
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "coding",
+    "prompt": "Write a program that reads lines from standard input where each line contains a test case name and an execution time in milliseconds separated by a comma (e.g., \"TestLogin,150\"), and outputs the name of the slowest test case.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "TestHomePage,120\nTestLogin,150\nTestCheckout,130\n",
+        "expected_output": "TestLogin"
+      },
+      {
+        "input": "TestA,200\nTestB,180\nTestC,220\n",
+        "expected_output": "TestC"
+      },
+      {
+        "input": "TestOne,50\nTestTwo,50\n",
+        "expected_output": "TestOne"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "multiple_choice",
+    "prompt": "Which approach is most effective when designing an automation framework to support parallel test execution across multiple UI browsers and devices?",
+    "options": [
+      "Implement a centralized test runner with environment abstraction and parallel executors",
+      "Run tests sequentially to avoid shared resource conflicts",
+      "Use only one browser type to reduce complexity",
+      "Manually trigger tests on each device one by one"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "difficulty": "hard",
+    "points": 1
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "short_answer",
+    "prompt": "Outline a plan to include accessibility testing into an existing UI automation suite for a single-page application.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Integrate accessibility tools (e.g. axe-core) into UI tests to scan relevant pages after rendering; automate checks for ARIA attributes and color contrast; include accessibility checks as pass/fail in CI pipeline.",
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 12,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "multiple_choice",
+    "prompt": "A regression test suite has grown too large to run before every build. What is the best approach to optimize regression testing while maintaining coverage?",
+    "options": [
+      "Prioritize and run impacted and high-risk tests first, with full suite nightly",
+      "Skip regression tests when builds pass smoke tests",
+      "Remove tests that occasionally fail instead of fixing them",
+      "Run regression tests only before major releases"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "coding",
+    "prompt": "Write a program that reads test results from standard input in the format \"testName,status\" where status is \"PASS\" or \"FAIL\" (one per line) and outputs the percentage of passed tests rounded down to the nearest integer.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "LoginTest,PASS\nCheckoutTest,FAIL\nSearchTest,PASS\n",
+        "expected_output": "66"
+      },
+      {
+        "input": "Test1,FAIL\nTest2,FAIL\n",
+        "expected_output": "0"
+      },
+      {
+        "input": "T1,PASS\nT2,PASS\nT3,PASS\n",
+        "expected_output": "100"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 8,
+    "difficulty": "easy",
+    "points": 3
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "short_answer",
+    "prompt": "How would you investigate and stabilize a flaky UI test that intermittently fails due to a modal popup sometimes appearing after login?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Add conditional checks to detect and handle the popup if it appears, using waits and dismissal steps to ensure consistent test flow.",
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 7,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "multiple_choice",
+    "prompt": "During a release, an automated test fails only on the staging environment due to timing issues but passes locally. What is the best next action?",
+    "options": [
+      "Add explicit waits or retries to handle environment latency",
+      "Ignore the failure and continue",
+      "Rewrite tests to UI-only tests",
+      "Run tests only locally"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "short_answer",
+    "prompt": "Explain a method to test REST API performance when external dependencies cause delays that distort test results.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use mocks or stubs for external dependencies to simulate responses, enabling isolated performance testing of the API.",
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 8,
+    "difficulty": "hard",
+    "points": 1
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "multiple_choice",
+    "prompt": "Which of the following best describes a release quality gate concerning automated tests?",
+    "options": [
+      "A set of criteria including minimum test coverage, no critical failures, and successful smoke tests before production deployment",
+      "The number of tests written during a sprint",
+      "The amount of code reviewed per release",
+      "The frequency of test execution in the pipeline"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "coding",
+    "prompt": "Write a program that reads lines with the format \"testName outcome\" where outcome is PASS or FAIL, then outputs the names of all tests that failed, one per line, sorted alphabetically.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "Login PASS\nSearch FAIL\nCheckout FAIL\nProfile PASS\n",
+        "expected_output": "Checkout\nSearch"
+      },
+      {
+        "input": "T1 PASS\nT2 PASS\n",
+        "expected_output": ""
+      },
+      {
+        "input": "A FAIL\nB FAIL\nC PASS\n",
+        "expected_output": "A\nB"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "easy",
+    "points": 3
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "short_answer",
+    "prompt": "Describe an approach to identify if test failures are due to genuine bugs or flaky tests in a continuous integration environment.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Rerun failed tests multiple times; if failures are inconsistent, they are likely flaky; use logs and environment data to investigate causes and fix flaky conditions.",
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "multiple_choice",
+    "prompt": "Your UI tests must validate accessibility on a single-page app with real-time content updates. Which testing practice is most effective?",
+    "options": [
+      "Run accessibility scans after key content changes and on initial load",
+      "Test only on first page load ignoring updates",
+      "Run accessibility only during nightly builds",
+      "Manually test accessibility ignoring automation"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "difficulty": "medium",
+    "points": 1
+  }
+]

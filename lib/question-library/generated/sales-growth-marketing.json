@@ -1,0 +1,693 @@
+[
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "An SDR books a meeting with a director at a 500-person SaaS company after a webinar. In discovery, you learn they already use a competing tool, have no budget approval this quarter, and only 1 team is actively using the current product. What is the best next qualification step?",
+    "options": [
+      "Advance immediately to demo because interest is high",
+      "Disqualify because they already have a competitor",
+      "Confirm urgency, business impact, and buying process before investing more time",
+      "Ask them to send over their procurement checklist and wait"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "short_answer",
+    "prompt": "A prospect says, 'We like your platform, but we don't have time to implement anything until next quarter.' What is the most effective discovery question to determine whether this is a true timing issue or a polite brush-off?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "What changes next quarter that makes this a priority, and what happens if you don’t solve it before then?",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "You run paid search campaigns for a PLG product. CTR is up 30%, CPC is flat, but trial-to-paid conversion dropped from 18% to 11% after a landing page change. What is the most likely issue to investigate first?",
+    "options": [
+      "Keyword match types became too broad",
+      "The landing page promise no longer matches the in-product onboarding or offer",
+      "The brand awareness campaign cannibalized direct traffic",
+      "The sales team is handling too many inbound leads"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "short_answer",
+    "prompt": "A mid-market prospect objects: 'Your price is 2x the competitor's.' Give a concise response that handles the objection without immediately discounting.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "I hear that. Can we compare the cost to solve the problem—implementation time, adoption, and revenue impact—so we can see whether the lower sticker price is actually cheaper overall?",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "Your funnel for enterprise trials looks like this: Visit-to-signup 12%, signup-to-active-user 41%, active-user-to-PQL 8%, PQL-to-opportunity 62%. Where should growth marketing focus first if the goal is to increase qualified pipeline fastest?",
+    "options": [
+      "Top of funnel traffic acquisition",
+      "Signup activation and onboarding",
+      "PQL generation from active users",
+      "Opportunity stage conversion"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "hard",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "short_answer",
+    "prompt": "A sales rep says a lead is 'qualified' because they liked the demo. In one sentence, what specific additional qualification signal should a manager look for before accepting it as pipeline?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Confirmed business pain with a clear use case, buying authority or influence, and a realistic timeline to evaluate or purchase.",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "A campaign generated 300 MQLs, but only 9 became opportunities. Sales says lead quality is poor. Marketing says sales is slow to follow up. Which analysis is the best next step?",
+    "options": [
+      "Compare MQL-to-opportunity conversion by campaign, source, and rep follow-up time",
+      "Increase MQL volume to reduce noise in the sample",
+      "Pause all campaigns until sales agrees on a definition",
+      "Switch all forms to require phone numbers"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "short_answer",
+    "prompt": "A prospect says, 'Your product is too complex for our team.' What is a strong discovery follow-up that turns the objection into a fit check?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "What part feels complex—setup, daily use, or change management—and how much internal support do you have for rollout?",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "You are launching a new positioning statement for a fintech product. Which customer quote best supports a sharp positioning angle?",
+    "options": [
+      "It has lots of features and the dashboard is colorful",
+      "We use it because it is a good option for teams like ours",
+      "It reduced our month-end reconciliation time from 6 hours to 45 minutes",
+      "The team seems professional and the website looks trustworthy"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "short_answer",
+    "prompt": "A PLG product has strong sign-up volume but low activation. The biggest drop is between account creation and first key action. What is one likely growth experiment you would run first?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Add an onboarding checklist, in-app guide, or template that helps users complete the first key action faster.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "A prospect says, 'We don't have budget.' After deeper discovery, you learn they have budget for tools that improve revenue operations, but not for 'martech.' What is the best next move?",
+    "options": [
+      "Offer a 20% discount to fit their budget",
+      "Reframe the solution in terms of the revenue outcome and budget owner priorities",
+      "Stop the conversation because budget is truly unavailable",
+      "Send a generic case study and ask them to revisit next quarter"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "short_answer",
+    "prompt": "You see that a webinar campaign drove 120 signups, 35 attended live, 18 requested a demo, and 4 became opportunities. What is one improvement you would make to the campaign beyond 'get more attendees'?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Tighten the audience or CTA so the webinar attracts higher-intent accounts and include a stronger post-webinar conversion path to demo or trial.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "A new feature launch page gets high traffic from existing customers, but little new business pipeline. Which metric would best indicate whether the launch is helping growth?",
+    "options": [
+      "Total page views",
+      "Customer support ticket count",
+      "Demo requests or trial starts from net-new accounts",
+      "Email open rate of the launch announcement"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "short_answer",
+    "prompt": "During a discovery call, the buyer asks, 'Can you integrate with our CRM?' What is the best way to answer while keeping control of the sales process?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Yes, we integrate with that CRM—can I ask how you want the data to flow and what use case matters most so I can confirm fit?",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "Your outbound sequence to RevOps leaders is getting opens but very low reply rates. Which change is most likely to improve response quality?",
+    "options": [
+      "Make the email longer and include more product details",
+      "Use a generic pain statement for all segments",
+      "Personalize around a specific workflow or metric the role owns",
+      "Send the same sequence twice to increase frequency"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "short_answer",
+    "prompt": "A deal is stuck because the champion says, 'The CFO will never approve this.' What is one question you should ask to assess the real blocker?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "What criteria does the CFO use to approve tools like this, and what business case would make this a priority?",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "You are comparing two campaigns for the same product: Campaign A has lower CTR but 3x higher opportunity conversion than Campaign B. What is the most sensible interpretation?",
+    "options": [
+      "Campaign A is worse because CTR matters most",
+      "Campaign A is likely attracting better-qualified intent despite fewer clicks",
+      "Campaign B should be killed immediately",
+      "CTR and opportunity conversion are unrelated, so no action is needed"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "short_answer",
+    "prompt": "A prospect says they are 'just exploring.' What is a concise way to qualify whether they are early-stage curiosity or a real buying motion?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "What prompted the search now, and what would have to be true for this to become a project this quarter?",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "An ABM campaign targets 50 named accounts. Impressions and clicks are strong, but no meetings are booked. Which diagnosis is most useful?",
+    "options": [
+      "The campaign audience is wrong, the offer is weak, or the CTA is too high-friction",
+      "Paid media never works for ABM",
+      "The accounts are too small",
+      "The sales team should cold call every contact immediately"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "short_answer",
+    "prompt": "A customer with high usage but low expansion potential asks for a discount at renewal. What is a strong response that protects value while exploring retention risk?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "We can discuss pricing, but first I want to understand whether there’s a value gap or adoption issue affecting renewal and what outcome you need to justify the spend.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "hard",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "Your website conversion rate improves after adding more pricing details, but demo quality drops and sales cycles lengthen. What is the most likely cause?",
+    "options": [
+      "You attracted more informed but less ready buyers",
+      "The pricing page caused technical SEO issues",
+      "Sales is overqualified leads",
+      "The company has too much brand demand"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "hard",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "short_answer",
+    "prompt": "For a self-serve PLG product, what is one leading indicator that a free user is becoming sales-ready?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Repeated high-intent usage of a key feature or team-level expansion signals such as inviting teammates or reaching usage thresholds.",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "A rep is pitching a data platform to a marketing leader. The leader says, 'We already have dashboards in GA4 and Looker.' Which response best positions the product?",
+    "options": [
+      "So your current setup is broken and inaccurate",
+      "Great—then let's talk about where those tools don't answer your attribution or decisioning needs",
+      "You should replace both tools immediately",
+      "Dashboards are not enough for any team"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "coding",
+    "prompt": "You are given counts for a funnel in the order: visits, signups, activated users, qualified leads, opportunities. Write a program that prints the conversion rate between each adjacent stage as percentages rounded to one decimal place, separated by spaces. Read five integers from stdin. Write four percentages to stdout. Example: if input is 1000 200 80 20 10, output should be '20.0 40.0 25.0 50.0'.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "1000 200 80 20 10",
+        "expected_output": "20.0 40.0 25.0 50.0"
+      },
+      {
+        "input": "500 100 50 25 5",
+        "expected_output": "20.0 50.0 50.0 20.0"
+      },
+      {
+        "input": "1200 300 150 60 30",
+        "expected_output": "25.0 50.0 40.0 50.0"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 12,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "A VP of Revenue at a 900-employee fintech books a demo after clicking a LinkedIn ad. In the first 10 minutes, she says, 'We need something to help us forecast pipeline better, but we also have a CRM cleanup initiative underway.' What is the best next discovery move?",
+    "options": [
+      "Pitch forecasting features immediately and ask for a technical demo",
+      "Ask how the CRM cleanup initiative affects timeline, ownership, and the business outcome she wants first",
+      "Send pricing and security docs so she can compare vendors internally",
+      "Qualify out because she mentioned another initiative"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "short_answer",
+    "prompt": "A prospect says, 'We're interested, but this is probably just for one team.' You learn they have 3 regions, each with different reporting pain. Write one concise discovery question that tests whether the use case can expand beyond the initial team.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "How are the reporting gaps affecting the other regions, and would solving this for one team create a repeatable rollout across the rest?",
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "Your SDR team is prospecting into SaaS ops leaders. The strongest first response to 'We already have a tool for that' is which of the following?",
+    "options": [
+      "'No problem — most teams have multiple tools, so can I send a brochure?'",
+      "'Which part of the workflow is the current tool not handling well enough to keep your team from hitting the metric you care about?'",
+      "'Our product is better than your current tool in every way.'",
+      "'Who else is on the buying committee?'"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "short_answer",
+    "prompt": "A paid search campaign for a PLG app drove 2,000 clicks, 500 trial signups, and 20 paid conversions last month. This month it drove 3,000 clicks, 900 signups, and 18 paid conversions. In one sentence, what does that most likely suggest about traffic quality or intent?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "The campaign is attracting more low-intent traffic, since clicks and signups rose but paid conversions fell, indicating weaker downstream quality.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "A growth marketer is reviewing a webinar campaign for an enterprise cybersecurity product. The webinar had high registration volume, but opportunities only came from attendees who asked a pricing question during Q&A. What campaign adjustment is most likely to improve opportunity quality?",
+    "options": [
+      "Promote the webinar to a broader audience to increase registrations",
+      "Use the webinar topic to address a sharper business problem and add a stronger post-event CTA for buyers showing active intent",
+      "Remove the Q&A so the presentation stays on schedule",
+      "Switch from webinars to product memes on social media"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "short_answer",
+    "prompt": "In a discovery call, a healthcare operations director says, 'We need better reporting, but the team is already stretched thin.' Write a concise follow-up question that uncovers urgency without sounding pushy.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "What happens if this reporting problem stays unresolved for the next 90 days?",
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "A PLG product sees strong activation, but PQL creation is flat. Product usage logs show users are completing the onboarding checklist, yet very few invite teammates or connect a data source. What is the most likely issue?",
+    "options": [
+      "The top-of-funnel acquisition channel is completely broken",
+      "The activation definition is probably too broad and not tied to meaningful product value",
+      "The product is overperforming, so no action is needed",
+      "The sales team is calling too late in the cycle"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "A demand gen team is deciding how to position a new workflow automation platform for mid-market HR teams. Which message is strongest?",
+    "options": [
+      "'The most advanced automation engine on the market'",
+      "'A better way to reduce manual HR admin by automating recurring employee workflows across the systems your team already uses'",
+      "'A platform for every department in every company'",
+      "'Cheaper than your current spreadsheet process'"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "short_answer",
+    "prompt": "A sales leader says, 'We need more pipeline, not more leads.' Give one concise way marketing should respond by aligning on a better metric.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Marketing should optimize to opportunity pipeline created, not just lead volume.",
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "An account-based campaign targets 40 named enterprise accounts. Click-through rate is decent, but no meetings are being booked. Sales notes that most clicks come from analysts, not decision-makers. What is the best diagnosis?",
+    "options": [
+      "The campaign has strong account engagement but weak stakeholder targeting and conversion path",
+      "The product-market fit is broken",
+      "The landing page should be removed entirely",
+      "The accounts are too large to ever convert"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "short_answer",
+    "prompt": "A prospect says, 'Your tool looks useful, but I need to justify this to finance.' What is one concise question that helps you uncover the economic case?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "What cost, revenue, or risk outcome would make this a clear win for finance?",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "A PLG company notices that free users who invite at least 2 teammates within 7 days convert to paid at 4x the rate of everyone else. What should growth most likely do?",
+    "options": [
+      "Treat team invitations as a leading indicator and optimize onboarding to drive that behavior earlier",
+      "Stop tracking activation because it no longer matters",
+      "Raise prices for free users who invite teammates",
+      "Focus only on more website traffic"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "A rep is qualifying a prospect from a manufacturing company. The buyer says, 'We have a project, but nothing is approved yet.' Which next question best tests real buying intent?",
+    "options": [
+      "'Would you like to see the enterprise edition?'",
+      "'What event or business problem caused this to become a project now?'",
+      "'Can I send you our case studies?'",
+      "'How soon do you want to sign?'"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "short_answer",
+    "prompt": "You launch a new comparison page against a major competitor. Traffic is flat, but demo requests from that page have a higher close rate than other pages. What does that tell you about the page’s role in the funnel?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "It is attracting higher-intent visitors and is a strong bottom-of-funnel conversion asset, even if traffic is modest.",
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "coding",
+    "prompt": "You are given five funnel counts in order: visits, signups, activated users, qualified leads, opportunities. Output the conversion rate from visits to opportunities as a percentage rounded to 2 decimals. Read one line with 5 integers. Write one line with the percentage and a percent sign.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "10000 800 320 64 16",
+        "expected_output": "0.16%"
+      },
+      {
+        "input": "2500 500 200 50 10",
+        "expected_output": "0.40%"
+      },
+      {
+        "input": "1200 300 120 30 6",
+        "expected_output": "0.50%"
+      }
+    ],
+    "ai_resistance": "low",
+    "estimated_minutes": 10,
+    "difficulty": "easy",
+    "points": 3
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "A growth team is running a product-led motion. Self-serve signups are healthy, but sales reports that most bookable meetings come from accounts with repeated logins from at least 3 people in the same domain. What should the team do next?",
+    "options": [
+      "Ignore the pattern because it is anecdotal",
+      "Use multi-user activity by domain as a signal for sales outreach and route those accounts to a faster sales assist motion",
+      "Cut the self-serve motion and go fully outbound",
+      "Only optimize for MQL volume"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "hard",
+    "points": 1
+  }
+]

@@ -1,18 +1,46 @@
 import type { Candidate, Test } from "@/lib/types"
 
 export interface TestFunnelStats {
-  /** Attempt rows — each candidate who accessed the assessment link. */
+  /** Per-candidate email invites sent (test_invites where is_share_link = false). */
   invited: number
   started: number
   completed: number
+  shortlisted: number
+  rejected: number
+  hired: number
 }
 
-export function funnelForTest(candidates: Candidate[]): TestFunnelStats {
-  const forTest = candidates
+function dispositionCounts(candidates: Candidate[]) {
   return {
-    invited: forTest.length,
-    started: forTest.filter((c) => c.started_at != null).length,
-    completed: forTest.filter((c) => c.status === "submitted").length,
+    shortlisted: candidates.filter((c) => c.disposition === "shortlisted").length,
+    rejected: candidates.filter((c) => c.disposition === "rejected").length,
+    hired: candidates.filter((c) => c.disposition === "hired").length,
+  }
+}
+
+export function funnelForTest(
+  candidates: Candidate[],
+  inviteCount: number,
+): TestFunnelStats {
+  return {
+    invited: inviteCount,
+    started: candidates.filter((c) => c.started_at != null).length,
+    completed: candidates.filter((c) => c.status === "submitted").length,
+    ...dispositionCounts(candidates),
+  }
+}
+
+/** Aggregate funnel across every assessment in the org. */
+export function orgFunnel(
+  candidates: Candidate[],
+  inviteCounts: Record<string, number>,
+): TestFunnelStats {
+  const invited = Object.values(inviteCounts).reduce((sum, n) => sum + n, 0)
+  return {
+    invited,
+    started: candidates.filter((c) => c.started_at != null).length,
+    completed: candidates.filter((c) => c.status === "submitted").length,
+    ...dispositionCounts(candidates),
   }
 }
 

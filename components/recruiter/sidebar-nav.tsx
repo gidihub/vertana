@@ -249,7 +249,7 @@ export function SidebarNav({
             onClick={onNavigate}
             aria-label="Vertana dashboard"
             className={cn(
-              "inline-flex rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pine focus-visible:ring-offset-2 focus-visible:ring-offset-[#e9ebe5]",
+              "inline-flex rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pine focus-visible:ring-offset-2 focus-visible:ring-offset-paper-deep",
               collapsed && "justify-center",
             )}
           >
@@ -385,7 +385,7 @@ export function SidebarNav({
 
       <div
         className={cn(
-          "shrink-0 space-y-3 border-t border-sage-line/60 bg-[#e9ebe5] py-4",
+          "shrink-0 space-y-3 border-t border-sage-line/60 bg-paper-deep py-4",
           collapsed ? "flex flex-col items-center px-2" : "px-3",
         )}
       >

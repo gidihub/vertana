@@ -21,6 +21,7 @@ export function uid(): string {
 interface DB {
   tests: Test[]
   candidates: Candidate[]
+  inviteCounts: Record<string, number>
   needsScoring: Record<string, number>
   consents: Record<string, ConsentRecord>
   organization: Organization | null
@@ -31,6 +32,7 @@ interface DB {
 const emptyDb: DB = {
   tests: [],
   candidates: [],
+  inviteCounts: {},
   needsScoring: {},
   consents: {},
   organization: null,
@@ -54,13 +56,24 @@ function subscribe(listener: () => void) {
 }
 
 async function api<T>(url: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(url, {
-    ...init,
-    headers: {
-      "Content-Type": "application/json",
-      ...init?.headers,
-    },
-  })
+  let res: Response
+  try {
+    res = await fetch(url, {
+      ...init,
+      headers: {
+        "Content-Type": "application/json",
+        ...init?.headers,
+      },
+    })
+  } catch (err) {
+    const message =
+      err instanceof Error ? err.message : "Network request failed"
+    throw new Error(
+      message === "Load failed" || message === "Failed to fetch"
+        ? "Could not reach the server — check your connection and that the dev server is running."
+        : message,
+    )
+  }
   const data = await res.json()
   if (!res.ok) {
     throw new Error(data.error || "Request failed")
@@ -78,6 +91,7 @@ export async function refreshStore(): Promise<void> {
           tests: Test[]
           candidates: Candidate[]
           needs_scoring: Record<string, number>
+          invite_counts: Record<string, number>
         }>("/api/tests"),
         api<{ organization: Organization }>("/api/org"),
       ])
@@ -85,6 +99,7 @@ export async function refreshStore(): Promise<void> {
       db = {
         tests: dashboard.tests,
         candidates: dashboard.candidates,
+        inviteCounts: dashboard.invite_counts ?? {},
         needsScoring: dashboard.needs_scoring ?? {},
         consents: {},
         organization: orgRes.organization,
@@ -208,7 +223,7 @@ export interface AttemptAnswerView {
 }
 
 export async function fetchLibraryQuestions(filters?: {
-  category?: LibraryCategory | ""
+  category?: string | ""
   search?: string
   ai_resistance?: AiResistance | ""
 }): Promise<Question[]> {
@@ -346,6 +361,28 @@ export async function gradeAttempt(input: {
     },
   )
   await refreshStore()
+  return data.candidate
+}
+
+export async function updateCandidateDisposition(input: {
+  testId: string
+  attemptId: string
+  disposition: Candidate["disposition"]
+}): Promise<Candidate> {
+  const data = await api<{ candidate: Candidate }>(
+    `/api/tests/${input.testId}/results/${input.attemptId}/disposition`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({ disposition: input.disposition }),
+    },
+  )
+  db = {
+    ...db,
+    candidates: db.candidates.map((c) =>
+      c.id === input.attemptId ? data.candidate : c,
+    ),
+  }
+  emit()
   return data.candidate
 }
 

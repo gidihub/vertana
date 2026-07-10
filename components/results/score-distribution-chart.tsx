@@ -3,7 +3,7 @@
 import { useMemo } from "react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
-import { SCORE_BUCKETS } from "@/lib/dashboard/stats"
+import { scoreDistribution } from "@/lib/dashboard/stats"
 import type { Candidate } from "@/lib/types"
 import {
   Card,
@@ -30,17 +30,10 @@ export function ScoreDistributionChart({
   candidates: Candidate[]
   compact?: boolean
 }) {
-  const distribution = useMemo(() => {
-    const scored = candidates.filter(
-      (c) => c.status === "submitted" && c.score !== null,
-    )
-    return SCORE_BUCKETS.map((b) => ({
-      range: b.label,
-      count: scored.filter(
-        (c) => (c.score as number) >= b.min && (c.score as number) <= b.max,
-      ).length,
-    }))
-  }, [candidates])
+  const distribution = useMemo(
+    () => scoreDistribution(candidates),
+    [candidates],
+  )
 
   const hasScores = distribution.some((d) => d.count > 0)
 

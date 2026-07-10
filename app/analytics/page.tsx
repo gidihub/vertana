@@ -1,17 +1,17 @@
 "use client"
 
-import Link from "next/link"
-import { BarChart3 } from "lucide-react"
-
 import {
   orgCompletionRate,
   totalNeedsScoring,
 } from "@/lib/dashboard/stats"
-import { hasIntegrityConcern } from "@/lib/integrity"
+import {
+  hasIntegrityConcern,
+  resolveIntegrityThreshold,
+} from "@/lib/integrity"
 import { warningSurface, numericText } from "@/lib/design-tokens"
 import { useStore, useNeedsScoring } from "@/lib/store"
+import { OrgAnalyticsCharts } from "@/components/analytics/org-analytics-charts"
 import { RecruiterShell } from "@/components/recruiter-shell"
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardHeader,
@@ -45,16 +45,17 @@ export default function AnalyticsPage() {
   const candidates = useStore((db) => db.candidates)
   const needsScoring = useNeedsScoring()
   const loading = useStore((db) => db.loading)
-  const integrityThreshold = useStore(
-    (db) => db.organization?.tab_switch_threshold ?? 3,
+  const tabSwitchThreshold = useStore(
+    (db) => db.organization?.tab_switch_threshold,
   )
+  const orgThreshold = resolveIntegrityThreshold(tabSwitchThreshold)
 
   const completionRate = orgCompletionRate(candidates)
   const needsTotal = totalNeedsScoring(needsScoring)
   const submitted = candidates.filter((c) => c.status === "submitted").length
   const inProgress = candidates.filter((c) => c.status === "in_progress").length
   const integrityFlags = candidates.filter((c) =>
-    hasIntegrityConcern(c.tab_switch_count, integrityThreshold),
+    hasIntegrityConcern(c.tab_switch_count, orgThreshold),
   ).length
 
   return (
@@ -108,30 +109,12 @@ export default function AnalyticsPage() {
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
                 Candidates at or above your tab-switch threshold (
-                {integrityThreshold}).
+                {orgThreshold}).
               </CardContent>
             </Card>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Per-test analytics</CardTitle>
-              <CardDescription>
-                Funnel and score distribution for each assessment live on the
-                dashboard and individual results pages.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button
-                variant="outline"
-                nativeButton={false}
-                render={<Link href="/dashboard" />}
-              >
-                <BarChart3 data-icon="inline-start" />
-                Open dashboard
-              </Button>
-            </CardContent>
-          </Card>
+          <OrgAnalyticsCharts />
         </div>
       )}
     </RecruiterShell>

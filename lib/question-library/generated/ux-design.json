@@ -1,0 +1,543 @@
+[
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "multiple_choice",
+    "prompt": "A product team is redesigning checkout for a grocery app. Analytics show many users drop off after choosing delivery time, but session recordings suggest confusion before that step. What research action is the best next move to understand the root cause before redesigning?",
+    "options": [
+      "Run a moderated usability test on the current checkout flow with 5-8 shoppers",
+      "A/B test two new checkout designs immediately",
+      "Replace the delivery-time step with a shorter form",
+      "Survey users only about their preferred delivery windows"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "short_answer",
+    "prompt": "A SaaS admin dashboard has 14 items in the left navigation, including 'Billing', 'Invoices', and 'Payment Methods' as separate top-level links. A customer support lead says users keep asking where to update credit cards. What information architecture change would you recommend, and why?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Group Billing, Invoices, and Payment Methods under a single Billing section to reduce fragmentation and make account-related tasks easier to find.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "multiple_choice",
+    "prompt": "While wireframing a mobile event-booking flow, you notice the 'Continue' button is below the fold on smaller phones, and first-time users miss it in testing. What is the best wireframe adjustment to address the issue early?",
+    "options": [
+      "Move the primary action higher in the screen hierarchy and make the next step visible without scrolling",
+      "Increase the button color saturation only",
+      "Add more promotional content above the button to balance the layout",
+      "Keep the layout but add a tooltip explaining where the button is"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "multiple_choice",
+    "prompt": "A design critique reveals that a settings page uses four different shades of gray for similar secondary actions, and the team wants to standardize the component library. What design system approach would best prevent future inconsistency?",
+    "options": [
+      "Define reusable tokens and components for buttons, text, spacing, and state colors in the design system",
+      "Allow each squad to choose its own neutral palette for flexibility",
+      "Document only the final Figma screens and leave implementation details to engineers",
+      "Use a screenshot library of approved pages without component rules"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "short_answer",
+    "prompt": "A travel app has a flight search form where screen-reader users cannot tell which error message belongs to which field when validation fails. What accessibility fix would you propose?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Associate each error message with its input using programmatic labels/aria-describedby and ensure errors are announced clearly to screen readers.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "multiple_choice",
+    "prompt": "In a usability review of a banking app, users repeatedly entered a date of birth in the wrong field because the form visually grouped all three fields but did not communicate the required order. Which heuristic is most directly being violated?",
+    "options": [
+      "Recognition rather than recall",
+      "Error prevention",
+      "Flexibility and efficiency of use",
+      "Aesthetic and minimalist design"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "multiple_choice",
+    "prompt": "A PM wants to add a 'Download PDF' button to the top of an invoice page, but customer interviews show most users only need the PDF after clicking 'View invoice details.' What is the most persuasive UX argument for the design review?",
+    "options": [
+      "Primary actions should reflect task frequency and context, so placing the download action after details may better match user intent",
+      "Buttons should always be placed above the fold regardless of task context",
+      "PDF downloads should be hidden to reduce clutter even if users need them",
+      "The button should be added because stakeholders requested it"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "multiple_choice",
+    "prompt": "You are reviewing a multi-step onboarding flow for a B2B tool. Users complain that step 3 asks for company size, team role, and budget before they can see the product. What flow critique is most appropriate?",
+    "options": [
+      "The flow is asking for too much information too early, increasing friction before users perceive value",
+      "The flow should have more visual styling on each step",
+      "The flow is too short and should collect even more data",
+      "The form needs more dropdowns instead of text inputs"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "short_answer",
+    "prompt": "A research study for a meal-planning app found that users loved the recipe search but abandoned the app when it asked them to create an account before saving favorites. What is the most likely product recommendation?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Let users save favorites first and defer account creation until after they have experienced value.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "multiple_choice",
+    "prompt": "A team is deciding whether to redesign a support portal's category structure. The current structure is based on internal departments, but user interviews show people think in terms of tasks like 'reset password' and 'update billing.' Which IA strategy best fits the findings?",
+    "options": [
+      "Task-based organization using user language",
+      "Department-based organization to match the org chart",
+      "Randomized ordering to encourage exploration",
+      "Alphabetical ordering of all support articles"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "multiple_choice",
+    "prompt": "During a flow critique, you see that a checkout page highlights 'Apply coupon' more prominently than 'Place order,' and users in testing keep trying coupons before completing the purchase. What should the designer change first?",
+    "options": [
+      "Reinforce the hierarchy so the primary action is visually dominant and secondary actions are less emphasized",
+      "Remove all secondary actions permanently",
+      "Add more coupon fields to help users explore discounts",
+      "Make the coupon button larger than the order button"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "short_answer",
+    "prompt": "A design system component for alerts is being used for everything from success messages to promo banners to destructive confirmations. What governance rule would you add to prevent misuse?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Define clear usage guidelines and variants for each alert type, with approved content and severity rules.",
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "multiple_choice",
+    "prompt": "A healthcare portal must meet WCAG expectations. In testing, an icon-only 'Next' control works with the mouse but is not announced meaningfully by screen readers. What is the best fix?",
+    "options": [
+      "Add an accessible name, such as visible text or an aria-label that describes the action",
+      "Increase the icon size only",
+      "Remove keyboard support to simplify the control",
+      "Add a colorful border around the icon"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "multiple_choice",
+    "prompt": "A product manager asks for a homepage hero redesign based on internal opinions. You want to align the team around evidence from users, support, and sales. What is the best artifact to bring to the discussion?",
+    "options": [
+      "A concise insight summary with supporting examples from research and analytics",
+      "A mood board of competitor homepages",
+      "A list of design preferences from the PM",
+      "A prototype with no explanation"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "multiple_choice",
+    "prompt": "A booking flow requires users to enter a phone number, but international users in testing often format numbers differently and get validation errors. What usability improvement is most appropriate?",
+    "options": [
+      "Provide country-aware input formatting and examples rather than relying on a single rigid pattern",
+      "Reject any number that includes spaces or dashes",
+      "Hide the phone field until after payment",
+      "Remove the field because all users should know the format"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "short_answer",
+    "prompt": "A collaboration tool shows 'empty state' screens with generic illustrations but no guidance. New users don't know what to do next after creating a workspace. What would you add to improve the experience?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Action-oriented empty states with a clear next step, brief guidance, and examples of what users can do first.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "multiple_choice",
+    "prompt": "An accessibility audit finds that a modal dialog can be opened with the keyboard, but focus moves behind the modal and users can tab to inactive page elements. What is the correct fix?",
+    "options": [
+      "Trap focus within the modal and restore focus to the trigger when it closes",
+      "Disable the modal for keyboard users only",
+      "Remove the close button to keep focus inside",
+      "Increase the modal's z-index"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "multiple_choice",
+    "prompt": "A team is evaluating two homepage concepts for an enterprise platform. Concept A is visually polished but untested; Concept B is a low-fidelity wireframe that captures the new task flow. Which should be used first for usability testing?",
+    "options": [
+      "Concept B, because it tests structure and task flow before visual polish",
+      "Concept A, because high fidelity always gives better feedback",
+      "Neither, because usability testing requires production code",
+      "Both only after launch"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 5,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "multiple_choice",
+    "prompt": "Users of a fintech app often misread 'Available balance' as 'current balance' and make transfers that later fail. What is the strongest UX response?",
+    "options": [
+      "Clarify the terminology with contextual help and better labels, then test comprehension",
+      "Keep the labels as-is to match finance industry jargon",
+      "Hide the balance entirely",
+      "Add more colors to the balance numbers"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "short_answer",
+    "prompt": "A stakeholder wants to ship a dashboard card with five metrics in one row. Your usability tests show users can only explain two of them without asking for help. What recommendation would you make?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Prioritize the most important metrics, reduce the number shown, and move lower-priority data into drill-down or secondary views.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "multiple_choice",
+    "prompt": "A customer support workflow has three forms in a row: search user, verify identity, issue refund. Agents say they often lose track of where they are after interruptions. What IA or flow improvement would help most?",
+    "options": [
+      "Add a clear step indicator and save state between steps",
+      "Make each form a different color",
+      "Remove the search step",
+      "Combine all three forms into a single very long page"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "multiple_choice",
+    "prompt": "A design review finds that a date picker relies only on drag gestures on mobile. Some users can't complete the task with assistive tech or one-handed use. Which heuristic or accessibility principle is most relevant?",
+    "options": [
+      "Provide multiple interaction methods and do not rely solely on complex gestures",
+      "Use more animation to explain the gesture",
+      "Increase the number of dates shown on screen",
+      "Keep the current approach because gestures are modern"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "short_answer",
+    "prompt": "A designer is asked to present findings from five user interviews to executives who care mainly about revenue risk. What is the best way to frame the findings?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Translate findings into business impact, such as conversion risk, support cost, or churn risk, while backing them with user evidence.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "coding",
+    "prompt": "You are given a list of navigation items used in a product sidebar. Some items are duplicates or near-duplicates in wording, such as 'Billing', 'Invoices', and 'Payment Methods'. Write a program that outputs the number of unique top-level groups after collapsing exact duplicates and treating these three billing-related labels as one group. For this question, consider 'Billing', 'Invoices', and 'Payment Methods' equivalent, but all other labels are only equivalent if exactly identical after trimming spaces. Read: first line N, then N lines of labels. Output the number of unique groups.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "6\nBilling\nInvoices\nPayment Methods\nReports\nReports \nUsers\n",
+        "expected_output": "3"
+      },
+      {
+        "input": "4\nSettings\nProfile\nProfile\nSecurity\n",
+        "expected_output": "3"
+      },
+      {
+        "input": "5\n Billing \nInvoices\nBilling\nHelp\nSupport\n",
+        "expected_output": "3"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 12,
+    "difficulty": "medium",
+    "points": 3
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "multiple_choice",
+    "prompt": "A B2B analytics product is adding a new \"Reports\" area. User interviews show three different customer roles expect different entry points: one wants saved dashboards, one wants exportable tables, and one only wants scheduled email summaries. As the first IA pass, what is the best way to organize the navigation label and substructure?",
+    "options": [
+      "Create one top-level Reports item, then group by the three role-based tasks inside it",
+      "Create three top-level items that match the three roles so each group sees its own path",
+      "Hide Reports under Settings because it is an advanced feature",
+      "Use a single page with all reports in one long scroll and no sub-navigation"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "short_answer",
+    "prompt": "After watching five support agents use a new refund workflow, you learn they repeatedly lose context because the customer lookup, eligibility check, and refund submission are spread across three separate pages. In one or two sentences, what UX recommendation would you make to reduce this friction, and what evidence would you cite in the meeting?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Recommend consolidating the three steps into a single guided flow or persistent task-oriented workspace so agents can keep customer context visible. Cite repeated context switching, backtracking, and the observed loss of key information between pages.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "multiple_choice",
+    "prompt": "A marketing team wants a redesign of a product landing page based mainly on stakeholder opinions. In a design review, they argue for making the sign-up button larger because it \"feels more premium.\" You have only one week to decide what to test before a launch. What is the strongest next step?",
+    "options": [
+      "Run a quick preference test on two polished visual comps and pick the winner",
+      "Validate the current page with a task-based usability test focused on whether users can understand the offer and complete sign-up",
+      "Replace the landing page with the executive team’s preferred layout to avoid debate",
+      "Skip research and move directly to high-fidelity design because the deadline is tight"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "multiple_choice",
+    "prompt": "A settings screen for a cloud storage app uses a card labeled \"Security\" that contains password changes, two-factor authentication, active sessions, and device recovery. Users in testing ask where to change their password because they do not realize it lives inside Security. Which design system/IA issue is most likely causing the confusion?",
+    "options": [
+      "The card is too visually prominent compared with the rest of the page",
+      "The grouping does not match the users’ mental model or expected findability for the task",
+      "The page has too many secondary actions overall, which always causes confusion",
+      "The content is too short and should be expanded with help text"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "short_answer",
+    "prompt": "A mobile banking app has a transfer form where screen-reader users can hear each field label, but they still miss the inline error explanation after submitting because it appears visually near the top of the form and is not announced reliably. What accessibility improvement would you recommend?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Add programmatic error association and an error summary/announcement so the message is linked to the field and spoken by assistive tech.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "coding",
+    "prompt": "A design ops tool tracks weekly heuristic issues found in reviews. Write a program that reads an integer n, then n lines of the form `severity title`, where severity is an integer from 1 to 5. Output the titles of all issues with severity 4 or 5, in the same order, one per line. If none qualify, output `None`. Programs read stdin and write stdout.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "5\n3 unclear button label\n5 keyboard trap in modal\n2 low contrast icon\n4 ambiguous primary action\n1 typo in helper text\n",
+        "expected_output": "keyboard trap in modal\nambiguous primary action\n"
+      },
+      {
+        "input": "3\n1 spacing inconsistency\n2 duplicate nav item\n3 small tap target\n",
+        "expected_output": "None\n"
+      },
+      {
+        "input": "4\n5 missing form label\n4 focus order jumps\n4 error not announced\n2 dead illustration\n",
+        "expected_output": "missing form label\nfocus order jumps\nerror not announced\n"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 10,
+    "difficulty": "hard",
+    "points": 2
+  }
+]

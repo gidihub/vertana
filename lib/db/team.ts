@@ -140,13 +140,20 @@ export async function createTeamInvite(input: {
     throw new Error(error?.message ?? "Failed to create invite")
   }
 
-  await sendTeamInviteEmail({
+  const send = await sendTeamInviteEmail({
     to: email,
     orgName: input.orgName,
     inviterEmail: input.inviterEmail,
     token,
     role: input.role,
   })
+
+  if (!send.ok && send.configured) {
+    await admin.from("team_invites").delete().eq("id", invite.id)
+    throw new Error(
+      send.error ?? "Invite email failed to send. Check your Brevo configuration.",
+    )
+  }
 
   return {
     id: invite.id as string,

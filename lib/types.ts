@@ -18,13 +18,52 @@ export interface TestCase {
   expected_output: string
 }
 
-export type LibraryCategory = "frontend" | "backend" | "data" | "ops"
+export type LibraryCategory =
+  | "frontend-engineering"
+  | "backend-engineering"
+  | "data-analyst"
+  | "machine-learning"
+  | "project-program-associate"
+  | "customer-technical-support"
+  | "devops-cloud"
+  | "qa-testing"
+  | "business-financial-analysis"
+  | "sales-growth-marketing"
+  | "mobile-engineering"
+  | "database-administration"
+  | "ux-design"
+  | "hr-people-management"
+  | "ai-assisted-work-sample"
+  | "ai-governance"
+  | "remote-collaboration"
+  | (string & {})
 
 export type CandidateStatus =
   | "invited"
   | "in_progress"
   | "submitted"
   | "expired"
+
+export type CandidateDisposition =
+  | "under_review"
+  | "shortlisted"
+  | "rejected"
+  | "hired"
+
+export type InviteEmailStatus = "pending" | "sent" | "failed"
+
+/** Per-candidate or share-link row in test_invites (not an attempt). */
+export interface TestInvite {
+  id: string
+  test_id: string
+  candidate_email: string | null
+  token: string
+  is_share_link: boolean
+  email_status: InviteEmailStatus | null
+  email_error: string | null
+  email_sent_at: string | null
+  status: "active" | "revoked" | "expired"
+}
 
 export type PlanTier = "free" | "starter" | "growth" | "custom"
 
@@ -40,6 +79,11 @@ export interface Organization {
   code_executions_reset_at: string
   /** Tab switches at or above this count surface an integrity concern badge. */
   tab_switch_threshold: number
+  stripe_customer_id?: string | null
+  stripe_subscription_id?: string | null
+  subscription_status?: string | null
+  billing_cycle?: "monthly" | "annual" | null
+  current_period_end?: string | null
 }
 
 // Table: questions
@@ -56,9 +100,11 @@ export interface Question {
   ai_resistance?: AiResistance
   source?: QuestionSource
   library_category?: LibraryCategory | string | null
+  category_id?: string | null
   estimated_minutes?: number | null
   difficulty?: QuestionDifficulty | null
   test_cases?: TestCase[]
+  created_at?: string
 }
 
 export interface LibraryQuestion extends Question {
@@ -154,4 +200,5 @@ export interface Candidate {
   consent_id: string | null
   started_at: string | null
   submitted_at: string | null
+  disposition: CandidateDisposition
 }

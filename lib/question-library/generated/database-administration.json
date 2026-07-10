@@ -1,0 +1,563 @@
+[
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "multiple_choice",
+    "prompt": "A PostgreSQL 14 primary has a write-heavy orders table. p95 latency jumped after adding a new composite index. EXPLAIN shows the planner still uses a sequential scan for a query filtering on customer_id and status. Which action is most likely to improve the query without hurting writes more than necessary?",
+    "options": [
+      "Create a wider covering index on every column in the table",
+      "Drop all existing indexes and let PostgreSQL rebuild statistics",
+      "Create a btree index on (customer_id, status) and re-check the query plan",
+      "Increase max_connections so the planner has more options"
+    ],
+    "correct_option_index": 2,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "short_answer",
+    "prompt": "A MySQL 8.0 replica is 18 minutes behind the primary after a bulk load, but normal traffic is still flowing. The app team asks how to reduce replication lag without sacrificing durability on the primary. What are two practical changes you would recommend?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Throttle or batch the bulk load, and tune replication/applier parallelism or I/O capacity on the replica.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "multiple_choice",
+    "prompt": "You are investigating a slow PostgreSQL query that joins invoices to customers. EXPLAIN (ANALYZE, BUFFERS) shows a Hash Join with a full scan of invoices, but the query only returns recent invoices for one region. Which change is most likely to improve the plan?",
+    "options": [
+      "Increase shared_buffers to force the planner to use the hash join faster",
+      "Add a selective index on invoices(created_at, region_id) or a suitable partial index",
+      "Disable autovacuum so the table stays smaller",
+      "Convert the join to a cross join"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "short_answer",
+    "prompt": "Your PostgreSQL primary must be backed up nightly with minimal impact, and point-in-time recovery must be available after accidental deletes. What backup approach would you choose?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Use base backups plus continuous WAL archiving for PITR.",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "multiple_choice",
+    "prompt": "A MySQL InnoDB table has 200 million rows. A dashboard query filters by tenant_id and event_time, but performance dropped after the table grew. Which index design is most appropriate if the query commonly uses WHERE tenant_id = ? AND event_time BETWEEN ? AND ? ORDER BY event_time DESC?",
+    "options": [
+      "Index on event_time only",
+      "Composite index on (tenant_id, event_time)",
+      "Index on all columns in the table",
+      "FULLTEXT index on the event message"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "coding",
+    "prompt": "You are given simplified PostgreSQL EXPLAIN output lines for several candidate indexes. Pick the index that is most likely to improve the query. Input format: first line has an integer n. Next n lines each contain an index name and an estimated cost separated by a space. Output the name of the index with the lowest cost; if tied, output the lexicographically smallest name. Example: input '3\\nidx_a 120.5\\nidx_b 98.1\\nidx_c 98.1' => output 'idx_b'.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "3\nidx_a 120.5\nidx_b 98.1\nidx_c 98.1\n",
+        "expected_output": "idx_b\n"
+      },
+      {
+        "input": "2\norders_tenant_time 45.2\norders_time 45.2\n",
+        "expected_output": "orders_tenant_time\n"
+      },
+      {
+        "input": "4\na 10\nb 9\nc 8\nd 7\n",
+        "expected_output": "d\n"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 8,
+    "difficulty": "easy",
+    "points": 3
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "multiple_choice",
+    "prompt": "A PostgreSQL streaming replica is intended for read-only traffic. After a failover rehearsal, you notice the replica is not able to accept writes if promoted, and the business wants the ability to run updates during maintenance windows on the standby. What is the main reason the standby cannot write before promotion?",
+    "options": [
+      "It was initialized with too few CPU cores",
+      "It is in hot standby/read-only mode while replaying WAL",
+      "The replica lacks a primary key on every table",
+      "Autovacuum is disabled on the standby"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "short_answer",
+    "prompt": "A PostgreSQL table shows frequent dead tuples and slow index scans after a long-running transaction blocks cleanup. What is the operational risk and the usual fix?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Bloat and degraded performance; resolve the long transaction and let vacuum reclaim space.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "multiple_choice",
+    "prompt": "A MySQL production database uses GTID replication. During migration, the team wants a safer cutover that minimizes the chance of missing writes when switching applications to the new host. Which practice best supports a safe cutover?",
+    "options": [
+      "Stop binlog generation on the old primary hours before cutover",
+      "Wait until the replica is fully caught up, then briefly freeze writes and verify GTID position before switching",
+      "Disable foreign key checks on the old primary",
+      "Restart both servers at the same time"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "multiple_choice",
+    "prompt": "A PostgreSQL query plan changed after an upgrade from nested loop to merge join, and the new plan is slower. The query filters on a highly selective predicate, but the table statistics are stale. What is the most likely first step?",
+    "options": [
+      "Increase work_mem indefinitely",
+      "Run ANALYZE on the affected tables and compare plans again",
+      "Drop the primary key",
+      "Turn off WAL archiving"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "coding",
+    "prompt": "You are given replica lag measurements for a MySQL replica every minute. Output the longest consecutive run where lag stayed at or below 5 seconds. Input: first line n, second line n integers. Output one integer. Example: '8\\n2 3 5 6 1 1 4 9' => 3.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "8\n2 3 5 6 1 1 4 9\n",
+        "expected_output": "3\n"
+      },
+      {
+        "input": "5\n10 9 8 7 6\n",
+        "expected_output": "0\n"
+      },
+      {
+        "input": "6\n5 5 5 5 5 5\n",
+        "expected_output": "6\n"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 8,
+    "difficulty": "easy",
+    "points": 3
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "short_answer",
+    "prompt": "After moving a PostgreSQL database to new hardware, the team wants to confirm the I/O subsystem can handle peak write load before go-live. What practical benchmark or test would you run?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Run a write-heavy load test such as pgbench or a representative replay against the new storage.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "multiple_choice",
+    "prompt": "A MySQL table with millions of rows has a query that selects only order_id and created_at for one customer. The existing index is on customer_id only. Which change is most likely to convert the query into an index-only or covering access pattern?",
+    "options": [
+      "Add a composite covering index including customer_id, created_at, and order_id",
+      "Set tmp_table_size larger",
+      "Remove the WHERE clause",
+      "Disable the query cache"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "short_answer",
+    "prompt": "A PostgreSQL primary is about to run out of disk because WAL files are accumulating faster than expected. What is the most likely root cause to check first on replicas or archiving?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "A broken or lagging WAL archive/replica is preventing WAL recycling.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "multiple_choice",
+    "prompt": "Your security team asks for the best way to reduce blast radius in PostgreSQL for an application that only needs to read from one schema and write to one table. What is the strongest least-privilege approach?",
+    "options": [
+      "Grant the application superuser so troubleshooting is easier",
+      "Create a dedicated role with only the required table and schema privileges",
+      "Share the postgres OS account with the app team",
+      "Allow the app to connect only from localhost"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "multiple_choice",
+    "prompt": "A PostgreSQL query on a large table uses WHERE date_trunc('day', created_at) = '2026-07-01'. The table is huge and this filter is common. What indexing approach is most appropriate?",
+    "options": [
+      "No index can help because functions are always slow",
+      "Create an index on created_at or a matching expression index if the expression is unavoidable",
+      "Add more RAM and leave the query unchanged",
+      "Convert the column to text"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "coding",
+    "prompt": "A PostgreSQL backup scheduler stores one backup per line with its age in days. Output how many backups are still within the retention window of 14 days. Input: first line n, second line n integers. Output the count. Example: '5\\n1 7 14 15 30' => 3.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "5\n1 7 14 15 30\n",
+        "expected_output": "3\n"
+      },
+      {
+        "input": "4\n0 2 3 4\n",
+        "expected_output": "4\n"
+      },
+      {
+        "input": "6\n14 14 14 15 16 17\n",
+        "expected_output": "3\n"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 6,
+    "difficulty": "easy",
+    "points": 3
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "short_answer",
+    "prompt": "You are planning a MySQL migration from a single primary to a primary-replica pair with minimal downtime. What is one operational check you must complete before redirecting writes to the new primary?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Verify the new primary has fully caught up and that replication position/GTID is consistent.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "multiple_choice",
+    "prompt": "A PostgreSQL database has a large append-only events table. Queries usually fetch the most recent 100 rows for one tenant. Which index is most likely to help the ORDER BY ... LIMIT pattern?",
+    "options": [
+      "Index on tenant_id, created_at DESC",
+      "Index on created_at only",
+      "GIN index on the JSON payload",
+      "No index because LIMIT is already small"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "multiple_choice",
+    "prompt": "A MySQL server is CPU-bound, and EXPLAIN shows 'Using temporary; Using filesort' for a report query with GROUP BY region_id ORDER BY total DESC. What is the most relevant tuning direction?",
+    "options": [
+      "Add or adjust indexes to support the filtering/grouping columns and reduce filesort work",
+      "Increase the max_allowed_packet",
+      "Disable binary logging",
+      "Reduce innodb_buffer_pool_size"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "short_answer",
+    "prompt": "During a PostgreSQL major-version upgrade, what is the main reason to rehearse the upgrade on a staging copy first?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "To validate extension compatibility, performance, and rollback/cutover steps before production.",
+    "test_cases": [],
+    "ai_resistance": "low",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "multiple_choice",
+    "prompt": "A MySQL backup process uses filesystem snapshots. The DBA wants the snapshot to be crash-consistent and usable for restore. Which preparation is most important immediately before the snapshot?",
+    "options": [
+      "Stop the server permanently",
+      "Ensure the backup method accounts for InnoDB redo/flush consistency and capture binlogs for PITR",
+      "Delete all indexes",
+      "Disable the buffer pool"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "coding",
+    "prompt": "You are given a list of PostgreSQL WAL archive statuses. Each line is either 'ok' or 'missing'. Output the first 1-based position of a missing WAL segment, or 0 if none are missing. Input: first line n, next n lines status strings. Example: '4\\nok\\nok\\nmissing\\nok' => 3.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "4\nok\nok\nmissing\nok\n",
+        "expected_output": "3\n"
+      },
+      {
+        "input": "3\nok\nok\nok\n",
+        "expected_output": "0\n"
+      },
+      {
+        "input": "5\nok\nmissing\nmissing\nok\nok\n",
+        "expected_output": "2\n"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 6,
+    "difficulty": "easy",
+    "points": 3
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "short_answer",
+    "prompt": "A PostgreSQL query on a partitioned table is still scanning all partitions even though the WHERE clause targets one day. What feature should you verify is working as intended?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Partition pruning.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 3,
+    "difficulty": "easy",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "multiple_choice",
+    "prompt": "You are designing high availability for PostgreSQL across two availability zones. The business wants automatic failover and minimal data loss. Which architecture choice is most appropriate?",
+    "options": [
+      "Single server with nightly logical dumps",
+      "Primary plus synchronous or near-synchronous replica with automated failover manager",
+      "Two independent primaries writing to the same tables",
+      "Read-only replicas without a promoted failover path"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "multiple_choice",
+    "prompt": "A migration script for MySQL adds a NOT NULL column with a default value to a very large table during business hours. What is the safest planning consideration?",
+    "options": [
+      "It will always be instantaneous on any table size",
+      "It may trigger table rebuild or metadata lock behavior depending on version and DDL algorithm, so test and schedule carefully",
+      "It only affects the replica",
+      "It has no effect on backups"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "hard",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "multiple_choice",
+    "prompt": "A PostgreSQL 15 service has a `payments` table with 80 million rows. A new dashboard query filters by `merchant_id` and `created_at >= now() - interval '7 days'`, then sorts by `created_at DESC LIMIT 50`. EXPLAIN shows a Bitmap Heap Scan on `merchant_id` followed by a Sort, and latency is rising during peak traffic. Which index change is most likely to improve this query without adding unnecessary write overhead?\n\nA. Add a BRIN index on `created_at`\nB. Add a btree index on `(merchant_id, created_at DESC)`\nC. Add separate btree indexes on `merchant_id` and `created_at`\nD. Add a full-text GIN index on `merchant_id` and `created_at`",
+    "options": [
+      "Add a BRIN index on `created_at`",
+      "Add a btree index on `(merchant_id, created_at DESC)`",
+      "Add separate btree indexes on `merchant_id` and `created_at`",
+      "Add a full-text GIN index on `merchant_id` and `created_at`"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "short_answer",
+    "prompt": "A MySQL 8.0 database uses GTID replication. A replica is falling behind after a one-time bulk import, but the application team cannot tolerate inconsistent reads during cutover. What is one safe operational step you would take before promoting the replica, and why?",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": "Wait until the replica has fully caught up and verify GTID consistency before promotion.",
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "coding",
+    "prompt": "A PostgreSQL DBA is reviewing candidate queries against a large `events` table and wants to identify which ones are likely to benefit from an index on `(tenant_id, created_at DESC)`. For each query, output `YES` if the WHERE clause filters on `tenant_id` and has either an equality or range predicate on `created_at`, otherwise output `NO`.\n\nInput format:\n- First line: integer `n`\n- Next `n` lines: one SQL predicate in simplified form\n\nRules:\n- Treat predicates as strings; do not execute SQL.\n- Output one line per input query.\n- A query qualifies only if it contains `tenant_id = ...` and one of:\n  - `created_at >= ...`\n  - `created_at > ...`\n  - `created_at BETWEEN ... AND ...`\n  - `created_at = ...`\n\nPrograms read stdin and write stdout.",
+    "options": [],
+    "correct_option_index": null,
+    "correct_answer_exact": null,
+    "test_cases": [
+      {
+        "input": "4\ntenant_id = 42 AND created_at >= '2026-07-01'\ntenant_id = 7 AND status = 'open'\ncreated_at >= '2026-07-01' AND tenant_id = 9\ntenant_id = 3 AND created_at BETWEEN '2026-07-01' AND '2026-07-07'",
+        "expected_output": "YES\nNO\nYES\nYES"
+      },
+      {
+        "input": "3\ntenant_id = 11 AND created_at = '2026-07-09'\ntenant_id = 11 AND created_at < '2026-07-09'\nmerchant_id = 11 AND created_at >= '2026-07-09'",
+        "expected_output": "YES\nNO\nNO"
+      }
+    ],
+    "ai_resistance": "high",
+    "estimated_minutes": 12,
+    "difficulty": "hard",
+    "points": 2
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "multiple_choice",
+    "prompt": "A PostgreSQL primary and synchronous standby are deployed across two AZs. The business wants automatic failover and minimal data loss, but also wants to avoid split-brain if the network between AZs is briefly unstable. Which approach best fits those requirements?\n\nA. Use asynchronous replication with no external failover manager\nB. Use synchronous replication with a quorum-aware HA manager and fencing/STONITH\nC. Use only WAL archiving and manual promotion scripts\nD. Put both PostgreSQL nodes behind a load balancer and allow both to accept writes",
+    "options": [
+      "Use asynchronous replication with no external failover manager",
+      "Use synchronous replication with a quorum-aware HA manager and fencing/STONITH",
+      "Use only WAL archiving and manual promotion scripts",
+      "Put both PostgreSQL nodes behind a load balancer and allow both to accept writes"
+    ],
+    "correct_option_index": 1,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "easy",
+    "points": 1
+  }
+]

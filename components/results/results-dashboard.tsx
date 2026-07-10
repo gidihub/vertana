@@ -24,6 +24,7 @@ import {
   getConsent,
   loadTestResults,
   gradeAttempt,
+  refreshStore,
   type AttemptAnswerView,
 } from "@/lib/store"
 import { formatDateTime } from "@/lib/format"
@@ -60,6 +61,8 @@ import {
 } from "@/components/ui/empty"
 import { ResultsPreviewMockup } from "@/components/empty-mockups"
 import { IntegrityConcernBadge } from "@/components/integrity-concern-badge"
+import { CandidateInvitesPanel } from "@/components/results/candidate-invites-panel"
+import { CandidateDispositionSelect } from "@/components/candidates/candidate-disposition"
 import { ResultsSummary } from "@/components/results/results-summary"
 import { ResultsFunnel } from "@/components/results/results-funnel"
 import { ResultsTableSkeleton } from "@/components/loading-skeletons"
@@ -143,6 +146,7 @@ export function ResultsDashboard({
   const candidates = useStore((db) =>
     db.candidates.filter((c) => c.test_id === testId),
   )
+  const inviteCount = useStore((db) => db.inviteCounts[testId] ?? 0)
   const integrityThreshold = useStore(
     (db) => db.organization?.tab_switch_threshold ?? 3,
   )
@@ -366,35 +370,52 @@ export function ResultsDashboard({
           </Card>
         </>
       ) : candidates.length === 0 ? (
-        <Empty className="rounded-xl border border-dashed border-border py-10">
-          <EmptyHeader>
-            <EmptyMedia>
-              <ResultsPreviewMockup />
-            </EmptyMedia>
-            <EmptyTitle className="text-base">No results yet</EmptyTitle>
-            <EmptyDescription>
-              Scores and activity appear here as soon as candidates start the
-              test. Share the link below to invite your first candidate, or edit
-              the test questions in the builder.
-            </EmptyDescription>
-          </EmptyHeader>
-          <EmptyContent className="flex flex-wrap justify-center gap-2">
-            <Button
-              variant="outline"
-              nativeButton={false}
-              render={<Link href={`/tests/${testId}/edit`} />}
-            >
-              <Pencil data-icon="inline-start" />
-              Edit test
-            </Button>
-            <Button variant="outline" onClick={copyLink}>
-              <LinkIcon data-icon="inline-start" />
-              Copy candidate link
-            </Button>
-          </EmptyContent>
-        </Empty>
+        <>
+          {test && (
+            <CandidateInvitesPanel
+              test={test}
+              onInvitesChange={() => void refreshStore()}
+            />
+          )}
+          {test && (
+            <ResultsFunnel
+              stats={funnelForTest(candidates, inviteCount)}
+              description="Email invites sent → started → completed for this assessment."
+              usesShareLink={test.status === "active"}
+            />
+          )}
+          <Empty className="rounded-xl border border-dashed border-border py-10">
+            <EmptyHeader>
+              <EmptyMedia>
+                <ResultsPreviewMockup />
+              </EmptyMedia>
+              <EmptyTitle className="text-base">No results yet</EmptyTitle>
+              <EmptyDescription>
+                Scores appear once candidates start. Send email invites above or
+                copy the shared link for open distribution.
+              </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent className="flex flex-wrap justify-center gap-2">
+              <Button
+                variant="outline"
+                nativeButton={false}
+                render={<Link href={`/tests/${testId}/edit`} />}
+              >
+                <Pencil data-icon="inline-start" />
+                Edit test
+              </Button>
+            </EmptyContent>
+          </Empty>
+        </>
       ) : (
         <>
+          {test && (
+            <CandidateInvitesPanel
+              test={test}
+              onInvitesChange={() => void refreshStore()}
+            />
+          )}
+
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             {statCards.map((s) => (
               <Card key={s.label}>
@@ -413,12 +434,19 @@ export function ResultsDashboard({
 
           {test && (
             <ResultsFunnel
-              stats={funnelForTest(candidates)}
-              description="Invited → started → completed for this assessment."
+              stats={funnelForTest(candidates, inviteCount)}
+              description="Email invites sent → started → completed for this assessment."
+              usesShareLink={test.status === "active"}
             />
           )}
 
-          {test && <ResultsSummary test={test} candidates={candidates} />}
+          {test && (
+            <ResultsSummary
+              test={test}
+              candidates={candidates}
+              inviteCount={inviteCount}
+            />
+          )}
 
           <Card>
             <CardHeader>
@@ -431,6 +459,7 @@ export function ResultsDashboard({
                     <TableRow>
                       <TableHead>Candidate</TableHead>
                       <TableHead>Status</TableHead>
+                      <TableHead>Disposition</TableHead>
                       <TableHead className="text-right">Score</TableHead>
                       <TableHead>Submitted</TableHead>
                       <TableHead>Integrity</TableHead>
@@ -446,6 +475,17 @@ export function ResultsDashboard({
                         <TableCell className="font-medium">{c.email}</TableCell>
                         <TableCell>
                           <CandidateStatusBadge status={c.status} />
+                        </TableCell>
+                        <TableCell>
+                          <CandidateDispositionSelect
+                            candidate={c}
+                            compact
+                            onUpdated={(updated) => {
+                              if (selected?.id === updated.id) {
+                                setSelected(updated)
+                              }
+                            }}
+                          />
                         </TableCell>
                         <TableCell
                           className={cn(
@@ -500,6 +540,13 @@ export function ResultsDashboard({
               )}
               <DetailRow label="Status">
                 <CandidateStatusBadge status={selected.status} />
+              </DetailRow>
+              <Separator />
+              <DetailRow label="Disposition">
+                <CandidateDispositionSelect
+                  candidate={selected}
+                  onUpdated={setSelected}
+                />
               </DetailRow>
               <Separator />
               <DetailRow label="Score">

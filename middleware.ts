@@ -8,6 +8,8 @@ const RECRUITER_API_PREFIXES = [
   "/api/tests",
   "/api/org",
   "/api/team",
+  "/api/billing/checkout",
+  "/api/billing/portal",
   "/api/generate-questions",
   "/api/question-library",
 ]
@@ -45,7 +47,10 @@ export async function middleware(request: NextRequest) {
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser().catch((err) => {
+    console.error("[middleware] Supabase auth getUser failed:", err)
+    return { data: { user: null }, error: err }
+  })
 
   if (!isRecruiterRoute(request.nextUrl.pathname)) {
     return response
@@ -74,7 +79,9 @@ export const config = {
     "/analytics/:path*",
     "/api/tests/:path*",
     "/api/org",
+    "/api/billing/checkout",
+    "/api/billing/portal",
     "/api/generate-questions",
-    "/api/question-library",
+    "/api/question-library/:path*",
   ],
 }

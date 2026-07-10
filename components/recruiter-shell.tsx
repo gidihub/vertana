@@ -67,7 +67,7 @@ export function RecruiterShell({
       {/* Desktop sidebar */}
       <aside
         className={cn(
-          "hidden h-svh shrink-0 flex-col overflow-hidden border-r border-sage-line/70 bg-[#e9ebe5] transition-[width] duration-200 ease-in-out lg:flex",
+          "hidden h-svh shrink-0 flex-col overflow-hidden border-r border-sage-line/70 bg-paper-deep transition-[width] duration-200 ease-in-out lg:flex",
           sidebarCollapsed ? "w-14" : "w-[272px]",
         )}
         aria-label="Main navigation"
@@ -92,7 +92,7 @@ export function RecruiterShell({
       )}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-[272px] shrink-0 flex-col border-r border-sage-line/70 bg-[#e9ebe5] transition-transform duration-200 lg:hidden",
+          "fixed inset-y-0 left-0 z-50 flex w-[272px] shrink-0 flex-col border-r border-sage-line/70 bg-paper-deep transition-transform duration-200 lg:hidden",
           mobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
         aria-label="Main navigation"

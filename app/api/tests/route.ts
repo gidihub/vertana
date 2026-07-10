@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 
 import { handleApiAuth } from "@/lib/auth/api"
 import {
+  countInvitesByTest,
   countNeedsScoringByTest,
   loadAllCandidates,
   loadTestsForOrg,
@@ -11,12 +12,13 @@ import type { Test } from "@/lib/types"
 
 export async function GET() {
   return handleApiAuth(async () => {
-    const [tests, candidates, needs_scoring] = await Promise.all([
+    const [tests, candidates, needs_scoring, invite_counts] = await Promise.all([
       loadTestsForOrg(),
       loadAllCandidates(),
       countNeedsScoringByTest(),
+      countInvitesByTest(),
     ])
-    return NextResponse.json({ tests, candidates, needs_scoring })
+    return NextResponse.json({ tests, candidates, needs_scoring, invite_counts })
   })
 }
 

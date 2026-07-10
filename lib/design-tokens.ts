@@ -6,7 +6,8 @@
  */
 
 export const colors = {
-  paper: "#f2f3ef",
+  paper: "#f7f6f2",
+  paperDeep: "#eeede9",
   ink: "#18231d",
   inkMuted: "#55655c",
   pine: "#0e4a34",
@@ -22,9 +23,9 @@ export const colors = {
 /** App shell — cream page background + ink body text */
 export const appShell = "min-h-svh bg-paper font-sans text-ink"
 
-/** Recruiter sidebar — slightly deeper cream for depth */
+/** Recruiter sidebar — slightly deeper neutral cream for depth */
 export const appSidebar =
-  "flex w-[272px] shrink-0 flex-col border-r border-sage-line/70 bg-[#e9ebe5]"
+  "flex w-[272px] shrink-0 flex-col border-r border-sage-line/70 bg-paper-deep"
 
 /** Sticky header used on marketing, auth, and recruiter surfaces */
 export const appHeader =

@@ -44,3 +44,7 @@ export function certificatesEnabledForTier(tier: PlanTier): boolean {
 export function codingQuestionsEnabledForTier(tier: PlanTier): boolean {
   return tier === "growth" || tier === "custom"
 }
+
+export function isPaidPlanTier(tier: PlanTier): boolean {
+  return tier === "starter" || tier === "growth" || tier === "custom"
+}

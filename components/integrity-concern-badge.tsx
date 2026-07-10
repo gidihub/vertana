@@ -14,7 +14,7 @@ export function IntegrityConcernBadge({
   /** danger = red integrity flag; warning = amber (legacy surfaces) */
   variant?: "danger" | "warning"
 }) {
-  const label = compact ? "Integrity concern" : "Integrity concern"
+  const label = compact ? "Integrity" : "Integrity concern"
   return (
     <Badge
       variant="outline"
