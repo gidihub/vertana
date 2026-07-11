@@ -48,6 +48,11 @@ export function DashboardAnalytics() {
   )
   const selectedTest = tests.find((t) => t.id === activeId)
 
+  const testItems = useMemo(
+    () => Object.fromEntries(tests.map((t) => [t.id, t.title])),
+    [tests],
+  )
+
   if (loading || tests.length === 0) return null
 
   return (
@@ -57,8 +62,9 @@ export function DashboardAnalytics() {
         <Select
           value={activeId ?? ""}
           onValueChange={(v) => setSelectedId(v || null)}
+          items={testItems}
         >
-          <SelectTrigger className="w-full sm:w-64">
+          <SelectTrigger className="h-9 w-full min-w-0 sm:w-72">
             <SelectValue placeholder="Select assessment" />
           </SelectTrigger>
           <SelectContent>

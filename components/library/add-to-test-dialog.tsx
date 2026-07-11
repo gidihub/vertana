@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import Link from "next/link"
 import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
@@ -39,6 +39,11 @@ export function AddToTestDialog({
   const tests = useStore((db) => db.tests)
   const [testId, setTestId] = useState<string>("")
   const [saving, setSaving] = useState(false)
+
+  const testItems = useMemo(
+    () => Object.fromEntries(tests.map((t) => [t.id, t.title])),
+    [tests],
+  )
 
   const eligible = questions.filter(
     (q) => codingEnabled || q.type !== "coding",
@@ -111,10 +116,14 @@ export function AddToTestDialog({
             >
               Assessment
             </label>
-            <Select value={testId} onValueChange={(v) => setTestId(v ?? "")}>
+            <Select
+              value={testId}
+              onValueChange={(v) => setTestId(v ?? "")}
+              items={testItems}
+            >
               <SelectTrigger
                 id="add-to-test-select"
-                className="w-full bg-background shadow-sm"
+                className="h-9 w-full min-w-0 bg-background shadow-sm"
               >
                 <SelectValue placeholder="Select assessment" />
               </SelectTrigger>

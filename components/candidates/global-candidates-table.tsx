@@ -63,6 +63,14 @@ export function GlobalCandidatesTable() {
     [tests],
   )
 
+  const testFilterItems = useMemo(
+    () => ({
+      all: "All tests",
+      ...Object.fromEntries(tests.map((t) => [t.id, t.title])),
+    }),
+    [tests],
+  )
+
   const rows = useMemo(() => {
     const q = search.trim().toLowerCase()
     return candidates
@@ -107,8 +115,9 @@ export function GlobalCandidatesTable() {
         <Select
           value={testFilter}
           onValueChange={(v) => setTestFilter(v ?? "all")}
+          items={testFilterItems}
         >
-          <SelectTrigger className="w-full sm:w-52">
+          <SelectTrigger className="h-9 w-full min-w-0 sm:w-52">
             <SelectValue placeholder="All tests" />
           </SelectTrigger>
           <SelectContent>
