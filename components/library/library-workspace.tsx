@@ -161,12 +161,14 @@ export function LibraryWorkspace({
 
   return (
     <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
-      <LibraryCategoryNav
-        active={category}
-        counts={categoryCounts}
-        total={allItems.length}
-        onSelect={setCategory}
-      />
+      <div className="w-full shrink-0 lg:sticky lg:top-[4.5rem] lg:z-10 lg:w-56 lg:max-h-[calc(100svh-5.5rem)] lg:overflow-y-auto lg:overscroll-contain">
+        <LibraryCategoryNav
+          active={category}
+          counts={categoryCounts}
+          total={allItems.length}
+          onSelect={setCategory}
+        />
+      </div>
 
       <div className="flex min-w-0 flex-1 flex-col gap-4">
         <div className="flex flex-col gap-2 sm:flex-row">

@@ -87,6 +87,12 @@
   --warning: oklch(0.75 0.14 75);
   --warning-foreground: oklch(0.32 0.06 75);
   --border: var(--color-sage-line);
+  --border-strong: color-mix(in srgb, var(--color-ink-muted) 32%, var(--color-sage-line));
+  --text-primary: var(--color-ink);
+  --text-secondary: var(--color-ink-muted);
+  --text-muted: color-mix(in srgb, var(--color-ink-muted) 72%, var(--color-paper));
+  --fill-primary: var(--color-pine);
+  --on-primary: var(--color-pine-foreground);
   --input: var(--color-sage-line);
   --ring: var(--color-pine);
   --chart-1: var(--color-pine);
@@ -123,6 +129,12 @@
   --accent-foreground: oklch(0.92 0.02 210);
   --destructive: oklch(0.7 0.19 22.2);
   --border: oklch(1 0 0 / 12%);
+  --border-strong: color-mix(in srgb, var(--muted-foreground) 32%, var(--border));
+  --text-primary: var(--foreground);
+  --text-secondary: var(--muted-foreground);
+  --text-muted: color-mix(in srgb, var(--muted-foreground) 72%, var(--background));
+  --fill-primary: var(--primary);
+  --on-primary: var(--primary-foreground);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.68 0.13 245);
   --chart-1: oklch(0.68 0.13 245);
@@ -159,6 +171,12 @@
     --accent-foreground: oklch(0.92 0.02 210);
     --destructive: oklch(0.7 0.19 22.2);
     --border: oklch(1 0 0 / 12%);
+    --border-strong: color-mix(in srgb, var(--muted-foreground) 32%, var(--border));
+    --text-primary: var(--foreground);
+    --text-secondary: var(--muted-foreground);
+    --text-muted: color-mix(in srgb, var(--muted-foreground) 72%, var(--background));
+    --fill-primary: var(--primary);
+    --on-primary: var(--primary-foreground);
     --input: oklch(1 0 0 / 15%);
     --ring: oklch(0.68 0.13 245);
     --chart-1: oklch(0.68 0.13 245);
