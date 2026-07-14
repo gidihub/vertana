@@ -69,10 +69,35 @@ export async function handleStripeWebhookEvent(
       // One-time credit-pack purchase.
       if (session.mode === "payment" && session.metadata?.kind === "credit_pack") {
         const org = await resolveOrgFromCheckoutSession(session)
-        if (!org) break
+        if (!org) {
+          console.error(
+            "[billing] credit-pack purchase paid but org could not be resolved — manual reconciliation required",
+            {
+              sessionId: session.id,
+              orgId: session.metadata?.org_id ?? session.client_reference_id,
+              customer:
+                typeof session.customer === "string"
+                  ? session.customer
+                  : (session.customer?.id ?? null),
+              metadata: session.metadata,
+            },
+          )
+          break
+        }
 
         const credits = Number.parseInt(session.metadata.credits ?? "0", 10)
-        if (!Number.isFinite(credits) || credits <= 0) break
+        if (!Number.isFinite(credits) || credits <= 0) {
+          console.error(
+            "[billing] credit-pack purchase paid but credit amount is invalid — manual reconciliation required",
+            {
+              sessionId: session.id,
+              orgId: org.id,
+              rawCredits: session.metadata.credits ?? null,
+              metadata: session.metadata,
+            },
+          )
+          break
+        }
 
         const paymentIntentId =
           typeof session.payment_intent === "string"

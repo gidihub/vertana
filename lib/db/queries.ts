@@ -1003,7 +1003,16 @@ export async function submitAttemptRecord(input: {
   // balance can never yield a free scored completion. consume_credits is
   // idempotent per (attempt_id, reason), so retries/races don't double-charge.
   if (!proctored) {
-    await consumeCredits(orgId, input.attemptId, "completion")
+    try {
+      await consumeCredits(orgId, input.attemptId, "completion")
+    } catch (err) {
+      if (err instanceof InsufficientCreditsError) {
+        throw new Error(
+          "This assessment is temporarily unavailable — the hiring team has no candidate credits remaining.",
+        )
+      }
+      throw err
+    }
   }
 
   const now = new Date().toISOString()

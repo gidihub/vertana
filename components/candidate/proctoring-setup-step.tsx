@@ -54,8 +54,10 @@ export function ProctoringSetupStep({
           videoRef.current.srcObject = stream
           await videoRef.current.play()
         }
+        if (cancelled) return
         setReady(true)
       } catch {
+        if (cancelled) return
         setError(
           "Camera access is required for this proctored assessment. Enable camera permissions or use a supported browser.",
         )

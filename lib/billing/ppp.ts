@@ -40,9 +40,7 @@ export function detectCountryFromHeaders(headers: HeadersLike): string | null {
   // actually served through Cloudflare; listing it last avoids a client spoofing
   // a cheaper PPP tier by sending `cf-ipcountry` to a non-Cloudflare origin.
   const country =
-    headers.get("x-vercel-ip-country") ??
-    headers.get("do-connecting-country") ??
-    headers.get("cf-ipcountry")
+    headers.get("x-vercel-ip-country") ?? headers.get("cf-ipcountry")
   const normalized = country?.trim().toUpperCase()
   return normalized && normalized !== "XX" ? normalized : null
 }

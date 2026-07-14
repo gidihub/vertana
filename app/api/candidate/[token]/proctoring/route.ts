@@ -32,6 +32,15 @@ export async function POST(
 
   try {
     const { token } = await params
+
+    const declaredLength = Number.parseInt(
+      req.headers.get("content-length") ?? "",
+      10,
+    )
+    if (Number.isFinite(declaredLength) && declaredLength > 2_500_000) {
+      return NextResponse.json({ error: "Image too large" }, { status: 413 })
+    }
+
     const body = bodySchema.parse(await req.json())
     const { mime, bytes } = parseDataUrl(body.imageDataUrl)
 
