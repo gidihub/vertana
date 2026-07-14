@@ -8,6 +8,7 @@ import {
   Users,
   Gauge,
   Flag,
+  CheckCircle2,
   Link as LinkIcon,
   ShieldCheck,
   ChevronDown,
@@ -36,7 +37,12 @@ import { numericText } from "@/lib/design-tokens"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { TestStatusBadge, CandidateStatusBadge } from "@/components/status-badge"
+import {
+  TestStatusBadge,
+  CandidateStatusBadge,
+  PassFailBadge,
+} from "@/components/status-badge"
+import { evaluatePass } from "@/lib/passing"
 import {
   Card,
   CardHeader,
@@ -88,6 +94,7 @@ function toCsv(
   consents: Record<string, ConsentRecord>,
   answers: Record<string, AttemptAnswerView[]>,
 ): string {
+  const passingScore = test?.passing_score ?? 70
   const questionHeaders = test.questions.map(
     (q, i) => `Q${i + 1}: ${q.prompt.replace(/"/g, '""')}`,
   )
@@ -95,6 +102,7 @@ function toCsv(
     "Email",
     "Status",
     "Score (%)",
+    "Result",
     "Tab switches",
     "Flagged",
     "Started",
@@ -109,10 +117,12 @@ function toCsv(
       const a = attemptAnswers.find((item) => item.question_id === q.id)
       return a?.response ?? ""
     })
+    const result = evaluatePass(c.score, passingScore)
     return [
       c.email,
       c.status,
       c.score ?? "",
+      result === null ? "" : result === "pass" ? "Pass" : "Fail",
       c.tab_switch_count,
       c.flagged ? "yes" : "no",
       c.started_at ?? "",
@@ -185,8 +195,19 @@ export function ResultsDashboard({
     const flagged = candidates.filter((c) =>
       hasIntegrityConcern(c.tab_switch_count, integrityThreshold),
     ).length
-    return { total: candidates.length, submitted: submitted.length, avg, flagged }
-  }, [candidates, integrityThreshold])
+    const passingScore = test?.passing_score ?? 70
+    const passed = scored.filter((c) => (c.score ?? 0) >= passingScore).length
+    const passRate =
+      scored.length > 0 ? Math.round((passed / scored.length) * 100) : null
+    return {
+      total: candidates.length,
+      submitted: submitted.length,
+      avg,
+      flagged,
+      passRate,
+      scoredCount: scored.length,
+    }
+  }, [candidates, integrityThreshold, test?.passing_score])
 
   if (!test && !loading) {
     return (
@@ -270,6 +291,11 @@ export function ResultsDashboard({
       value: stats.avg === null ? "—" : `${stats.avg}%`,
       icon: Gauge,
     },
+    {
+      label: "Pass rate",
+      value: stats.passRate === null ? "—" : `${stats.passRate}%`,
+      icon: CheckCircle2,
+    },
     { label: "Integrity flags", value: stats.flagged, icon: Flag },
   ]
 
@@ -347,8 +373,8 @@ export function ResultsDashboard({
 
       {loading ? (
         <>
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, i) => (
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+            {Array.from({ length: 5 }).map((_, i) => (
               <Card key={i}>
                 <CardHeader className="flex-row items-center justify-between gap-2 pb-2">
                   <Skeleton className="h-4 w-20" />
@@ -416,7 +442,7 @@ export function ResultsDashboard({
             />
           )}
 
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
             {statCards.map((s) => (
               <Card key={s.label}>
                 <CardHeader className="flex-row items-center justify-between gap-2 pb-2">
@@ -461,6 +487,7 @@ export function ResultsDashboard({
                       <TableHead>Status</TableHead>
                       <TableHead>Disposition</TableHead>
                       <TableHead className="text-right">Score</TableHead>
+                      <TableHead>Result</TableHead>
                       <TableHead>Submitted</TableHead>
                       <TableHead>Integrity</TableHead>
                     </TableRow>
@@ -495,6 +522,19 @@ export function ResultsDashboard({
                           )}
                         >
                           {c.score === null ? "—" : `${c.score}%`}
+                        </TableCell>
+                        <TableCell>
+                          {(() => {
+                            const result = evaluatePass(
+                              c.score,
+                              test?.passing_score ?? 70,
+                            )
+                            return result ? (
+                              <PassFailBadge result={result} />
+                            ) : (
+                              <span className="text-muted-foreground">—</span>
+                            )
+                          })()}
                         </TableCell>
                         <TableCell className="text-muted-foreground">
                           {formatDateTime(c.submitted_at)}
@@ -553,6 +593,26 @@ export function ResultsDashboard({
                 <span className={cn("font-semibold", scoreTone(selected.score))}>
                   {selected.score === null ? "Pending review" : `${selected.score}%`}
                 </span>
+              </DetailRow>
+              <Separator />
+              <DetailRow label="Result">
+                {(() => {
+                  const result = evaluatePass(
+                    selected.score,
+                    test?.passing_score ?? 70,
+                  )
+                  return result ? (
+                    <PassFailBadge result={result} />
+                  ) : (
+                    <span className="text-muted-foreground">
+                      Pending review
+                    </span>
+                  )
+                })()}
+              </DetailRow>
+              <Separator />
+              <DetailRow label="Passing score">
+                <span className={numericText}>{test?.passing_score ?? 70}%</span>
               </DetailRow>
               <Separator />
               <DetailRow label="Integrity">

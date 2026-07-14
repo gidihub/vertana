@@ -32,6 +32,10 @@ export interface OrganizationRow {
   billing_cycle: "monthly" | "annual" | null
   current_period_end: string | null
   ppp_tier: string | null
+  extra_seats: number
+  is_comp: boolean
+  data_retention_days: number | null
+  default_reply_to: string | null
 }
 
 export interface TestRow {
@@ -40,6 +44,7 @@ export interface TestRow {
   title: string
   description: string
   time_limit_seconds: number
+  passing_score: number
   deadline: string | null
   randomize_questions: boolean
   requires_proctoring: boolean
@@ -85,9 +90,15 @@ export interface TestInviteRow {
   status: "active" | "revoked" | "expired"
   expires_at: string | null
   is_share_link: boolean
-  email_status: "pending" | "sent" | "failed" | null
+  email_status: "pending" | "sent" | "failed" | "scheduled" | null
   email_error: string | null
   email_sent_at: string | null
+  scheduled_at: string | null
+  email_subject: string | null
+  email_message: string | null
+  email_reply_to: string | null
+  reminder_not_started_at: string | null
+  reminder_deadline_at: string | null
 }
 
 export function rowToTestInvite(row: TestInviteRow): TestInvite {
@@ -101,6 +112,10 @@ export function rowToTestInvite(row: TestInviteRow): TestInvite {
     email_error: row.email_error,
     email_sent_at: row.email_sent_at,
     status: row.status,
+    expires_at: row.expires_at,
+    scheduled_at: row.scheduled_at,
+    reminder_not_started_at: row.reminder_not_started_at ?? null,
+    reminder_deadline_at: row.reminder_deadline_at ?? null,
   }
 }
 
@@ -209,6 +224,7 @@ export function rowToTest(
     title: row.title,
     description: row.description,
     time_limit_minutes: Math.round(row.time_limit_seconds / 60),
+    passing_score: row.passing_score ?? 70,
     deadline: row.deadline,
     randomize_questions: row.randomize_questions,
     requires_proctoring: row.requires_proctoring,

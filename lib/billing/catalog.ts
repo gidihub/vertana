@@ -66,6 +66,40 @@ export async function resolvePackPriceId(
   return packPriceId(packId, tier)
 }
 
+/** Forward: resolve the Stripe recurring Price ID for one extra seat at a tier. */
+export async function resolveExtraSeatPriceId(
+  tier: PppTier,
+): Promise<string | null> {
+  const admin = createAdminClient()
+  const { data } = await admin
+    .from("plans")
+    .select("stripe_extra_seat_price_id")
+    .eq("name", "growth")
+    .eq("tier", tier)
+    .maybeSingle()
+
+  return (
+    (data as { stripe_extra_seat_price_id: string | null } | null)
+      ?.stripe_extra_seat_price_id ?? null
+  )
+}
+
+/** Set of extra-seat Price IDs across all tiers (to identify the item on a sub). */
+export async function extraSeatPriceIds(): Promise<Set<string>> {
+  const admin = createAdminClient()
+  const { data } = await admin
+    .from("plans")
+    .select("stripe_extra_seat_price_id")
+    .not("stripe_extra_seat_price_id", "is", null)
+
+  const ids = new Set<string>()
+  for (const row of (data as { stripe_extra_seat_price_id: string | null }[] | null) ??
+    []) {
+    if (row.stripe_extra_seat_price_id) ids.add(row.stripe_extra_seat_price_id)
+  }
+  return ids
+}
+
 export interface ResolvedPlanFromPrice {
   planName: PlanTier
   tier: PppTier

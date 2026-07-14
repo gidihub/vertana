@@ -47,15 +47,18 @@ function newQuestion(testId: string, position: number): Question {
 export function TestBuilder({ existing }: { existing?: Test }) {
   const router = useRouter()
   const org = useOrganization()
-  const canProctor = proctoringEnabledForTier(
-    (org?.plan_tier ?? "free") as PlanTier,
-  )
+  const canProctor =
+    org?.is_comp === true ||
+    proctoringEnabledForTier((org?.plan_tier ?? "free") as PlanTier)
   const testId = useMemo(() => existing?.id ?? uid(), [existing?.id])
 
   const [title, setTitle] = useState(existing?.title ?? "")
   const [description, setDescription] = useState(existing?.description ?? "")
   const [timeLimit, setTimeLimit] = useState(
     String(existing?.time_limit_minutes ?? 30),
+  )
+  const [passingScore, setPassingScore] = useState(
+    String(existing?.passing_score ?? 70),
   )
   const [deadline, setDeadline] = useState(
     existing?.deadline ? existing.deadline.slice(0, 10) : "",
@@ -176,6 +179,11 @@ export function TestBuilder({ existing }: { existing?: Test }) {
 
   function validate(): string | null {
     if (!title.trim()) return "Give your test a title."
+    if (String(passingScore).trim() === "")
+      return "Passing score must be a whole number between 0 and 100."
+    const pass = Number(passingScore)
+    if (!Number.isInteger(pass) || pass < 0 || pass > 100)
+      return "Passing score must be a whole number between 0 and 100."
     if (questions.length === 0) return "Add at least one question."
     for (const [i, q] of questions.entries()) {
       if (!q.prompt.trim()) return `Question ${i + 1} needs a prompt.`
@@ -201,6 +209,7 @@ export function TestBuilder({ existing }: { existing?: Test }) {
       title: title.trim(),
       description: description.trim(),
       time_limit_minutes: Number(timeLimit) || 30,
+      passing_score: Number(passingScore),
       deadline: deadline ? new Date(deadline).toISOString() : null,
       randomize_questions: randomize,
       requires_proctoring: proctoring,
@@ -302,6 +311,24 @@ export function TestBuilder({ existing }: { existing?: Test }) {
                 />
               </Field>
             </div>
+            <Field>
+              <FieldLabel htmlFor="passing-score">Passing score</FieldLabel>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="passing-score"
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={passingScore}
+                  onChange={(e) => setPassingScore(e.target.value)}
+                  className="w-24"
+                />
+                <span className="text-sm text-muted-foreground">%</span>
+              </div>
+              <FieldDescription>
+                Candidates who score at or above this are marked as a pass.
+              </FieldDescription>
+            </Field>
           </FieldGroup>
         </CardContent>
       </Card>

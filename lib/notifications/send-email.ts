@@ -2,6 +2,37 @@ export type SendEmailResult =
   | { ok: true }
   | { ok: false; error: string; configured: boolean }
 
+/**
+ * Best-effort first name derived from an email local-part, e.g.
+ * "pele.fasko@x.com" → "Pele", "jane_doe@x.com" → "Jane". Returns null when the
+ * local-part isn't name-like (e.g. "info", "hr2024", single letters) so callers
+ * can fall back to a neutral greeting.
+ */
+export function firstNameFromEmail(email: string): string | null {
+  const local = (email.split("@")[0] ?? "").trim()
+  if (!local) return null
+  const token = local.split(/[.\-_+]/)[0] ?? ""
+  const cleaned = token.replace(/[^a-zA-Z]/g, "")
+  if (cleaned.length < 2) return null
+  const generic = new Set([
+    "info",
+    "admin",
+    "hr",
+    "team",
+    "hello",
+    "contact",
+    "recruiting",
+    "recruitment",
+    "careers",
+    "jobs",
+    "no",
+    "noreply",
+    "support",
+  ])
+  if (generic.has(cleaned.toLowerCase())) return null
+  return cleaned.charAt(0).toUpperCase() + cleaned.slice(1).toLowerCase()
+}
+
 export function appOrigin(): string {
   if (process.env.NEXT_PUBLIC_SITE_URL) {
     return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "")
@@ -17,6 +48,8 @@ type SendEmailInput = {
   subject: string
   html: string
   logLabel: string
+  /** Optional Reply-To address so candidate replies reach the recruiter. */
+  replyTo?: string
 }
 
 function brevoSender(): { name: string; email: string } {
@@ -56,6 +89,7 @@ export async function sendTransactionalEmail(
       to: input.to.map((email) => ({ email })),
       subject: input.subject,
       htmlContent: input.html,
+      ...(input.replyTo ? { replyTo: { email: input.replyTo } } : {}),
     }),
   })
 

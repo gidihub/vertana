@@ -202,6 +202,30 @@ async function main() {
 
       console.log(`  ${pack.id}/${tier}: ${priceId}`)
     }
+
+    // Extra seat: one recurring monthly price per tier, written to the paid plan rows.
+    const extraSeatCents = plans.growth.extraSeatMonthlyCents
+    if (extraSeatCents != null) {
+      const product = await ensureProduct(
+        `vertana_extra_seat_${tier}`,
+        `Vertana extra seat (${tier})`,
+      )
+      const extraSeatPriceId = await ensurePrice({
+        product,
+        unitAmount: extraSeatCents,
+        lookupKey: `extra_seat_${tier}`,
+        recurring: { interval: "month" },
+      })
+
+      const { error } = await supabase
+        .from("plans")
+        .update({ stripe_extra_seat_price_id: extraSeatPriceId })
+        .in("name", ["starter", "growth"])
+        .eq("tier", tier)
+      if (error) throw new Error(`DB update failed (extra_seat/${tier}): ${error.message}`)
+
+      console.log(`  extra_seat/${tier}: ${extraSeatPriceId}`)
+    }
   }
 
   const couponId = await ensureCoupon()

@@ -5,20 +5,36 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  /* Vertana marketing palette — "Ink & Signal"
-     paper #F7F6F2 (neutral warm off-white) · ink #18231D · pine #0E4A34 · pine-deep #0A3325
-     lime #C4F250 · sage #DDE2D6 (UI chrome — borders, muted fills) */
-  --color-paper: #f7f6f2;
+  /* ---------------------------------------------------------------------------
+     Vertana "Ink & Signal" palette — single source of truth.
+     Canonical tokens (canvas/surface/forest/lime/ink/line) match the homepage
+     design system doc. Legacy names (paper/pine/sage) are kept as aliases so
+     existing components keep working; both resolve to the same values, so the
+     palette can't drift. Do not inline hex values in components — use a token.
+     --------------------------------------------------------------------------- */
+
+  /* Canonical tokens */
+  --color-canvas: #f5f3ee; /* page background — warm off-white */
+  --color-surface: #ffffff; /* cards, panels on canvas */
+  --color-forest: #14342b; /* primary brand — dark surfaces, buttons, headings */
+  --color-forest-deep: #0e2620; /* hover for forest surfaces */
+  --color-lime: #c7f04a; /* accent — used sparingly */
+  --color-lime-ink: #23331a; /* text on lime */
+  --color-ink: #1a1d1b; /* body text on light */
+  --color-ink-muted: #6b7570; /* secondary text, captions, chips */
+  --color-line: #e2dfd8; /* hairline borders, dividers */
+
+  /* Back-compat aliases (existing class names: bg-paper, text-pine, border-sage-line …) */
+  --color-paper: var(--color-canvas);
   --color-paper-deep: #eeede9;
-  --color-ink: #18231d;
-  --color-ink-muted: #55655c;
-  --color-pine: #0e4a34;
-  --color-pine-deep: #0a3325;
+  --color-pine: var(--color-forest);
+  --color-pine-deep: var(--color-forest-deep);
   --color-pine-foreground: #f2f3ef;
-  --color-lime: #c4f250;
-  --color-lime-ink: #23331a;
   --color-sage: #dde2d6;
-  --color-sage-line: #cbd2c3;
+  --color-sage-line: var(--color-line);
+
+  /* Single soft card elevation — the doc allows no shadows beyond this. */
+  --shadow-elevation: 0 1px 2px rgba(20, 52, 43, 0.04);
 }
 
 @theme inline {

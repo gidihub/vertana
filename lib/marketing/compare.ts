@@ -28,11 +28,11 @@ export const COMPARISONS: CompareContent[] = [
     competitor: "TestTrick",
     sourceDomain: "testtrick.com",
     intro:
-      "TestTrick is a full-featured assessment platform with a deep test library and heavy lockdown-style monitoring. Vertana takes the opposite bet on integrity — designing assessments an AI can't complete for the candidate — and keeps seats unlimited on every plan, including Free. Here's an honest side-by-side.",
+      "TestTrick is a full-featured assessment platform with a deep test library and heavy lockdown-style monitoring. Vertana takes the opposite bet on integrity — designing assessments an AI can't complete for the candidate — and includes generous seat counts with no per-seat pricing. Here's an honest side-by-side.",
     rows: [
       {
         feature: "Pricing model",
-        vertana: "$19–39/mo flat, unlimited seats",
+        vertana: "$19–39/mo flat, no per-seat pricing",
         competitor:
           "$35–75/mo — every tier has the same features, only volume differs",
       },
@@ -43,7 +43,7 @@ export const COMPARISONS: CompareContent[] = [
       },
       {
         feature: "Team members",
-        vertana: "Unlimited on every plan",
+        vertana: "2 / 5 / 10 included; extras ~$5/mo",
         competitor: "3 users on Starter, 5 on Basic, 7 on Business",
       },
       {
@@ -94,7 +94,7 @@ export const COMPARISONS: CompareContent[] = [
     competitor: "TestDome",
     sourceDomain: "testdome.com",
     intro:
-      "TestDome is a pay-per-candidate assessment service with a deep technical question bank and no subscription. Vertana is a flat monthly subscription with unlimited seats, an ongoing free plan, and integrity built on AI-resistant question design rather than snapshots. Here's how they line up.",
+      "TestDome is a pay-per-candidate assessment service with a deep technical question bank and no subscription. Vertana is a flat monthly subscription with generous included seat counts, an ongoing free plan, and integrity built on AI-resistant question design rather than snapshots. Here's how they line up.",
     rows: [
       {
         feature: "Pricing model",
@@ -152,7 +152,7 @@ export const COMPARISONS: CompareContent[] = [
     competitor: "TestGorilla",
     sourceDomain: "testgorilla.com",
     intro:
-      "TestGorilla is a broad multi-measure assessment library covering cognitive, personality, and language testing. Vertana is more focused: 800+ curated questions across 16 categories, unlimited seats on every plan, month-to-month billing, and integrity that doesn't depend on surveillance. Here's the honest comparison.",
+      "TestGorilla is a broad multi-measure assessment library covering cognitive, personality, and language testing. Vertana is more focused: 800+ curated questions across 16 categories, generous seat counts with no per-seat pricing, month-to-month billing, and integrity that doesn't depend on surveillance. Here's the honest comparison.",
     rows: [
       {
         feature: "Billing commitment",
@@ -167,7 +167,7 @@ export const COMPARISONS: CompareContent[] = [
       },
       {
         feature: "Team members",
-        vertana: "Unlimited on every plan",
+        vertana: "2 / 5 / 10 included; extras ~$5/mo",
         competitor:
           "2 premium seats on Core; unlimited only on custom-priced Plus",
       },
@@ -212,7 +212,7 @@ export const COMPARISONS: CompareContent[] = [
     competitor: "HackerRank",
     sourceDomain: "hackerrank.com",
     intro:
-      "HackerRank is the deep, developer-only standard for coding assessment, with a huge question bank and live interview tooling. Vertana covers technical and non-technical roles at a fraction of the price, with unlimited seats and an ongoing free plan. Here's where each one fits.",
+      "HackerRank is the deep, developer-only standard for coding assessment, with a huge question bank and live interview tooling. Vertana covers technical and non-technical roles at a fraction of the price, with 10 seats on Growth and an ongoing free plan. Here's where each one fits.",
     rows: [
       {
         feature: "Role coverage",
@@ -221,7 +221,7 @@ export const COMPARISONS: CompareContent[] = [
       },
       {
         feature: "Pricing model",
-        vertana: "$19–39/mo flat, unlimited seats",
+        vertana: "$19–39/mo flat, no per-seat pricing",
         competitor: "$165/mo Starter, $375/mo Pro, billed annually",
       },
       {
@@ -231,7 +231,7 @@ export const COMPARISONS: CompareContent[] = [
       },
       {
         feature: "Team members",
-        vertana: "Unlimited on every plan",
+        vertana: "2 / 5 / 10 included; extras ~$5/mo",
         competitor: "Starter capped at 1 user; unlimited only on Pro",
       },
       {
@@ -297,7 +297,7 @@ export const COMPARISONS: CompareContent[] = [
       {
         feature: "Pricing model",
         vertana:
-          "$19–39/mo flat, unlimited seats and candidates via credits",
+          "$19–39/mo flat, no per-seat pricing; candidates via credits",
         competitor:
           "$30 / $75 / $145 per month ($24 / $60 / $116 annually)",
       },

@@ -180,7 +180,7 @@ export async function POST(req: Request) {
     try {
       const org = await ensureMonthlyResets(await getOrganization())
       const limit = aiLimitForTier(org.plan_tier)
-      if (org.ai_generations_used >= limit) {
+      if (!org.is_comp && org.ai_generations_used >= limit) {
         return NextResponse.json(
           {
             error: `Monthly AI generation limit reached (${limit}). Upgrade your plan or wait until ${new Date(org.ai_generations_reset_at).toLocaleDateString()}.`,

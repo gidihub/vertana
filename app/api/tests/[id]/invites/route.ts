@@ -5,13 +5,29 @@ import { handleApiAuth } from "@/lib/auth/api"
 import { auditRecruiterAction } from "@/lib/audit/events"
 import {
   createCandidateInvite,
+  createCandidateInvitesBulk,
   loadEmailInvitesForTest,
   loadTestById,
 } from "@/lib/db/queries"
 
-const inviteSchema = z.object({
-  email: z.string().email(),
+const optionsSchema = z.object({
+  deadlineAt: z.string().datetime().nullish(),
+  message: z.string().max(2000).nullish(),
+  subject: z.string().max(300).nullish(),
+  replyTo: z.string().email().nullish(),
+  scheduledAt: z.string().datetime().nullish(),
 })
+
+// Accepts either a single `email` (legacy) or a list of `emails` for bulk sends.
+const inviteSchema = z
+  .object({
+    email: z.string().email().optional(),
+    emails: z.array(z.string().email()).max(500).optional(),
+  })
+  .merge(optionsSchema)
+  .refine((v) => Boolean(v.email) || (v.emails && v.emails.length > 0), {
+    message: "Provide at least one candidate email.",
+  })
 
 export async function GET(
   _req: Request,
@@ -37,7 +53,49 @@ export async function POST(
     try {
       const { id } = await params
       const body = inviteSchema.parse(await req.json())
-      const invite = await createCandidateInvite({ testId: id, email: body.email })
+      const options = {
+        deadlineAt: body.deadlineAt ?? null,
+        message: body.message ?? null,
+        subject: body.subject ?? null,
+        replyTo: body.replyTo ?? null,
+        scheduledAt: body.scheduledAt ?? null,
+      }
+
+      // Bulk path: one row per email, each independently succeeding/failing.
+      if (body.emails && body.emails.length > 0) {
+        const results = await createCandidateInvitesBulk({
+          testId: id,
+          emails: body.emails,
+          options,
+        })
+        const created = results.filter((r) => r.ok)
+        if (created.length > 0) {
+          try {
+            await auditRecruiterAction({
+              orgId: ctx.orgId,
+              userId: ctx.user.id,
+              action: "invite.created",
+              resourceType: "test_invite",
+              resourceId: id,
+              metadata: {
+                testId: id,
+                count: created.length,
+                emails: created.map((r) => r.email),
+                scheduled: Boolean(options.scheduledAt),
+              },
+            })
+          } catch {
+            // Audit failure is logged in writeAuditLog; don't block invites.
+          }
+        }
+        return NextResponse.json({ results })
+      }
+
+      const invite = await createCandidateInvite({
+        testId: id,
+        email: body.email as string,
+        options,
+      })
       try {
         await auditRecruiterAction({
           orgId: ctx.orgId,
@@ -45,7 +103,11 @@ export async function POST(
           action: "invite.created",
           resourceType: "test_invite",
           resourceId: invite.id,
-          metadata: { testId: id, email: body.email },
+          metadata: {
+            testId: id,
+            email: body.email,
+            scheduled: Boolean(options.scheduledAt),
+          },
         })
       } catch {
         // Audit failure is logged in writeAuditLog; don't block invite creation.

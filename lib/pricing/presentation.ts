@@ -38,6 +38,17 @@ function activeTestsLabel(plan: PlanConfig): string {
     : `${plan.activeTestLimit} active tests`
 }
 
+function seatsLabel(plan: PlanConfig): string {
+  if (plan.seatsIncluded == null) return "Unlimited team seats"
+  return `${plan.seatsIncluded} team seats included`
+}
+
+/** Highlight line on each plan card — seat count, not unlimited. */
+export function seatsBadgeLabel(plan: PlanConfig): string {
+  if (plan.seatsIncluded == null) return "Unlimited seats included"
+  return `${plan.seatsIncluded} seats included · no per-seat pricing`
+}
+
 /** 5–6 feature bullets per card, numbers sourced from config. */
 export function planFeatureBullets(plan: PlanConfig): string[] {
   if (plan.name === "custom") {
@@ -61,18 +72,20 @@ export function planFeatureBullets(plan: PlanConfig): string[] {
 
   if (plan.name === "free") {
     bullets.push(
+      seatsLabel(plan),
       "All question types, incl. coding IDE",
       "Tab-switch integrity detection",
-      "Unlimited team members",
     )
   } else if (plan.name === "starter") {
     bullets.push(
+      seatsLabel(plan),
       "Proctoring + face verification",
       "Candidate certificates",
       "Everything in Free",
     )
   } else if (plan.name === "growth") {
     bullets.push(
+      seatsLabel(plan),
       "ATS integrations",
       "Priority support",
       "Everything in Starter",

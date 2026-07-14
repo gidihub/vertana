@@ -37,9 +37,16 @@ import { sanitizeQuestionsForPlan } from "@/lib/coding/limits"
 import type { PppTier } from "@/lib/billing/ppp"
 import { notifyTestCompletion } from "@/lib/notifications/completion-email"
 import { sendCandidateInviteEmail } from "@/lib/notifications/candidate-invite-email"
+import { sendCandidateReminderEmail } from "@/lib/notifications/reminder-email"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { proctoringExpiresAt } from "@/lib/proctoring/retention"
-import type { Candidate, ConsentRecord, Test, TestInvite } from "@/lib/types"
+import type {
+  Candidate,
+  ConsentRecord,
+  Test,
+  TestInvite,
+  TestStatus,
+} from "@/lib/types"
 
 export class TokenAccessError extends Error {
   code: "invalid" | "closed" | "expired" | "revoked"
@@ -207,6 +214,7 @@ export async function saveTestRecord(
 
   if (
     test.requires_proctoring &&
+    !org.is_comp &&
     !proctoringEnabledForTier(org.plan_tier as PlanTier)
   ) {
     throw new Error(
@@ -214,7 +222,7 @@ export async function saveTestRecord(
     )
   }
 
-  if (test.status === "active") {
+  if (test.status === "active" && !org.is_comp) {
     const supabase = createAdminClient()
     const { count } = await supabase
       .from("tests")
@@ -250,6 +258,7 @@ export async function saveTestRecord(
     title: test.title,
     description: test.description,
     time_limit_seconds: (test.time_limit_minutes || 30) * 60,
+    passing_score: Math.min(Math.max(Math.round(test.passing_score ?? 70), 0), 100),
     deadline: test.deadline,
     randomize_questions: test.randomize_questions,
     requires_proctoring: test.requires_proctoring,
@@ -622,7 +631,11 @@ export async function startAttempt(input: {
   // Proctoring is a paid feature. If the org has since downgraded to Free while
   // proctored tests still exist, block new attempts rather than silently running
   // them unproctored. (Existing in-progress attempts above are allowed to resume.)
-  if (proctored && !proctoringEnabledForTier(org.plan_tier as PlanTier)) {
+  if (
+    proctored &&
+    !org.is_comp &&
+    !proctoringEnabledForTier(org.plan_tier as PlanTier)
+  ) {
     throw new Error(
       "This proctored assessment is temporarily unavailable — the hiring team needs to upgrade their plan to run it.",
     )
@@ -630,8 +643,9 @@ export async function startAttempt(input: {
 
   // Only new attempts reserve credits: proctored attempts reserve 2 at start
   // (recording begins now); unproctored attempts reserve nothing until submit.
+  // Comp orgs never reserve or consume credits.
   const requiredAtStart = proctored ? 2 : 1
-  if (org.credits_remaining < requiredAtStart) {
+  if (!org.is_comp && org.credits_remaining < requiredAtStart) {
     throw new Error(
       "This assessment is temporarily unavailable — the hiring team has no candidate credits remaining.",
     )
@@ -663,7 +677,7 @@ export async function startAttempt(input: {
     throw new Error(error?.message ?? "Could not start attempt")
   }
 
-  if (proctored) {
+  if (proctored && !org.is_comp) {
     try {
       await consumeCredits(orgId, attempt.id, "proctored_start")
     } catch (err) {
@@ -865,11 +879,28 @@ export async function recordProctoringMedia(input: {
     throw new Error(`Failed to store proctoring media: ${uploadError.message}`)
   }
 
+  // Resolve the org's configured retention window (falls back to the global
+  // default when unset) so media expires per the organization's data policy.
+  let retentionDays: number | null = null
+  const { data: testOrg } = await supabase
+    .from("tests")
+    .select("org_id")
+    .eq("id", loaded.invite.test_id)
+    .maybeSingle()
+  if (testOrg?.org_id) {
+    const { data: orgRow } = await supabase
+      .from("organizations")
+      .select("data_retention_days")
+      .eq("id", testOrg.org_id)
+      .maybeSingle()
+    retentionDays = (orgRow?.data_retention_days as number | null) ?? null
+  }
+
   const { error: rowError } = await supabase.from("proctoring_media").insert({
     attempt_id: input.attemptId,
     kind,
     storage_path: storagePath,
-    expires_at: proctoringExpiresAt(),
+    expires_at: proctoringExpiresAt(new Date(), retentionDays),
   })
 
   if (rowError) {
@@ -927,7 +958,7 @@ export async function submitAttemptRecord(input: {
   // Proctored attempts already consumed their 2 credits at start; only
   // unproctored attempts consume a credit on completion.
   const proctored = loaded.test.requires_proctoring
-  if (!proctored && org.credits_remaining < 1) {
+  if (!proctored && !org.is_comp && org.credits_remaining < 1) {
     throw new Error(
       "Submission failed — the hiring team has no candidate credits remaining.",
     )
@@ -1002,7 +1033,7 @@ export async function submitAttemptRecord(input: {
   // Consume the completion credit BEFORE finalizing the attempt so an exhausted
   // balance can never yield a free scored completion. consume_credits is
   // idempotent per (attempt_id, reason), so retries/races don't double-charge.
-  if (!proctored) {
+  if (!proctored && !org.is_comp) {
     try {
       await consumeCredits(orgId, input.attemptId, "completion")
     } catch (err) {
@@ -1093,7 +1124,7 @@ export async function issueCertificateRecord(input: {
   if (!loaded) throw new Error("Invalid test link")
 
   const org = await getOrganizationById(loaded.test.org_id!)
-  if (!certificatesEnabledForTier(org.plan_tier)) {
+  if (!org.is_comp && !certificatesEnabledForTier(org.plan_tier)) {
     throw new Error("Certificates require a Starter plan or higher.")
   }
 
@@ -1433,6 +1464,10 @@ async function deliverCandidateInviteEmail(input: {
   timeLimitMinutes: number
   token: string
   orgName?: string
+  message?: string | null
+  subject?: string | null
+  replyTo?: string | null
+  deadline?: string | null
 }): Promise<TestInvite> {
   const supabase = createAdminClient()
   const send = await sendCandidateInviteEmail({
@@ -1441,6 +1476,10 @@ async function deliverCandidateInviteEmail(input: {
     timeLimitMinutes: input.timeLimitMinutes,
     token: input.token,
     orgName: input.orgName,
+    message: input.message,
+    subject: input.subject,
+    replyTo: input.replyTo,
+    deadline: input.deadline,
   })
 
   const patch = send.ok
@@ -1469,9 +1508,39 @@ async function deliverCandidateInviteEmail(input: {
   return rowToTestInvite(data as TestInviteRow)
 }
 
+export interface CandidateInviteOptions {
+  /** Per-invite deadline (ISO). Falls back to the test deadline when omitted. */
+  deadlineAt?: string | null
+  /** Personalized note included in the invitation email. */
+  message?: string | null
+  /** Overrides the default email subject. */
+  subject?: string | null
+  /** Reply-To address for candidate responses. */
+  replyTo?: string | null
+  /** When set to a future time, the email is queued instead of sent now. */
+  scheduledAt?: string | null
+}
+
+function normalizeInviteOptions(options?: CandidateInviteOptions) {
+  const scheduledAt =
+    options?.scheduledAt && new Date(options.scheduledAt).getTime() > Date.now()
+      ? new Date(options.scheduledAt).toISOString()
+      : null
+  return {
+    deadlineAt: options?.deadlineAt
+      ? new Date(options.deadlineAt).toISOString()
+      : null,
+    message: options?.message?.trim() || null,
+    subject: options?.subject?.trim() || null,
+    replyTo: options?.replyTo?.trim() || null,
+    scheduledAt,
+  }
+}
+
 export async function createCandidateInvite(input: {
   testId: string
   email: string
+  options?: CandidateInviteOptions
 }): Promise<TestInvite> {
   const test = await loadTestById(input.testId)
   if (!test) throw new Error("Test not found")
@@ -1482,6 +1551,10 @@ export async function createCandidateInvite(input: {
   const org = await getOrganization()
   const email = input.email.trim().toLowerCase()
   if (!email) throw new Error("Email is required")
+
+  const opts = normalizeInviteOptions(input.options)
+  // Fall back to the org-wide default reply-to when the caller didn't set one.
+  const replyTo = opts.replyTo ?? org?.default_reply_to ?? null
 
   const supabase = createAdminClient()
   const { data: existing } = await supabase
@@ -1506,13 +1579,23 @@ export async function createCandidateInvite(input: {
       token,
       is_share_link: false,
       status: "active",
-      email_status: "pending",
+      email_status: opts.scheduledAt ? "scheduled" : "pending",
+      expires_at: opts.deadlineAt,
+      scheduled_at: opts.scheduledAt,
+      email_subject: opts.subject,
+      email_message: opts.message,
+      email_reply_to: replyTo,
     })
     .select("*")
     .single()
 
   if (error || !invite) {
     throw new Error(error?.message ?? "Could not create invite")
+  }
+
+  // Queued for a future send — the cron processor will deliver it.
+  if (opts.scheduledAt) {
+    return rowToTestInvite(invite as TestInviteRow)
   }
 
   return deliverCandidateInviteEmail({
@@ -1522,7 +1605,369 @@ export async function createCandidateInvite(input: {
     timeLimitMinutes: test.time_limit_minutes,
     token,
     orgName: org?.name,
+    message: opts.message,
+    subject: opts.subject,
+    replyTo,
+    deadline: opts.deadlineAt ?? test.deadline,
   })
+}
+
+export interface BulkInviteResult {
+  email: string
+  ok: boolean
+  invite?: TestInvite
+  error?: string
+}
+
+/** Max invites created in parallel per bulk request. */
+const BULK_INVITE_CONCURRENCY = 5
+
+/** Invite many candidates at once; each email succeeds or fails independently. */
+export async function createCandidateInvitesBulk(input: {
+  testId: string
+  emails: string[]
+  options?: CandidateInviteOptions
+}): Promise<BulkInviteResult[]> {
+  // De-duplicate normalized emails up front so each candidate is invited once.
+  const seen = new Set<string>()
+  const emails: string[] = []
+  for (const raw of input.emails) {
+    const email = raw.trim().toLowerCase()
+    if (!email || seen.has(email)) continue
+    seen.add(email)
+    emails.push(email)
+  }
+
+  // Process with a fixed-size worker pool: bounded concurrency, results kept in
+  // input order so the response lines up with what the recruiter submitted.
+  const results: BulkInviteResult[] = new Array(emails.length)
+  let cursor = 0
+  async function worker() {
+    while (true) {
+      const index = cursor++
+      if (index >= emails.length) return
+      const email = emails[index]
+      try {
+        const invite = await createCandidateInvite({
+          testId: input.testId,
+          email,
+          options: input.options,
+        })
+        results[index] = { email, ok: true, invite }
+      } catch (err) {
+        results[index] = { email, ok: false, error: (err as Error).message }
+      }
+    }
+  }
+
+  const workerCount = Math.min(BULK_INVITE_CONCURRENCY, emails.length)
+  await Promise.all(Array.from({ length: workerCount }, () => worker()))
+
+  return results
+}
+
+/** Revoke an email invite so its personal link no longer grants access. */
+export async function revokeCandidateInvite(inviteId: string): Promise<TestInvite> {
+  const supabase = createAdminClient()
+  const orgId = await getOrgId()
+
+  const { data: invite, error } = await supabase
+    .from("test_invites")
+    .select("*")
+    .eq("id", inviteId)
+    .eq("is_share_link", false)
+    .maybeSingle()
+
+  if (error || !invite) throw new Error("Invite not found")
+
+  const test = await loadTestById(invite.test_id as string)
+  if (!test || test.org_id !== orgId) throw new Error("Invite not found")
+
+  const { data: updated, error: updateError } = await supabase
+    .from("test_invites")
+    .update({ status: "revoked" })
+    .eq("id", inviteId)
+    .select("*")
+    .single()
+
+  if (updateError || !updated) {
+    throw new Error(updateError?.message ?? "Could not revoke invite")
+  }
+
+  return rowToTestInvite(updated as TestInviteRow)
+}
+
+/**
+ * Deliver any scheduled invites whose send time has passed. Invoked by the cron
+ * endpoint; runs with the service-role client and is not org-scoped.
+ */
+export async function processScheduledInvites(
+  limit = 100,
+): Promise<{ processed: number; sent: number; failed: number }> {
+  const supabase = createAdminClient()
+  const nowIso = new Date().toISOString()
+
+  const { data: due, error } = await supabase
+    .from("test_invites")
+    .select("*")
+    .eq("is_share_link", false)
+    .eq("email_status", "scheduled")
+    .eq("status", "active")
+    .lte("scheduled_at", nowIso)
+    .order("scheduled_at", { ascending: true })
+    .limit(limit)
+
+  if (error) throw new Error(error.message)
+
+  const rows = (due ?? []) as TestInviteRow[]
+  let sent = 0
+  let failed = 0
+
+  for (const row of rows) {
+    // Atomically claim the invite: flip scheduled → pending only if it's still
+    // scheduled. If another concurrent run already claimed it, skip delivery so
+    // the same email isn't sent twice.
+    const { data: claimed } = await supabase
+      .from("test_invites")
+      .update({ email_status: "pending", email_error: null })
+      .eq("id", row.id)
+      .eq("email_status", "scheduled")
+      .select("id")
+
+    if (!claimed || claimed.length === 0) {
+      continue
+    }
+
+    const { data: testRow } = await supabase
+      .from("tests")
+      .select("*")
+      .eq("id", row.test_id)
+      .maybeSingle()
+
+    // Skip (and clear the schedule) if the test is gone or no longer active.
+    if (!testRow || (testRow as TestRow).status !== "active") {
+      await supabase
+        .from("test_invites")
+        .update({
+          email_status: "failed",
+          email_error: "Test is not active at scheduled send time.",
+        })
+        .eq("id", row.id)
+      failed += 1
+      continue
+    }
+
+    const test = testRow as TestRow
+    const { data: org } = await supabase
+      .from("organizations")
+      .select("name")
+      .eq("id", test.org_id)
+      .maybeSingle()
+
+    const result = await deliverCandidateInviteEmail({
+      inviteId: row.id,
+      to: row.candidate_email ?? "",
+      testTitle: test.title,
+      timeLimitMinutes: Math.round(test.time_limit_seconds / 60),
+      token: row.token,
+      orgName: (org as { name?: string } | null)?.name,
+      message: row.email_message,
+      subject: row.email_subject,
+      replyTo: row.email_reply_to,
+      deadline: row.expires_at ?? test.deadline,
+    })
+
+    if (result.email_status === "sent") sent += 1
+    else failed += 1
+  }
+
+  return { processed: rows.length, sent, failed }
+}
+
+/** Hours after an invite is sent before we nudge a candidate who hasn't started. */
+const REMINDER_NOT_STARTED_AFTER_HOURS = 48
+/** Hours before the deadline when we send the "closes soon" reminder. */
+const REMINDER_DEADLINE_WITHIN_HOURS = 24
+
+type InviteWithTest = TestInviteRow & {
+  tests: {
+    title: string
+    time_limit_seconds: number
+    status: TestStatus
+    deadline: string | null
+    org_id: string
+  } | null
+}
+
+/** Effective deadline for an invite: its own expiry, else the test's deadline. */
+function inviteDeadline(row: InviteWithTest): string | null {
+  return row.expires_at ?? row.tests?.deadline ?? null
+}
+
+/**
+ * Send candidate invite reminders. Two independent one-shot nudges:
+ *   1. "not started" — 48h after the invite was emailed, if no attempt started.
+ *   2. "deadline" — within 24h of the deadline, if not yet submitted.
+ * Invoked by the reminder cron; runs with the service-role client (not scoped).
+ */
+export async function processInviteReminders(
+  limit = 100,
+): Promise<{ notStartedSent: number; deadlineSent: number; failed: number }> {
+  const supabase = createAdminClient()
+  const now = Date.now()
+  const nowIso = new Date(now).toISOString()
+  const testSelect =
+    "*, tests!inner(title, time_limit_seconds, status, deadline, org_id)"
+
+  let notStartedSent = 0
+  let deadlineSent = 0
+  let failed = 0
+
+  // Cache org names so a batch of invites for one org needs a single lookup.
+  const orgNameCache = new Map<string, string | undefined>()
+  async function orgName(orgId: string): Promise<string | undefined> {
+    if (orgNameCache.has(orgId)) return orgNameCache.get(orgId)
+    const { data } = await supabase
+      .from("organizations")
+      .select("name")
+      .eq("id", orgId)
+      .maybeSingle()
+    const name = (data as { name?: string } | null)?.name
+    orgNameCache.set(orgId, name)
+    return name
+  }
+
+  // Has this invite been started / submitted? Returns flags per invite id.
+  async function attemptFlags(
+    inviteIds: string[],
+  ): Promise<Map<string, { started: boolean; submitted: boolean }>> {
+    const map = new Map<string, { started: boolean; submitted: boolean }>()
+    if (inviteIds.length === 0) return map
+    const { data } = await supabase
+      .from("attempts")
+      .select("test_invite_id, started_at, submitted_at")
+      .in("test_invite_id", inviteIds)
+    for (const a of (data ?? []) as {
+      test_invite_id: string
+      started_at: string | null
+      submitted_at: string | null
+    }[]) {
+      const prev = map.get(a.test_invite_id) ?? {
+        started: false,
+        submitted: false,
+      }
+      map.set(a.test_invite_id, {
+        started: prev.started || a.started_at !== null,
+        submitted: prev.submitted || a.submitted_at !== null,
+      })
+    }
+    return map
+  }
+
+  async function sendReminder(
+    row: InviteWithTest,
+    kind: "not_started" | "deadline",
+  ): Promise<boolean> {
+    const column =
+      kind === "not_started" ? "reminder_not_started_at" : "reminder_deadline_at"
+
+    // Atomically claim so concurrent runs don't double-send this reminder.
+    // Reassert status = 'active' so revoked invites aren't sent after fetch.
+    const { data: claimed } = await supabase
+      .from("test_invites")
+      .update({ [column]: nowIso })
+      .eq("id", row.id)
+      .eq("status", "active")
+      .is(column, null)
+      .select("id")
+    if (!claimed || claimed.length === 0) return false
+
+    // Release the claim so a later cron run can retry.
+    async function releaseClaim(): Promise<void> {
+      await supabase
+        .from("test_invites")
+        .update({ [column]: null })
+        .eq("id", row.id)
+    }
+
+    const test = row.tests
+    if (!test) {
+      await releaseClaim()
+      return false
+    }
+    const result = await sendCandidateReminderEmail({
+      kind,
+      to: row.candidate_email ?? "",
+      testTitle: test.title,
+      timeLimitMinutes: Math.round(test.time_limit_seconds / 60),
+      token: row.token,
+      orgName: await orgName(test.org_id),
+      replyTo: row.email_reply_to,
+      deadline: inviteDeadline(row),
+    })
+    if (!result.ok) await releaseClaim()
+    return result.ok
+  }
+
+  // --- Reminder 1: invited but not started, 48h after send ---
+  const notStartedCutoff = new Date(
+    now - REMINDER_NOT_STARTED_AFTER_HOURS * 3600_000,
+  ).toISOString()
+  const { data: notStartedRows } = await supabase
+    .from("test_invites")
+    .select(testSelect)
+    .eq("is_share_link", false)
+    .eq("status", "active")
+    .eq("email_status", "sent")
+    .is("reminder_not_started_at", null)
+    .lte("email_sent_at", notStartedCutoff)
+    .limit(limit)
+
+  const nsRows = (notStartedRows ?? []) as unknown as InviteWithTest[]
+  const nsFlags = await attemptFlags(nsRows.map((r) => r.id))
+  for (const row of nsRows) {
+    if (row.tests?.status !== "active") continue
+    // Don't nudge to start if the deadline has already passed.
+    const deadline = inviteDeadline(row)
+    if (deadline && new Date(deadline).getTime() <= now) continue
+    if (nsFlags.get(row.id)?.started) continue
+    const ok = await sendReminder(row, "not_started")
+    if (ok) notStartedSent += 1
+    else failed += 1
+  }
+
+  // --- Reminder 2: deadline within 24h and not submitted ---
+  const { data: deadlineRows } = await supabase
+    .from("test_invites")
+    .select(testSelect)
+    .eq("is_share_link", false)
+    .eq("status", "active")
+    .eq("email_status", "sent")
+    .is("reminder_deadline_at", null)
+    // Prioritize imminent reminders by effective deadline. expires_at is the
+    // primary component of inviteDeadline(); order by it (soonest first, nulls
+    // last) so the limit keeps the most urgent invites.
+    .order("expires_at", { ascending: true, nullsFirst: false })
+    .limit(limit)
+
+  const dlRows = (deadlineRows ?? []) as unknown as InviteWithTest[]
+  const windowEnd = now + REMINDER_DEADLINE_WITHIN_HOURS * 3600_000
+  const dueForDeadline = dlRows.filter((row) => {
+    if (row.tests?.status !== "active") return false
+    const deadline = inviteDeadline(row)
+    if (!deadline) return false
+    const ts = new Date(deadline).getTime()
+    return ts > now && ts <= windowEnd
+  })
+  const dlFlags = await attemptFlags(dueForDeadline.map((r) => r.id))
+  for (const row of dueForDeadline) {
+    if (dlFlags.get(row.id)?.submitted) continue
+    const ok = await sendReminder(row, "deadline")
+    if (ok) deadlineSent += 1
+    else failed += 1
+  }
+
+  return { notStartedSent, deadlineSent, failed }
 }
 
 export async function resendCandidateInvite(inviteId: string): Promise<TestInvite> {
@@ -1547,6 +1992,7 @@ export async function resendCandidateInvite(inviteId: string): Promise<TestInvit
     .eq("id", inviteId)
 
   const org = await getOrganization()
+  const row = invite as TestInviteRow
   return deliverCandidateInviteEmail({
     inviteId,
     to: (invite.candidate_email as string) ?? "",
@@ -1554,6 +2000,10 @@ export async function resendCandidateInvite(inviteId: string): Promise<TestInvit
     timeLimitMinutes: test.time_limit_minutes,
     token: invite.token as string,
     orgName: org?.name,
+    message: row.email_message,
+    subject: row.email_subject,
+    replyTo: row.email_reply_to,
+    deadline: row.expires_at ?? test.deadline,
   })
 }
 

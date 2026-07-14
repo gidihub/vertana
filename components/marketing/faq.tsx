@@ -8,7 +8,11 @@ import {
 const FAQS = [
   {
     q: "How is Vertana different from other assessment tools?",
-    a: "Most tools fight AI cheating with surveillance. We design assessments an AI can't complete for the candidate, and treat monitoring as consented evidence, not a cage.",
+    a: "Most tools fight AI cheating with surveillance. We design assessments an AI can't complete for the candidate, and treat monitoring as consented evidence — not a cage. Ten seats on Growth with no per-seat pricing, a real free tier, and pricing that adjusts to your country.",
+  },
+  {
+    q: "Do you charge per seat?",
+    a: "No. Every plan includes a generous seat count (2 on Free, 5 on Starter, 10 on Growth — more than double what comparable tools include at twice the price). If you need more, extra seats are a few dollars a month, not a per-user licence.",
   },
   {
     q: "Can candidates just use ChatGPT to pass?",

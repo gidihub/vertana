@@ -1,13 +1,14 @@
 "use client"
 
-import { useState } from "react"
-import { CreditCard, Loader2 } from "lucide-react"
+import { useEffect, useState } from "react"
+import { CreditCard, Loader2, Users } from "lucide-react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { useOrganization } from "@/lib/store"
 import { formatDate } from "@/lib/format"
 import { isPaidPlanTier, type PlanTier } from "@/lib/plans"
+import type { SeatUsage } from "@/lib/billing/seats"
 import type { BillingCycle } from "@/lib/stripe/prices"
 import { cn } from "@/lib/utils"
 
@@ -40,10 +41,111 @@ async function openPortal() {
   window.location.href = data.url
 }
 
+function formatUsdCents(cents: number): string {
+  return `$${Math.round(cents / 100)}`
+}
+
+function SeatSummary({
+  seats,
+  canManage,
+  onChange,
+}: {
+  seats: SeatUsage
+  canManage: boolean
+  onChange: (extraSeats: number) => Promise<void>
+}) {
+  const [pending, setPending] = useState(false)
+  const unlimited = seats.total == null
+
+  async function change(delta: number) {
+    const next = Math.max(0, seats.extraSeats + delta)
+    if (next === seats.extraSeats) return
+    setPending(true)
+    try {
+      await onChange(next)
+    } finally {
+      setPending(false)
+    }
+  }
+
+  return (
+    <div className="rounded-lg border border-border bg-muted/20 p-4">
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Users className="size-4" />
+        Team seats
+      </div>
+      <p className="mt-1 text-lg font-semibold">
+        {seats.used}
+        {unlimited ? " used" : ` / ${seats.total}`}
+      </p>
+      <p className="mt-1 text-xs text-muted-foreground">
+        {unlimited
+          ? "Unlimited seats included"
+          : `${seats.included} included${
+              seats.extraSeats > 0 ? ` + ${seats.extraSeats} extra` : ""
+            }`}
+        {seats.extraSeatPriceCents != null
+          ? ` · extra seats ${formatUsdCents(seats.extraSeatPriceCents)}/mo each`
+          : ""}
+      </p>
+
+      {canManage && seats.extraSeatPriceCents != null ? (
+        <div className="mt-3 flex items-center gap-3">
+          <span className="text-xs text-muted-foreground">Extra seats</span>
+          <div className="inline-flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              className="size-7"
+              disabled={pending || seats.extraSeats <= 0}
+              onClick={() => void change(-1)}
+              aria-label="Remove an extra seat"
+            >
+              {pending ? <Loader2 className="size-3.5 animate-spin" /> : "−"}
+            </Button>
+            <span className="min-w-6 text-center text-sm font-semibold tabular-nums">
+              {seats.extraSeats}
+            </span>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              className="size-7"
+              disabled={pending}
+              onClick={() => void change(1)}
+              aria-label="Add an extra seat"
+            >
+              {pending ? <Loader2 className="size-3.5 animate-spin" /> : "+"}
+            </Button>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
 export function BillingActions() {
   const org = useOrganization()
   const [loading, setLoading] = useState<string | null>(null)
   const [cycle, setCycle] = useState<BillingCycle>("monthly")
+  const [seats, setSeats] = useState<SeatUsage | null>(null)
+  const [canManageSeats, setCanManageSeats] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    void fetch("/api/team")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (cancelled || !data) return
+        if (data.seats) setSeats(data.seats as SeatUsage)
+        setCanManageSeats(Boolean(data.canManageSeats))
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   if (!org) return null
 
@@ -74,6 +176,22 @@ export function BillingActions() {
     }
   }
 
+  async function handleSeatChange(extraSeats: number) {
+    try {
+      const res = await fetch("/api/billing/seats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ extraSeats }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Failed to update seats")
+      setSeats(data.seats as SeatUsage)
+      toast.success("Seats updated")
+    } catch (err) {
+      toast.error((err as Error).message)
+    }
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <div className="rounded-lg border border-border bg-muted/20 p-4">
@@ -88,6 +206,14 @@ export function BillingActions() {
           </p>
         ) : null}
       </div>
+
+      {seats ? (
+        <SeatSummary
+          seats={seats}
+          canManage={hasSubscription && canManageSeats}
+          onChange={handleSeatChange}
+        />
+      ) : null}
 
       {hasSubscription ? (
         <Button

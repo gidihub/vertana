@@ -46,10 +46,10 @@ export async function Pricing() {
             Pricing
           </p>
           <h2 className="mt-3 font-sans text-3xl font-semibold tracking-tight text-balance text-ink sm:text-4xl">
-            Flat pricing with unlimited seats
+            Flat pricing. No per-seat charges.
           </h2>
           <p className="mt-3 text-sm text-ink-muted">
-            Every plan includes unlimited team members — you only pay for the
+            Every plan includes a generous seat count — you only pay for the
             candidates you evaluate.
           </p>
         </div>

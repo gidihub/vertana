@@ -4,10 +4,11 @@ import { handleApiAuth } from "@/lib/auth/api"
 import { getOrganization, ensureMonthlyResets } from "@/lib/org"
 
 export async function GET() {
-  return handleApiAuth(async ({ user }) => {
+  return handleApiAuth(async ({ user, role }) => {
     const org = await ensureMonthlyResets(await getOrganization())
     return NextResponse.json({
       user_email: user.email ?? null,
+      role,
       organization: {
         id: org.id,
         name: org.name,
@@ -25,6 +26,10 @@ export async function GET() {
         billing_cycle: org.billing_cycle ?? null,
         current_period_end: org.current_period_end ?? null,
         ppp_tier: org.ppp_tier ?? null,
+        extra_seats: org.extra_seats ?? 0,
+        is_comp: org.is_comp ?? false,
+        data_retention_days: org.data_retention_days ?? null,
+        default_reply_to: org.default_reply_to ?? null,
       },
     })
   })

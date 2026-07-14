@@ -37,6 +37,10 @@ export interface PlanConfig {
   hasEnterpriseControls: boolean
   /** Proctoring + face verification. Paid plans only — never on Free. */
   hasProctoring: boolean
+  /** Included team seats. null = unlimited (Custom). */
+  seatsIncluded: number | null
+  /** Monthly price per extra seat in cents. null = not sold (Free) or included (Custom). */
+  extraSeatMonthlyCents: number | null
 }
 
 export interface PackConfig {
@@ -69,6 +73,23 @@ const PLAN_MONTHLY_DOLLARS: Record<PppTier, { starter: number; growth: number }>
   t3: { starter: 9, growth: 19 },
   t4: { starter: 7, growth: 15 },
   t5: { starter: 5, growth: 10 },
+}
+
+/** Extra seat price (USD/mo) per PPP tier — scales down with regional pricing. */
+const EXTRA_SEAT_MONTHLY_DOLLARS: Record<PppTier, number> = {
+  t1: 5,
+  t2: 4,
+  t3: 3,
+  t4: 2,
+  t5: 1,
+}
+
+/** Included seats per plan (identical across PPP tiers). */
+const SEATS_INCLUDED: Record<PlanName, number | null> = {
+  free: 2,
+  starter: 5,
+  growth: 10,
+  custom: null,
 }
 
 /** Volume + capability limits are identical across every PPP tier. */
@@ -125,23 +146,30 @@ function yearlyTotalCents(monthlyDollars: number): number {
 
 function buildPlans(tier: PppTier): Record<PlanName, PlanConfig> {
   const { starter, growth } = PLAN_MONTHLY_DOLLARS[tier]
+  const extraSeatCents = EXTRA_SEAT_MONTHLY_DOLLARS[tier] * 100
   return {
     free: {
       name: "free",
       monthlyPriceCents: 0,
       yearlyPriceCents: 0,
+      seatsIncluded: SEATS_INCLUDED.free,
+      extraSeatMonthlyCents: null,
       ...PLAN_VOLUME.free,
     },
     starter: {
       name: "starter",
       monthlyPriceCents: starter * 100,
       yearlyPriceCents: yearlyTotalCents(starter),
+      seatsIncluded: SEATS_INCLUDED.starter,
+      extraSeatMonthlyCents: extraSeatCents,
       ...PLAN_VOLUME.starter,
     },
     growth: {
       name: "growth",
       monthlyPriceCents: growth * 100,
       yearlyPriceCents: yearlyTotalCents(growth),
+      seatsIncluded: SEATS_INCLUDED.growth,
+      extraSeatMonthlyCents: extraSeatCents,
       ...PLAN_VOLUME.growth,
     },
     custom: {
@@ -155,6 +183,8 @@ function buildPlans(tier: PppTier): Record<PlanName, PlanConfig> {
       hasAts: true,
       hasEnterpriseControls: true,
       hasProctoring: true,
+      seatsIncluded: SEATS_INCLUDED.custom,
+      extraSeatMonthlyCents: null,
     },
   }
 }
@@ -188,4 +218,20 @@ export function pricingForTier(tier: PppTier): TierPricing {
 /** Monthly credits granted for a plan (anchor volume applies to every tier). */
 export function monthlyCreditsForPlan(plan: PlanName): number {
   return PRICING_BY_TIER[ANCHOR_TIER].plans[plan].monthlyCredits ?? 0
+}
+
+/**
+ * Included team seats for a plan. null = unlimited (Custom). Seat counts are
+ * identical across PPP tiers, so the anchor table is authoritative.
+ */
+export function seatsIncludedForPlan(plan: PlanName): number | null {
+  return PRICING_BY_TIER[ANCHOR_TIER].plans[plan].seatsIncluded
+}
+
+/** Extra-seat monthly price (cents) for a plan at a given PPP tier. */
+export function extraSeatCentsForPlan(
+  plan: PlanName,
+  tier: PppTier,
+): number | null {
+  return PRICING_BY_TIER[tier].plans[plan].extraSeatMonthlyCents
 }

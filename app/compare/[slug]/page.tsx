@@ -120,7 +120,7 @@ export default async function ComparePage({
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-base text-pine-foreground/80">
             Test your first 10 candidates free — no credit card, no trial clock,
-            unlimited seats.
+            2 seats included on Free.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link

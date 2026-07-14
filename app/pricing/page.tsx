@@ -16,6 +16,7 @@ import { PricingPlans } from "@/components/marketing/pricing-plans"
 import { PricingPacks } from "@/components/marketing/pricing-packs"
 import {
   formatPerCandidate,
+  formatUsd,
   getPricingForRequest,
   perCandidateCost,
 } from "@/lib/pricing"
@@ -30,7 +31,7 @@ import { numericText } from "@/lib/design-tokens"
 export const metadata: Metadata = {
   title: "Pricing — no-shows don't cost you credits | Vertana",
   description:
-    "The full toolkit on every paid plan, unlimited team members, and 10 free candidates a month. Coding assessments and AI question generation on every plan, including Free.",
+    "The full toolkit on every paid plan, no per-seat pricing, and 10 free candidates a month. Coding assessments and AI question generation on every plan, including Free.",
   alternates: { canonical: "/pricing" },
 }
 
@@ -114,7 +115,7 @@ function Headline() {
           No-shows don&rsquo;t cost you credits.
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-base text-ink-muted">
-          Full toolkit on every paid plan, unlimited seats, 10 free candidates a
+          Full toolkit on every paid plan, no per-seat pricing, 10 free candidates a
           month.
         </p>
       </div>
@@ -272,8 +273,26 @@ function ComparisonTable({ plans }: { plans: PlanConfig[] }) {
           ],
         },
         {
-          label: "Team members",
-          cells: ["unlimited", "unlimited", "unlimited", "unlimited"],
+          label: "Team seats included",
+          cells: [
+            String(free.seatsIncluded),
+            String(starter.seatsIncluded),
+            String(growth.seatsIncluded),
+            "unlimited",
+          ],
+        },
+        {
+          label: "Extra seats",
+          cells: [
+            false,
+            starter.extraSeatMonthlyCents != null
+              ? `${formatUsd(starter.extraSeatMonthlyCents)}/mo`
+              : "—",
+            growth.extraSeatMonthlyCents != null
+              ? `${formatUsd(growth.extraSeatMonthlyCents)}/mo`
+              : "—",
+            "Included",
+          ],
         },
       ],
     },

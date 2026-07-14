@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin"
 import { createClient } from "@/lib/supabase/server"
 import { creditsForTier, type PlanTier } from "@/lib/plans"
+import { isCompEmail } from "@/lib/comp"
 
 export class AuthError extends Error {
   status: number
@@ -74,6 +75,9 @@ export async function setupOrganizationForUser(input: {
   // billing is wired, plan_tier will be set in the database at checkout and this
   // env var has no effect on existing organizations.
   const tier = (process.env.VERTANA_PLAN_TIER as PlanTier) || "free"
+  // Owners on an allowlisted domain get a complimentary org: unlimited credits
+  // and all paid features, independent of plan_tier. See lib/comp.ts.
+  const isComp = isCompEmail(input.email)
   const { data: org, error: orgError } = await admin
     .from("organizations")
     .insert({
@@ -81,6 +85,7 @@ export async function setupOrganizationForUser(input: {
       owner_id: input.userId,
       plan_tier: tier,
       credits_remaining: creditsForTier(tier),
+      is_comp: isComp,
     })
     .select("id, name")
     .single()

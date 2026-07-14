@@ -2,6 +2,7 @@ import type Stripe from "stripe"
 
 import type { PppTier } from "@/lib/billing/ppp"
 import { resolvePlanFromPriceId } from "@/lib/billing/catalog"
+import { extraSeatQuantityFromSubscription } from "@/lib/billing/manage-seats"
 import { grantMonthlyCredits, nextMonthlyExpiryISO } from "@/lib/credits/ledger"
 import { monthlyCreditsForPlan } from "@/lib/pricing/config"
 import type { PlanName } from "@/lib/pricing/config"
@@ -63,6 +64,9 @@ export async function syncSubscriptionToOrg(
     (subscription.metadata?.ppp_tier as PppTier | undefined) ??
     null
   const periodEnd = subscriptionPeriodEnd(subscription)
+  const extraSeats = isActive
+    ? await extraSeatQuantityFromSubscription(subscription)
+    : 0
 
   const admin = createAdminClient()
   const { error } = await admin
@@ -73,6 +77,7 @@ export async function syncSubscriptionToOrg(
       billing_cycle: billingCycle,
       current_period_end: periodEnd,
       ppp_tier: isActive ? pppTier : null,
+      extra_seats: extraSeats,
       ...(isActive && tier ? { plan_tier: tier } : { plan_tier: "free" }),
     })
     .eq("id", org.id)
@@ -104,6 +109,7 @@ export async function downgradeOrgToFree(orgId: string): Promise<void> {
       billing_cycle: null,
       current_period_end: null,
       ppp_tier: null,
+      extra_seats: 0,
     })
     .eq("id", orgId)
 

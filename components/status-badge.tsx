@@ -40,3 +40,22 @@ export function CandidateStatusBadge({ status }: { status: CandidateStatus }) {
     </Badge>
   )
 }
+
+const passFailStyles = {
+  pass: "bg-[color-mix(in_oklch,var(--chart-3)_18%,transparent)] text-[color-mix(in_oklch,var(--chart-3)_60%,var(--foreground))]",
+  fail: "bg-[color-mix(in_oklch,var(--destructive)_15%,transparent)] text-destructive",
+} as const
+
+export function PassFailBadge({
+  result,
+  className,
+}: {
+  result: "pass" | "fail"
+  className?: string
+}) {
+  return (
+    <Badge variant="secondary" className={cn(passFailStyles[result], className)}>
+      {result === "pass" ? "Pass" : "Fail"}
+    </Badge>
+  )
+}

@@ -31,10 +31,10 @@ const STATUS_DOT: Record<TestStatus, string> = {
 }
 
 const PRIMARY_NAV = [
-  { href: "/dashboard", label: "Tests", icon: LayoutGrid },
-  { href: "/candidates", label: "Candidates", icon: UserRound },
-  { href: "/library", label: "Library", icon: BookOpen },
-  { href: "/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/dashboard", label: "Tests", icon: LayoutGrid, tour: "nav-tests" },
+  { href: "/candidates", label: "Candidates", icon: UserRound, tour: "nav-candidates" },
+  { href: "/library", label: "Library", icon: BookOpen, tour: "nav-library" },
+  { href: "/analytics", label: "Analytics", icon: BarChart3, tour: "nav-analytics" },
 ] as const
 
 function TestSidebarItem({
@@ -119,12 +119,14 @@ function SidebarIconButton({
   label,
   active,
   onClick,
+  dataTour,
 }: {
   href?: string
   icon: React.ComponentType<{ className?: string }>
   label: string
   active?: boolean
   onClick?: () => void
+  dataTour?: string
 }) {
   const className = cn(
     "flex size-9 items-center justify-center rounded-md transition-colors",
@@ -133,7 +135,13 @@ function SidebarIconButton({
 
   if (href) {
     return (
-      <Link href={href} title={label} className={className} onClick={onClick}>
+      <Link
+        href={href}
+        title={label}
+        className={className}
+        onClick={onClick}
+        data-tour={dataTour}
+      >
         <Icon className="size-4" />
         <span className="sr-only">{label}</span>
       </Link>
@@ -155,6 +163,7 @@ function NavLink({
   active,
   collapsed,
   onNavigate,
+  dataTour,
 }: {
   href: string
   label: string
@@ -162,6 +171,7 @@ function NavLink({
   active: boolean
   collapsed?: boolean
   onNavigate?: () => void
+  dataTour?: string
 }) {
   if (collapsed) {
     return (
@@ -171,6 +181,7 @@ function NavLink({
         label={label}
         active={active}
         onClick={onNavigate}
+        dataTour={dataTour}
       />
     )
   }
@@ -179,6 +190,7 @@ function NavLink({
     <Link
       href={href}
       onClick={onNavigate}
+      data-tour={dataTour}
       className={cn(
         "flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors",
         active ? "bg-pine/10 text-pine" : "text-ink hover:bg-paper/70",
@@ -277,6 +289,7 @@ export function SidebarNav({
           <Button
             className="mt-3 size-9 bg-pine p-0 text-pine-foreground hover:bg-pine-deep"
             nativeButton={false}
+            data-tour="create-test"
             render={
               <Link href="/tests/new" onClick={onNavigate} title="Create test" />
             }
@@ -288,6 +301,7 @@ export function SidebarNav({
           <Button
             className="mt-4 w-full bg-pine text-pine-foreground hover:bg-pine-deep"
             nativeButton={false}
+            data-tour="create-test"
             render={<Link href="/tests/new" onClick={onNavigate} />}
           >
             <Plus data-icon="inline-start" />
@@ -318,6 +332,7 @@ export function SidebarNav({
               active={isNavActive(item.href)}
               collapsed={collapsed}
               onNavigate={onNavigate}
+              dataTour={item.tour}
             />
           ))}
         </nav>
@@ -365,11 +380,13 @@ export function SidebarNav({
             label="Team"
             active={pathname === "/team"}
             onClick={onNavigate}
+            dataTour="nav-team"
           />
         ) : (
           <Link
             href="/team"
             onClick={onNavigate}
+            data-tour="nav-team"
             className={cn(
               "mt-auto flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors",
               pathname === "/team"
@@ -397,7 +414,7 @@ export function SidebarNav({
               href="/settings"
               icon={Settings}
               label="Account settings"
-              active={pathname === "/settings"}
+              active={pathname === "/settings" || pathname.startsWith("/settings/")}
               onClick={onNavigate}
             />
             <a
@@ -425,7 +442,7 @@ export function SidebarNav({
               onClick={onNavigate}
               className={cn(
                 "flex items-center gap-2 rounded-md px-2 py-2 transition-colors",
-                pathname === "/settings"
+                pathname === "/settings" || pathname.startsWith("/settings/")
                   ? "bg-pine/10 font-medium text-pine"
                   : "text-ink hover:bg-paper/70",
               )}

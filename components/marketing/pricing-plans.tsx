@@ -13,6 +13,7 @@ import {
   ctaLabel,
   headlinePrice,
   planFeatureBullets,
+  seatsBadgeLabel,
   secondaryPriceLine,
 } from "@/lib/pricing/presentation"
 import { formatLocalEstimate } from "@/lib/pricing/currency"
@@ -181,7 +182,7 @@ function PlanCard({
 
       <div className="mt-5 flex items-center gap-2 rounded-lg bg-pine/10 px-3 py-2.5 text-sm font-semibold text-pine">
         <Users className="size-4 shrink-0" aria-hidden />
-        Unlimited team members
+        {seatsBadgeLabel(plan)}
       </div>
 
       <ul className="mt-6 flex flex-1 flex-col gap-3">

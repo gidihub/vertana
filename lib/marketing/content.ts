@@ -370,10 +370,10 @@ export const USE_CASES: UseCaseContent[] = [
     slug: "recruitment-agencies",
     eyebrow: "Use case · Recruitment agencies",
     title: "Recruitment agencies",
-    lead: "Hand clients a ranked, defensible shortlist instead of a stack of CVs. Vertana gives agencies comparable, evidence-backed scores across every role — with unlimited seats so the whole desk works from one account.",
+    lead: "Hand clients a ranked, defensible shortlist instead of a stack of CVs. Vertana gives agencies comparable, evidence-backed scores across every role — ten seats on one account, with role-based access per desk.",
     bullets: [
       "Defensible, comparable scores",
-      "Unlimited seats across your desk",
+      "10 seats on Growth, no per-seat pricing",
       "CSV export for client handoff",
     ],
     pains: [
@@ -394,8 +394,8 @@ export const USE_CASES: UseCaseContent[] = [
       },
       {
         icon: IconUsersGroup,
-        title: "Unlimited seats",
-        body: "Put your whole desk on one account at no extra cost — no per-seat pricing eating into your margin.",
+        title: "Generous seat counts",
+        body: "Ten seats on Growth with no per-seat pricing — add more for a few dollars a month if your desk grows.",
       },
       {
         icon: IconFileSpreadsheet,
@@ -405,7 +405,7 @@ export const USE_CASES: UseCaseContent[] = [
     ],
     outcomes: [
       { stat: "Ranked", label: "shortlist per client role" },
-      { stat: "Unlimited", label: "team seats, one account" },
+      { stat: "10 seats", label: "on Growth, one account" },
       { stat: "Evidence", label: "behind every submission" },
     ],
   },

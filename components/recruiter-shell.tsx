@@ -116,7 +116,7 @@ export function RecruiterShell({
           onSidebarToggle={toggleSidebar}
         />
 
-        {org && org.credits_remaining <= 0 && (
+        {org && !org.is_comp && org.credits_remaining <= 0 && (
           <div className="border-b border-destructive/20 bg-destructive/5 px-4 py-2 text-center text-sm text-destructive sm:px-6">
             No candidate credits remaining.{" "}
             <Link href="/#pricing" className={linkClass}>

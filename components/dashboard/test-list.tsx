@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
@@ -16,6 +17,7 @@ import {
   Trash2,
   CalendarClock,
   ClipboardCheck,
+  UserPlus,
 } from "lucide-react"
 
 import {
@@ -53,6 +55,7 @@ import {
 } from "@/components/ui/empty"
 import { TestCardMockup } from "@/components/empty-mockups"
 import { TestListSkeleton } from "@/components/loading-skeletons"
+import { InviteCandidatesDialog } from "@/components/results/invite-candidates-dialog"
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -113,7 +116,7 @@ function ScoringBadge({ count }: { count: number }) {
   if (count > 0) {
     return (
       <Badge variant="outline" className={warningSurface}>
-        {count} need scoring
+        {count === 1 ? "1 needs scoring" : `${count} need scoring`}
       </Badge>
     )
   }
@@ -132,6 +135,7 @@ export function TestList() {
   const candidates = useStore((db) => db.candidates)
   const org = useStore((db) => db.organization)
   const needsScoring = useNeedsScoring()
+  const [inviteTest, setInviteTest] = useState<Test | null>(null)
 
   const countFor = (id: string) =>
     candidates.filter((c) => c.test_id === id).length
@@ -148,7 +152,7 @@ export function TestList() {
       toast.error("Publish this test first to get a candidate link.")
       return
     }
-    if (org && org.credits_remaining <= 0) {
+    if (org && !org.is_comp && org.credits_remaining <= 0) {
       toast.error(
         "No candidate credits remaining. Upgrade your plan or wait for your monthly reset before inviting candidates.",
       )
@@ -193,7 +197,7 @@ export function TestList() {
             <StatCard
               label="Needs scoring"
               value={needsScoringTotal}
-              warning
+              warning={needsScoringTotal > 0}
             />
           </div>
 
@@ -278,6 +282,13 @@ export function TestList() {
                                 <Pencil data-icon="inline-start" />
                                 Edit
                               </DropdownMenuItem>
+                              <DropdownMenuItem
+                                disabled={test.status !== "active"}
+                                onClick={() => setInviteTest(test)}
+                              >
+                                <UserPlus data-icon="inline-start" />
+                                Invite candidates
+                              </DropdownMenuItem>
                               <DropdownMenuItem onClick={() => copyLink(test)}>
                                 <Link2 data-icon="inline-start" />
                                 Copy candidate link
@@ -346,6 +357,15 @@ export function TestList() {
                         View results
                       </Button>
                       <Button
+                        size="sm"
+                        className="bg-pine text-pine-foreground hover:bg-pine-deep"
+                        disabled={test.status !== "active"}
+                        onClick={() => setInviteTest(test)}
+                      >
+                        <UserPlus data-icon="inline-start" />
+                        Invite
+                      </Button>
+                      <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => copyLink(test)}
@@ -361,6 +381,16 @@ export function TestList() {
           )}
         </>
       )}
+
+      {inviteTest ? (
+        <InviteCandidatesDialog
+          test={inviteTest}
+          open={Boolean(inviteTest)}
+          onOpenChange={(open) => {
+            if (!open) setInviteTest(null)
+          }}
+        />
+      ) : null}
     </div>
   )
 }

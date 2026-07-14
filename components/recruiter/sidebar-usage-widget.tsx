@@ -27,6 +27,7 @@ export function SidebarUsageWidget({ compact = false }: { compact?: boolean }) {
 
   return (
     <div
+      data-tour="sidebar-usage"
       className={cn(
         "rounded-lg border border-sage-line/80 bg-paper/60 p-3",
         compact && "text-xs",

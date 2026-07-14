@@ -1,11 +1,11 @@
 import { Suspense } from "react"
 
-import { SettingsContent } from "./settings-content"
+import { ProfileSettings } from "@/components/settings/profile-settings"
 
 export default function SettingsPage() {
   return (
     <Suspense fallback={null}>
-      <SettingsContent />
+      <ProfileSettings />
     </Suspense>
   )
 }

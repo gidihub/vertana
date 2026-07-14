@@ -2,6 +2,16 @@ import { generateToken } from "@/lib/db/mappers"
 import { sendTeamInviteEmail } from "@/lib/notifications/team-invite-email"
 import { createAdminClient } from "@/lib/supabase/admin"
 
+/** Thrown when an invite would exceed the org's seat allowance. */
+export class SeatLimitError extends Error {
+  constructor(total: number) {
+    super(
+      `You've reached your team seat limit (${total}). Upgrade your plan or add seats in Billing to invite more teammates.`,
+    )
+    this.name = "SeatLimitError"
+  }
+}
+
 export type TeamMemberRole = "owner" | "admin" | "member"
 export type TeamInviteRole = "admin" | "member"
 
@@ -123,20 +133,25 @@ export async function createTeamInvite(input: {
   }
 
   const token = generateToken()
+
+  // Seat gate + insert happen atomically under a row lock (see migration 027),
+  // so concurrent invites cannot collectively exceed the seat allowance.
   const { data: invite, error } = await admin
-    .from("team_invites")
-    .insert({
-      org_id: input.orgId,
-      email,
-      role: input.role,
-      token,
-      status: "pending",
-      invited_by: input.invitedByUserId,
+    .rpc("create_team_invite_atomic", {
+      p_org_id: input.orgId,
+      p_email: email,
+      p_role: input.role,
+      p_token: token,
+      p_invited_by: input.invitedByUserId,
     })
     .select("id, email, role, status, created_at, expires_at, invited_by")
     .single()
 
   if (error || !invite) {
+    const seatLimit = error?.message?.match(/seat_limit_(\d+)/)
+    if (seatLimit) {
+      throw new SeatLimitError(Number(seatLimit[1]))
+    }
     throw new Error(error?.message ?? "Failed to create invite")
   }
 

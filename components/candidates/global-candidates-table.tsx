@@ -10,7 +10,8 @@ import { numericText } from "@/lib/design-tokens"
 import { useStore } from "@/lib/store"
 import { CandidateDispositionSelect } from "@/components/candidates/candidate-disposition"
 import { IntegrityConcernBadge } from "@/components/integrity-concern-badge"
-import { CandidateStatusBadge } from "@/components/status-badge"
+import { CandidateStatusBadge, PassFailBadge } from "@/components/status-badge"
+import { evaluatePass } from "@/lib/passing"
 import { DISPOSITION_FILTER_OPTIONS } from "@/lib/disposition"
 import { Input } from "@/components/ui/input"
 import {
@@ -174,6 +175,7 @@ export function GlobalCandidatesTable() {
               <TableHead>Status</TableHead>
               <TableHead>Disposition</TableHead>
               <TableHead className="text-right">Score</TableHead>
+              <TableHead>Result</TableHead>
               <TableHead>Submitted</TableHead>
             </TableRow>
           </TableHeader>
@@ -181,7 +183,7 @@ export function GlobalCandidatesTable() {
             {loading ? (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={7}
                   className="text-center text-muted-foreground"
                 >
                   Loading candidates…
@@ -190,7 +192,7 @@ export function GlobalCandidatesTable() {
             ) : rows.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={7}
                   className="text-center text-muted-foreground"
                 >
                   No candidates match your filters.
@@ -201,6 +203,10 @@ export function GlobalCandidatesTable() {
                 const integrity = hasIntegrityConcern(
                   row.tab_switch_count,
                   integrityThreshold,
+                )
+                const passResult = evaluatePass(
+                  row.score,
+                  testById.get(row.test_id)?.passing_score ?? 70,
                 )
                 return (
                   <TableRow key={row.id}>
@@ -234,6 +240,13 @@ export function GlobalCandidatesTable() {
                         >
                           {row.score === null ? "—" : `${row.score}%`}
                         </span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {passResult ? (
+                        <PassFailBadge result={passResult} />
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
                       )}
                     </TableCell>
                     <TableCell className="text-muted-foreground">

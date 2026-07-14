@@ -9,6 +9,7 @@ import {
   loadTeamMembers,
   revokeTeamInvite,
 } from "@/lib/db/team"
+import { getSeatUsage } from "@/lib/billing/seats"
 import { getOrganization } from "@/lib/org"
 
 const inviteSchema = z.object({
@@ -17,12 +18,18 @@ const inviteSchema = z.object({
 })
 
 export async function GET() {
-  return handleApiAuth(async ({ orgId }) => {
-    const [members, invites] = await Promise.all([
+  return handleApiAuth(async ({ orgId, role }) => {
+    const [members, invites, seats] = await Promise.all([
       loadTeamMembers(orgId),
       loadTeamInvites(orgId),
+      getSeatUsage(orgId),
     ])
-    return NextResponse.json({ members, invites })
+    return NextResponse.json({
+      members,
+      invites,
+      seats,
+      canManageSeats: role === "owner",
+    })
   })
 }
 

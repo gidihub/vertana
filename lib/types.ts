@@ -52,7 +52,7 @@ export type CandidateDisposition =
   | "rejected"
   | "hired"
 
-export type InviteEmailStatus = "pending" | "sent" | "failed"
+export type InviteEmailStatus = "pending" | "sent" | "failed" | "scheduled"
 
 /** Per-candidate or share-link row in test_invites (not an attempt). */
 export interface TestInvite {
@@ -65,6 +65,14 @@ export interface TestInvite {
   email_error: string | null
   email_sent_at: string | null
   status: "active" | "revoked" | "expired"
+  /** Per-invite deadline; overrides the test deadline when sooner. */
+  expires_at: string | null
+  /** When set in the future, the invite email is queued for delivery. */
+  scheduled_at: string | null
+  /** When the "haven't started" reminder was sent (null if not sent). */
+  reminder_not_started_at: string | null
+  /** When the "deadline approaching" reminder was sent (null if not sent). */
+  reminder_deadline_at: string | null
 }
 
 export type PlanTier = "free" | "starter" | "growth" | "custom"
@@ -87,6 +95,17 @@ export interface Organization {
   billing_cycle?: "monthly" | "annual" | null
   current_period_end?: string | null
   ppp_tier?: PppTier | null
+  /** Paid extra seats beyond the plan's included allowance. */
+  extra_seats?: number
+  /** Complimentary/internal org: bypasses credit consumption and paid gates. */
+  is_comp?: boolean
+  /**
+   * Proctoring media retention in days. null = use the global default
+   * (PROCTORING_RETENTION_DAYS).
+   */
+  data_retention_days?: number | null
+  /** Default Reply-To for candidate invitation emails. */
+  default_reply_to?: string | null
 }
 
 // Table: questions
@@ -143,6 +162,7 @@ export interface Test {
   title: string
   description: string
   time_limit_minutes: number
+  passing_score: number // percentage 0-100; score >= this is a pass
   deadline: string | null // ISO date string
   randomize_questions: boolean
   requires_proctoring: boolean

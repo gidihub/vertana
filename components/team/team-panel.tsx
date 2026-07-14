@@ -5,6 +5,7 @@ import { Loader2, Mail, UserPlus, X } from "lucide-react"
 import { toast } from "sonner"
 
 import type { TeamInviteView, TeamMemberView } from "@/lib/db/team"
+import type { SeatUsage } from "@/lib/billing/seats"
 import { useOrganization } from "@/lib/store"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -32,11 +33,31 @@ const ROLE_LABELS: Record<string, string> = {
   member: "Member",
 }
 
+function SeatMeter({ seats }: { seats: SeatUsage }) {
+  const unlimited = seats.total == null
+  return (
+    <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+      <span className="font-medium text-foreground">
+        {seats.used} {unlimited ? "seats used" : `of ${seats.total} seats used`}
+      </span>
+      {!unlimited && seats.pendingInvites > 0 ? (
+        <span>({seats.pendingInvites} pending)</span>
+      ) : null}
+      {!unlimited && !seats.canInvite ? (
+        <span className="text-warning-foreground">
+          · seat limit reached
+        </span>
+      ) : null}
+    </div>
+  )
+}
+
 export function TeamPanel() {
   const org = useOrganization()
   const [loading, setLoading] = useState(true)
   const [members, setMembers] = useState<TeamMemberView[]>([])
   const [invites, setInvites] = useState<TeamInviteView[]>([])
+  const [seats, setSeats] = useState<SeatUsage | null>(null)
   const [email, setEmail] = useState("")
   const [role, setRole] = useState<"member" | "admin">("member")
   const [inviting, setInviting] = useState(false)
@@ -49,6 +70,7 @@ export function TeamPanel() {
       if (!res.ok) throw new Error(data.error || "Failed to load team")
       setMembers(data.members ?? [])
       setInvites(data.invites ?? [])
+      setSeats(data.seats ?? null)
     } catch (err) {
       toast.error((err as Error).message)
     } finally {
@@ -106,8 +128,13 @@ export function TeamPanel() {
           </CardTitle>
           <CardDescription>
             Invite teammates to build assessments and review results together.
-            Every plan includes unlimited members.
+            {seats?.total != null
+              ? ` Your plan includes ${seats.included} seats${
+                  seats.extraSeats > 0 ? ` + ${seats.extraSeats} extra` : ""
+                }.`
+              : " No per-seat pricing."}
           </CardDescription>
+          {seats ? <SeatMeter seats={seats} /> : null}
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -187,6 +214,12 @@ export function TeamPanel() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {seats && !seats.canInvite ? (
+            <p className="mb-3 rounded-lg border border-border bg-muted/30 px-3 py-2.5 text-xs text-muted-foreground">
+              You&rsquo;ve used all {seats.total} seats. Upgrade your plan or add
+              seats in Billing to invite more teammates.
+            </p>
+          ) : null}
           <form onSubmit={(e) => void handleInvite(e)} className="flex flex-col gap-3">
             <div className="flex flex-col gap-2 sm:flex-row">
               <Input
@@ -195,12 +228,12 @@ export function TeamPanel() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                disabled={inviting}
+                disabled={inviting || (seats ? !seats.canInvite : false)}
               />
               <Select
                 value={role}
                 onValueChange={(v) => setRole(v as "member" | "admin")}
-                disabled={inviting}
+                disabled={inviting || (seats ? !seats.canInvite : false)}
               >
                 <SelectTrigger className="w-full sm:w-36">
                   <SelectValue />
@@ -214,7 +247,7 @@ export function TeamPanel() {
             <Button
               type="submit"
               className="self-start bg-pine text-pine-foreground hover:bg-pine-deep"
-              disabled={inviting}
+              disabled={inviting || (seats ? !seats.canInvite : false)}
             >
               {inviting ? (
                 <Loader2 className="size-4 animate-spin" />
