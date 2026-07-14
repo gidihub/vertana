@@ -18,7 +18,7 @@ export const PLAN_LIMITS: Record<PlanTier, PlanLimits> = {
     aiGenerations: 30,
   },
   growth: {
-    candidateCredits: 400,
+    candidateCredits: 300,
     activeTests: null,
     aiGenerations: 100,
   },
@@ -41,8 +41,17 @@ export function certificatesEnabledForTier(tier: PlanTier): boolean {
   return tier !== "free"
 }
 
-export function codingQuestionsEnabledForTier(tier: PlanTier): boolean {
-  return tier === "growth" || tier === "custom"
+/**
+ * Coding IDE is available on every plan, including Free, in every region.
+ * (Kept as a function so callers have a single entitlement source of truth.)
+ */
+export function codingQuestionsEnabledForTier(_tier: PlanTier): boolean {
+  return true
+}
+
+/** Proctoring + face verification is a paid feature — never available on Free. */
+export function proctoringEnabledForTier(tier: PlanTier): boolean {
+  return tier !== "free"
 }
 
 export function isPaidPlanTier(tier: PlanTier): boolean {

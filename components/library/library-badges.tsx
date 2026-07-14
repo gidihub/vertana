@@ -57,7 +57,7 @@ export function LibraryCategoryTag({ label }: { label: string }) {
   return (
     <Badge
       variant="outline"
-      className="border-border bg-background font-normal text-muted-foreground"
+      className="h-auto max-w-full whitespace-normal break-words border-border bg-background py-0.5 text-left font-normal leading-snug text-muted-foreground"
     >
       {label}
     </Badge>

@@ -9,6 +9,7 @@ import { useOrganization } from "@/lib/store"
 import { formatDate } from "@/lib/format"
 import { isPaidPlanTier, type PlanTier } from "@/lib/plans"
 import type { BillingCycle } from "@/lib/stripe/prices"
+import { cn } from "@/lib/utils"
 
 const TIER_LABELS: Record<PlanTier, string> = {
   free: "Free",
@@ -42,6 +43,7 @@ async function openPortal() {
 export function BillingActions() {
   const org = useOrganization()
   const [loading, setLoading] = useState<string | null>(null)
+  const [cycle, setCycle] = useState<BillingCycle>("monthly")
 
   if (!org) return null
 
@@ -103,17 +105,42 @@ export function BillingActions() {
           Manage subscription
         </Button>
       ) : (
-        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+        <div className="flex flex-col gap-3">
+          <div
+            role="radiogroup"
+            aria-label="Billing cycle"
+            className="inline-flex w-fit items-center rounded-full border border-border bg-muted/30 p-1"
+          >
+            {(["monthly", "annual"] as const).map((option) => (
+              <button
+                key={option}
+                type="button"
+                role="radio"
+                aria-checked={cycle === option}
+                onClick={() => setCycle(option)}
+                className={cn(
+                  "rounded-full px-3 py-1.5 text-xs font-semibold capitalize transition-colors",
+                  cycle === option
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           {!isPaid || tier === "starter" ? (
             <Button
               type="button"
               disabled={loading !== null}
-              onClick={() => void handleCheckout("starter", "monthly")}
+              onClick={() => void handleCheckout("starter", cycle)}
             >
-              {loading === "starter-monthly" ? (
+              {loading === `starter-${cycle}` ? (
                 <Loader2 className="size-4 animate-spin" />
               ) : null}
               Upgrade to Starter
+              {cycle === "annual" ? " (annual)" : ""}
             </Button>
           ) : null}
           {tier !== "growth" && tier !== "custom" ? (
@@ -121,14 +148,16 @@ export function BillingActions() {
               type="button"
               variant={tier === "free" ? "default" : "outline"}
               disabled={loading !== null}
-              onClick={() => void handleCheckout("growth", "monthly")}
+              onClick={() => void handleCheckout("growth", cycle)}
             >
-              {loading === "growth-monthly" ? (
+              {loading === `growth-${cycle}` ? (
                 <Loader2 className="size-4 animate-spin" />
               ) : null}
               Upgrade to Growth
+              {cycle === "annual" ? " (annual)" : ""}
             </Button>
           ) : null}
+          </div>
         </div>
       )}
 

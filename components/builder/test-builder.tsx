@@ -6,7 +6,8 @@ import { Loader2, Save, Send, Sparkles } from "lucide-react"
 import { toast } from "sonner"
 
 import type { Question, Test, TimingPolicy } from "@/lib/types"
-import { uid, saveTest } from "@/lib/store"
+import { uid, saveTest, useOrganization } from "@/lib/store"
+import { proctoringEnabledForTier, type PlanTier } from "@/lib/plans"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -45,6 +46,10 @@ function newQuestion(testId: string, position: number): Question {
 
 export function TestBuilder({ existing }: { existing?: Test }) {
   const router = useRouter()
+  const org = useOrganization()
+  const canProctor = proctoringEnabledForTier(
+    (org?.plan_tier ?? "free") as PlanTier,
+  )
   const testId = useMemo(() => existing?.id ?? uid(), [existing?.id])
 
   const [title, setTitle] = useState(existing?.title ?? "")
@@ -61,6 +66,11 @@ export function TestBuilder({ existing }: { existing?: Test }) {
   const [proctoring, setProctoring] = useState(
     existing?.requires_proctoring ?? true,
   )
+  // Proctoring is a paid feature — force it off (and keep it off) on Free plans
+  // so the test can be saved without hitting the server-side gate.
+  useEffect(() => {
+    if (!canProctor && proctoring) setProctoring(false)
+  }, [canProctor, proctoring])
   const [certEligible, setCertEligible] = useState(
     existing?.certificate_eligible ?? false,
   )
@@ -322,13 +332,15 @@ export function TestBuilder({ existing }: { existing?: Test }) {
             <FieldLabel htmlFor="proctoring" className="flex-1">
               Require proctoring consent
               <FieldDescription>
-                Candidates must accept monitoring terms and tab-switching is
-                tracked during the test.
+                {canProctor
+                  ? "Candidates must accept monitoring terms and tab-switching is tracked during the test."
+                  : "Proctoring + face verification is available on paid plans. Upgrade to Starter or higher to require proctoring. Tab-switch integrity detection stays on for every plan."}
               </FieldDescription>
             </FieldLabel>
             <Switch
               id="proctoring"
-              checked={proctoring}
+              checked={proctoring && canProctor}
+              disabled={!canProctor}
               onCheckedChange={setProctoring}
             />
           </Field>

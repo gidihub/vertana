@@ -9,16 +9,18 @@ import {
   startCandidateAttempt,
   loadResumeAttempt,
 } from "@/lib/store"
-import { CONSENT_VERSION, buildConsentSnapshot } from "@/lib/consent"
+import { buildConsentSnapshot, getConsentCopy } from "@/lib/consent"
+import { isCameraProctoringEnabledClient } from "@/lib/proctoring/config"
 import { appShell } from "@/lib/design-tokens"
 import { CandidateHeader } from "@/components/candidate/candidate-header"
 import { StartStep } from "@/components/candidate/start-step"
 import { ConsentStep } from "@/components/candidate/consent-step"
+import { ProctoringSetupStep } from "@/components/candidate/proctoring-setup-step"
 import { TestRunner } from "@/components/candidate/test-runner"
 import { DoneStep } from "@/components/candidate/done-step"
 import { CertificateStep } from "@/components/candidate/certificate-step"
 
-type Step = "start" | "consent" | "test" | "certificate" | "done"
+type Step = "start" | "consent" | "proctoring" | "test" | "certificate" | "done"
 
 export function CandidateFlow({
   test,
@@ -36,6 +38,29 @@ export function CandidateFlow({
   const [initialTabSwitches, setInitialTabSwitches] = useState(0)
   const [startedAt, setStartedAt] = useState<string>("")
   const consentAcceptedRef = useRef(false)
+  const cameraProctoring = isCameraProctoringEnabledClient()
+
+  async function persistConsent(id: string) {
+    const copy = getConsentCopy()
+    const res = await fetch(`/api/candidate/${token}/consent`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        attemptId: id,
+        version: copy.version,
+      }),
+    })
+    if (!res.ok) {
+      let message = "Failed to save consent"
+      try {
+        const data = (await res.json()) as { error?: string }
+        if (data.error) message = data.error
+      } catch {
+        // ignore non-JSON error bodies
+      }
+      throw new Error(message)
+    }
+  }
 
   async function handleStart(candidateEmail: string) {
     try {
@@ -70,8 +95,24 @@ export function CandidateFlow({
     }
   }
 
-  function handleConsentAccept() {
-    consentAcceptedRef.current = true
+  async function handleConsentAccept() {
+    if (!attemptId) return
+    try {
+      await persistConsent(attemptId)
+      consentAcceptedRef.current = true
+      if (cameraProctoring) {
+        setStep("proctoring")
+        return
+      }
+      setStartedAt(new Date().toISOString())
+      setStep("test")
+    } catch (err) {
+      consentAcceptedRef.current = false
+      toast.error((err as Error).message)
+    }
+  }
+
+  function handleProctoringComplete() {
     setStartedAt(new Date().toISOString())
     setStep("test")
   }
@@ -83,6 +124,7 @@ export function CandidateFlow({
     if (!attemptId || submitting) return
     setSubmitting(true)
     try {
+      const copy = getConsentCopy()
       const { certificate } = await submitAttempt({
         token,
         attemptId,
@@ -90,8 +132,8 @@ export function CandidateFlow({
         tabSwitchCount: result.tabSwitchCount,
         consent: test.requires_proctoring
           ? {
-              version: CONSENT_VERSION,
-              snapshot: buildConsentSnapshot(),
+              version: copy.version,
+              snapshot: buildConsentSnapshot(copy),
             }
           : undefined,
       })
@@ -116,8 +158,16 @@ export function CandidateFlow({
         {step === "start" && <StartStep test={test} onStart={handleStart} />}
         {step === "consent" && (
           <ConsentStep
-            onAccept={handleConsentAccept}
+            onAccept={() => void handleConsentAccept()}
             onDecline={() => setStep("start")}
+          />
+        )}
+        {step === "proctoring" && attemptId && (
+          <ProctoringSetupStep
+            token={token}
+            attemptId={attemptId}
+            onComplete={handleProctoringComplete}
+            onSkip={() => setStep("consent")}
           />
         )}
         {step === "test" && attemptId && (

@@ -55,12 +55,12 @@ export default async function BlogArticlePage({
         <div className="mx-auto w-full max-w-3xl px-4 py-16 sm:px-6 lg:py-20">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 rounded text-sm font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pine focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+            className="flex w-fit items-center gap-2 rounded text-sm font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pine focus-visible:ring-offset-2 focus-visible:ring-offset-card"
           >
             <ArrowLeft className="size-4" aria-hidden />
             All articles
           </Link>
-          <span className="mt-6 inline-flex w-fit items-center rounded-full border border-sage-line bg-sage px-3 py-1 text-xs font-semibold text-ink">
+          <span className="mt-6 flex w-fit items-center rounded-full border border-sage-line bg-sage px-3 py-1 text-xs font-semibold text-ink">
             {post.category}
           </span>
           <h1 className="mt-4 font-sans text-4xl font-semibold tracking-tight text-balance text-ink sm:text-5xl">

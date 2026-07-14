@@ -27,7 +27,8 @@ import {
 } from "@/lib/question-library/display"
 import { fetchLibraryQuestions, useStore } from "@/lib/store"
 import type { AiResistance, Question, QuestionType } from "@/lib/types"
-import { codingQuestionsEnabledForTier } from "@/lib/plans"
+import { codingStatusForOrg } from "@/lib/coding/limits"
+import { type PlanTier } from "@/lib/plans"
 import { Input } from "@/components/ui/input"
 import {
   Select,
@@ -48,7 +49,8 @@ export function LibraryWorkspace({
   onAdd?: (question: Question) => void
 }) {
   const org = useStore((db) => db.organization)
-  const codingEnabled = codingQuestionsEnabledForTier(org?.plan_tier ?? "free")
+  const tier = (org?.plan_tier ?? "free") as PlanTier
+  const codingEnabled = codingStatusForOrg(tier, org?.ppp_tier ?? null).allowed
 
   const [loading, setLoading] = useState(true)
   const [allItems, setAllItems] = useState<Question[]>([])

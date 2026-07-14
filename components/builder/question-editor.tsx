@@ -4,7 +4,7 @@ import Link from "next/link"
 import { Trash2, GripVertical, ChevronUp, ChevronDown, Check, Plus, Lock } from "lucide-react"
 
 import type { AiResistance, Question, QuestionType, TestCase } from "@/lib/types"
-import { MAX_CODING_TEST_CASES } from "@/lib/coding/limits"
+import { MAX_CODING_TEST_CASES, type CodingBlockReason } from "@/lib/coding/limits"
 import { AiResistanceBadge } from "@/components/builder/ai-resistance-badge"
 import { cn } from "@/lib/utils"
 import { linkClass } from "@/lib/design-tokens"
@@ -32,6 +32,7 @@ export function QuestionEditor({
   index,
   total,
   codingEnabled,
+  codingLockReason = "plan",
   onChange,
   onRemove,
   onMove,
@@ -40,6 +41,7 @@ export function QuestionEditor({
   index: number
   total: number
   codingEnabled: boolean
+  codingLockReason?: CodingBlockReason
   onChange: (q: Question) => void
   onRemove: () => void
   onMove: (dir: -1 | 1) => void
@@ -210,17 +212,27 @@ export function QuestionEditor({
                 <SelectItem value="short_answer">Short answer</SelectItem>
                 <SelectItem value="coding" disabled={!codingEnabled}>
                   Coding
-                  {!codingEnabled ? " — Growth plan" : ""}
+                  {!codingEnabled
+                    ? codingLockReason === "ppp_floor"
+                      ? " — regional floor pricing"
+                      : " — Growth plan"
+                    : ""}
                 </SelectItem>
               </SelectContent>
             </Select>
             {!codingEnabled && (
               <p className="mt-1 text-xs text-muted-foreground">
-                Coding questions are{" "}
-                <Link href="/#pricing" className={linkClass}>
-                  available on Growth
-                </Link>
-                .
+                {codingLockReason === "ppp_floor" ? (
+                  <>Coding questions are excluded on regional floor pricing.</>
+                ) : (
+                  <>
+                    Coding questions are{" "}
+                    <Link href="/#pricing" className={linkClass}>
+                      available on Growth
+                    </Link>
+                    .
+                  </>
+                )}
               </p>
             )}
           </Field>

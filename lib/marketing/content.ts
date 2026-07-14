@@ -140,12 +140,12 @@ export const FEATURES: FeatureContent[] = [
   {
     slug: "proctoring",
     eyebrow: "Product · Proctoring",
-    title: "Consent-first proctoring you can defend",
-    lead: "When integrity matters, Vertana monitors the session with the candidate's clear, up-front consent — camera verification and focus tracking, always disclosed, never hidden.",
+    title: "Consent-first integrity monitoring you can defend",
+    lead: "When integrity matters, Vertana tracks tab focus with the candidate's clear, up-front consent — always disclosed, never hidden. Camera verification is on the roadmap for Growth plans.",
     bullets: [
-      "Explicit consent before anything is recorded",
-      "Camera verification and tab-switch tracking",
-      "A full, auditable activity trail",
+      "Explicit consent before monitoring begins",
+      "Tab-switch and focus-loss tracking today",
+      "Camera verification coming to Growth",
     ],
     highlights: [
       {
@@ -155,18 +155,18 @@ export const FEATURES: FeatureContent[] = [
       },
       {
         icon: IconVideo,
-        title: "Camera verification",
-        body: "Confirm the right person is taking the test with a clear, disclosed camera check at the start.",
+        title: "Camera verification (coming)",
+        body: "Optional face verification at test start is planned for Growth-tier proctored assessments.",
       },
       {
         icon: IconActivity,
-        title: "Focus tracking",
+        title: "Focus tracking (live)",
         body: "Tab switches and focus loss are logged and surfaced on results, so you can weigh them fairly.",
       },
     ],
     detail: {
       heading: "Integrity signals, not black boxes",
-      body: "Proctoring is optional per test and fully transparent. Every monitored event is recorded to an activity trail you and the candidate can understand, so decisions are defensible.",
+      body: "Proctoring is optional per test and fully transparent. Tab-focus events are recorded today; camera and screen capture are coming in a later release.",
       points: [
         "Toggle proctoring on or off per assessment",
         "Consent version is stored with each attempt",
@@ -238,53 +238,53 @@ export interface UseCaseContent {
 
 export const USE_CASES: UseCaseContent[] = [
   {
-    slug: "recruiters",
-    eyebrow: "Use case · For recruiters",
-    title: "Screen more candidates on real signal, not résumés",
-    lead: "Send one link, get back a ranked shortlist. Vertana lets recruiting teams verify skills before the first call, so you spend interview time on the people most likely to convert.",
+    slug: "technical-hiring",
+    eyebrow: "Use case · Technical hiring",
+    title: "Technical hiring",
+    lead: "Verify engineering skill before the interview loop even starts. Vertana evaluates real coding and design reasoning up front, so senior engineers only meet candidates who've already proven they can do the work.",
     bullets: [
-      "One link, no candidate accounts",
-      "Ranked results in a shared dashboard",
-      "Defensible, auditable scoring",
+      "Coding questions with real execution",
+      "Short answer for design reasoning",
+      "Protect senior engineers' time",
     ],
     pains: [
       {
-        title: "Résumés don't predict performance",
-        body: "Keyword-matched résumés push weak candidates forward and bury strong ones who don't write the right buzzwords.",
+        title: "Interview time is your scarcest resource",
+        body: "Every unqualified on-site burns senior engineering hours you can't get back — and the loop stalls behind them.",
       },
       {
-        title: "Phone screens don't scale",
-        body: "Manually screening a large top-of-funnel eats hours and still relies on gut feel rather than evidence.",
+        title: "Résumés and trivia don't predict ability",
+        body: "Keyword-matched CVs and whiteboard puzzles reward the wrong things. Neither tells you whether someone can actually build.",
       },
     ],
     solutions: [
       {
-        icon: IconFilter,
-        title: "Filter on evidence",
-        body: "Every candidate takes the same timed test, so your shortlist is built on comparable, objective signal.",
+        icon: IconTerminal2,
+        title: "Real coding questions",
+        body: "Evaluate practical coding ability with questions that reflect the work, run in a sandboxed execution environment.",
       },
       {
-        icon: IconRoute,
-        title: "Zero-friction invites",
-        body: "Share a single secure link. Candidates start immediately — no sign-ups, downloads, or scheduling.",
+        icon: IconWriting,
+        title: "Reasoning in writing",
+        body: "Short-answer questions surface how a candidate approaches trade-offs and design decisions, not just syntax.",
       },
       {
-        icon: IconClipboardCheck,
-        title: "Panel-ready results",
-        body: "Hand hiring managers a ranked view with scores, timing, and integrity flags they can trust.",
+        icon: IconUsersGroup,
+        title: "Protect the team's focus",
+        body: "Only strong, verified candidates reach a live interview, so engineers spend their hours on the best signal.",
       },
     ],
     outcomes: [
-      { stat: "1 link", label: "to invite an entire pipeline" },
-      { stat: "Ranked", label: "shortlist, sorted by signal" },
-      { stat: "CSV", label: "export for any panel review" },
+      { stat: "Code", label: "evaluated, not memorized trivia" },
+      { stat: "Fewer", label: "unqualified on-site interviews" },
+      { stat: "Signal", label: "ranked before you meet" },
     ],
   },
   {
     slug: "remote-hiring",
-    eyebrow: "Use case · For remote hiring",
-    title: "Hire confidently across time zones",
-    lead: "Async by design, Vertana lets distributed teams assess candidates anywhere without scheduling a live call. Consent-first proctoring keeps remote assessments fair and verifiable.",
+    eyebrow: "Use case · Remote hiring",
+    title: "Remote hiring",
+    lead: "Run a consistent, verifiable screen across time zones with no in-person step. Async by design, Vertana lets distributed teams assess candidates anywhere, with consent-first monitoring that keeps results fair.",
     bullets: [
       "Fully asynchronous — no scheduling",
       "Consent-first proctoring built in",
@@ -309,7 +309,7 @@ export const USE_CASES: UseCaseContent[] = [
       {
         icon: IconLockCheck,
         title: "Verifiable integrity",
-        body: "Optional camera verification and focus tracking, disclosed up front, make remote results defensible.",
+        body: "Consent-first proctoring and focus tracking, disclosed up front, make remote results defensible.",
       },
       {
         icon: IconGauge,
@@ -324,46 +324,175 @@ export const USE_CASES: UseCaseContent[] = [
     ],
   },
   {
-    slug: "technical-teams",
-    eyebrow: "Use case · For technical teams",
-    title: "Assess real engineering skill, not trivia",
-    lead: "Built for teams that hire engineers, Vertana supports coding questions and written reasoning so you evaluate how someone actually thinks and builds — before you spend engineering hours interviewing.",
+    slug: "high-volume-screening",
+    eyebrow: "Use case · High-volume screening",
+    title: "High-volume screening",
+    lead: "Rank hundreds of applicants automatically instead of reading every résumé. One link screens the whole funnel, and auto-scored results come back sorted by signal — so your team starts at the top.",
     bullets: [
-      "Coding questions with real evaluation",
-      "Short answer for design reasoning",
-      "Protect engineers' interview time",
+      "One link for the entire funnel",
+      "Auto-scored, ranked results",
+      "Integrity flags surfaced inline",
     ],
     pains: [
       {
-        title: "Interview time is your scarcest resource",
-        body: "Every unqualified on-site burns senior engineering hours you can't get back.",
+        title: "Reading every résumé doesn't scale",
+        body: "A large top-of-funnel means hundreds of CVs, and the strongest candidates get lost in the pile.",
       },
       {
-        title: "Whiteboard trivia misses real ability",
-        body: "Puzzle questions reward memorization, not the practical judgment your team actually needs.",
+        title: "Manual phone screens burn days",
+        body: "Screening volume by hand relies on gut feel, introduces bias, and delays your response to the best people.",
       },
     ],
     solutions: [
       {
-        icon: IconTerminal2,
-        title: "Real coding questions",
-        body: "Evaluate practical coding ability with questions that reflect the work, not brain-teasers.",
+        icon: IconRoute,
+        title: "One link, zero friction",
+        body: "Share a single secure link with your whole applicant pool. Candidates start immediately — no accounts or installs.",
       },
       {
-        icon: IconWriting,
-        title: "Reasoning in writing",
-        body: "Short-answer questions surface how a candidate approaches trade-offs and design decisions.",
+        icon: IconFilter,
+        title: "Filter on evidence",
+        body: "Every applicant takes the same timed test, so your shortlist is built on comparable, objective signal.",
       },
       {
-        icon: IconUsersGroup,
-        title: "Protect the team's focus",
-        body: "Only strong, verified candidates reach a live interview, so engineers focus on the best signal.",
+        icon: IconChartBar,
+        title: "Ranked in one dashboard",
+        body: "Results land auto-scored and sorted, with completion time and integrity flags, ready to action.",
       },
     ],
     outcomes: [
-      { stat: "Code", label: "evaluated, not memorized trivia" },
-      { stat: "Fewer", label: "unqualified on-site interviews" },
-      { stat: "Signal", label: "ranked before you meet" },
+      { stat: "Hundreds", label: "screened from a single link" },
+      { stat: "Ranked", label: "automatically, by score" },
+      { stat: "Hours", label: "saved on every role" },
+    ],
+  },
+  {
+    slug: "recruitment-agencies",
+    eyebrow: "Use case · Recruitment agencies",
+    title: "Recruitment agencies",
+    lead: "Hand clients a ranked, defensible shortlist instead of a stack of CVs. Vertana gives agencies comparable, evidence-backed scores across every role — with unlimited seats so the whole desk works from one account.",
+    bullets: [
+      "Defensible, comparable scores",
+      "Unlimited seats across your desk",
+      "CSV export for client handoff",
+    ],
+    pains: [
+      {
+        title: "Clients don't trust a CV stack",
+        body: "Submitting résumés alone invites second-guessing. You need evidence that a candidate can do the job.",
+      },
+      {
+        title: "Every placement is a decision you must defend",
+        body: "When a shortlist is challenged, gut feel isn't a defence — you need comparable results behind each name.",
+      },
+    ],
+    solutions: [
+      {
+        icon: IconClipboardCheck,
+        title: "Defensible shortlists",
+        body: "Every candidate is scored on the same test, so each submission comes with objective, comparable evidence.",
+      },
+      {
+        icon: IconUsersGroup,
+        title: "Unlimited seats",
+        body: "Put your whole desk on one account at no extra cost — no per-seat pricing eating into your margin.",
+      },
+      {
+        icon: IconFileSpreadsheet,
+        title: "Client-ready export",
+        body: "Export a ranked, formatted results set in one click to hand straight to the client with confidence.",
+      },
+    ],
+    outcomes: [
+      { stat: "Ranked", label: "shortlist per client role" },
+      { stat: "Unlimited", label: "team seats, one account" },
+      { stat: "Evidence", label: "behind every submission" },
+    ],
+  },
+  {
+    slug: "graduate-campus-hiring",
+    eyebrow: "Use case · Graduate & campus hiring",
+    title: "Graduate & campus hiring",
+    lead: "Assess potential at scale when candidates have thin work history. Vertana measures skill and reasoning directly, so a whole cohort gets a fair, comparable shot regardless of what's on the résumé.",
+    bullets: [
+      "Skills over résumés",
+      "The same bar for every applicant",
+      "Scales to a full cohort",
+    ],
+    pains: [
+      {
+        title: "Thin CVs make grads hard to compare",
+        body: "With little work history, résumés reward the best-connected, not the most capable — and real talent gets missed.",
+      },
+      {
+        title: "Campus volume overwhelms the funnel",
+        body: "Hundreds of applicants per role means signal is low and manual review is impossible to do fairly.",
+      },
+    ],
+    solutions: [
+      {
+        icon: IconGauge,
+        title: "A consistent bar",
+        body: "Every applicant sits the same assessment under the same rules, so the standard never bends to background.",
+      },
+      {
+        icon: IconFilter,
+        title: "Potential over pedigree",
+        body: "Measure how someone thinks and solves, not which university or internship they had access to.",
+      },
+      {
+        icon: IconChartBar,
+        title: "Cohort-scale ranking",
+        body: "Screen an entire graduating class from one link and get a ranked, comparable view of the whole cohort.",
+      },
+    ],
+    outcomes: [
+      { stat: "Whole cohort", label: "screened from one link" },
+      { stat: "Potential", label: "measured, not assumed" },
+      { stat: "Fair", label: "comparable results for all" },
+    ],
+  },
+  {
+    slug: "first-technical-hire",
+    eyebrow: "Use case · First technical hire",
+    title: "First technical hire",
+    lead: "Evaluate skills you don't have in-house yet, with confidence. Vertana's AI-drafted, work-sample questions let a non-technical founder or team screen for real ability — and make a defensible first decision.",
+    bullets: [
+      "Assess skills you can't yet",
+      "AI-drafted, work-sample questions",
+      "A defensible first decision",
+    ],
+    pains: [
+      {
+        title: "You can't interview for skills you don't have",
+        body: "Without an engineer on staff, it's hard to tell a strong technical candidate from a confident one.",
+      },
+      {
+        title: "The first hire is the most expensive to get wrong",
+        body: "Your first technical hire shapes everything after it — a bad call sets the whole team back.",
+      },
+    ],
+    solutions: [
+      {
+        icon: IconWand,
+        title: "AI-drafted questions",
+        body: "Describe the role and Vertana drafts a role-specific assessment, so you start from an expert-shaped baseline.",
+      },
+      {
+        icon: IconTerminal2,
+        title: "Real work samples",
+        body: "Candidates solve practical problems with real execution — you see ability, not just a polished conversation.",
+      },
+      {
+        icon: IconShieldCheck,
+        title: "A decision you can defend",
+        body: "Objective, comparable scores give you the evidence to back your first technical hire with confidence.",
+      },
+    ],
+    outcomes: [
+      { stat: "Screen", label: "without an expert on staff" },
+      { stat: "Real work", label: "evaluated, not trivia" },
+      { stat: "Confidence", label: "in hire number one" },
     ],
   },
 ]

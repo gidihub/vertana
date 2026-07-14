@@ -5,7 +5,8 @@ import { Code2, Sparkles, Coins } from "lucide-react"
 
 import { useOrganization } from "@/lib/store"
 import { formatDate } from "@/lib/format"
-import { codingQuestionsEnabledForTier, aiLimitForTier, type PlanTier } from "@/lib/plans"
+import { codingStatusForOrg } from "@/lib/coding/limits"
+import { aiLimitForTier, type PlanTier } from "@/lib/plans"
 import { linkClass, numericText } from "@/lib/design-tokens"
 import { cn } from "@/lib/utils"
 import {
@@ -29,7 +30,7 @@ export function OrgUsagePanel() {
 
   const tier = org.plan_tier as PlanTier
   const aiLimit = aiLimitForTier(tier)
-  const codingEnabled = codingQuestionsEnabledForTier(tier)
+  const codingStatus = codingStatusForOrg(tier, org.ppp_tier ?? null)
 
   return (
     <Card className="border-sage-line/70 bg-card">
@@ -44,9 +45,7 @@ export function OrgUsagePanel() {
           icon={Sparkles}
           label="Plan tier"
           value={TIER_LABELS[tier]}
-          detail={
-            codingEnabled ? "Coding enabled" : "Coding locked — Growth+"
-          }
+          detail={codingStatus.detail}
         />
         <UsageItem
           icon={Sparkles}
@@ -70,7 +69,7 @@ export function OrgUsagePanel() {
           mono
         />
       </CardContent>
-      {!codingEnabled && (
+      {codingStatus.showUpgrade && (
         <div className="border-t border-border px-6 py-3 text-sm text-muted-foreground">
           Need coding questions?{" "}
           <Link href="/#pricing" className={linkClass}>

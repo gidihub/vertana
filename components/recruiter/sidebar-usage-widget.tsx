@@ -4,7 +4,8 @@ import Link from "next/link"
 import { Code2, Coins, Sparkles } from "lucide-react"
 
 import { useOrganization } from "@/lib/store"
-import { aiLimitForTier, codingQuestionsEnabledForTier, type PlanTier } from "@/lib/plans"
+import { aiLimitForTier, type PlanTier } from "@/lib/plans"
+import { codingStatusForOrg } from "@/lib/coding/limits"
 import { linkClass, numericText } from "@/lib/design-tokens"
 import { cn } from "@/lib/utils"
 
@@ -21,7 +22,7 @@ export function SidebarUsageWidget({ compact = false }: { compact?: boolean }) {
 
   const tier = org.plan_tier as PlanTier
   const aiLimit = aiLimitForTier(tier)
-  const codingEnabled = codingQuestionsEnabledForTier(tier)
+  const codingStatus = codingStatusForOrg(tier, org.ppp_tier ?? null)
   const aiRemaining = Math.max(0, aiLimit - org.ai_generations_used)
 
   return (
@@ -63,7 +64,7 @@ export function SidebarUsageWidget({ compact = false }: { compact?: boolean }) {
         </li>
       </ul>
       <div className="mt-2.5 flex flex-col gap-1 border-t border-sage-line/60 pt-2.5">
-        {!codingEnabled && (
+        {codingStatus.showUpgrade && (
           <Link href="/#pricing" className={cn(linkClass, "text-xs")}>
             Upgrade for coding
           </Link>

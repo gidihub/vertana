@@ -15,9 +15,12 @@ import {
   type TestRow,
 } from "@/lib/db/mappers"
 import { gradeCodingAnswer } from "@/lib/execution/grade-coding"
+import {
+  consumeCredits,
+  InsufficientCreditsError,
+} from "@/lib/credits/ledger"
 import { recordCodeExecutions } from "@/lib/org"
 import {
-  deductCredit,
   ensureMonthlyResets,
   ensureMonthlyResetsForOrgId,
   getOrgId,
@@ -27,12 +30,15 @@ import {
 import {
   certificatesEnabledForTier,
   PLAN_LIMITS,
+  proctoringEnabledForTier,
   type PlanTier,
 } from "@/lib/plans"
 import { sanitizeQuestionsForPlan } from "@/lib/coding/limits"
+import type { PppTier } from "@/lib/billing/ppp"
 import { notifyTestCompletion } from "@/lib/notifications/completion-email"
 import { sendCandidateInviteEmail } from "@/lib/notifications/candidate-invite-email"
 import { createAdminClient } from "@/lib/supabase/admin"
+import { proctoringExpiresAt } from "@/lib/proctoring/retention"
 import type { Candidate, ConsentRecord, Test, TestInvite } from "@/lib/types"
 
 export class TokenAccessError extends Error {
@@ -199,6 +205,15 @@ export async function saveTestRecord(
   const orgId = await getOrgId()
   const org = await ensureMonthlyResets(await getOrganization())
 
+  if (
+    test.requires_proctoring &&
+    !proctoringEnabledForTier(org.plan_tier as PlanTier)
+  ) {
+    throw new Error(
+      "Proctoring is available on paid plans only. Upgrade to Starter or higher to enable proctoring, or turn it off to save this test.",
+    )
+  }
+
   if (test.status === "active") {
     const supabase = createAdminClient()
     const { count } = await supabase
@@ -267,6 +282,7 @@ export async function saveTestRecord(
     test.questions,
     existingQuestions,
     org.plan_tier as PlanTier,
+    (org.ppp_tier as PppTier | null) ?? null,
   )
 
   const questionRows = sanitizedQuestions.map((q) => questionToRow(q, test.id))
@@ -581,12 +597,9 @@ export async function startAttempt(input: {
     )
   }
 
-  const org = await ensureMonthlyResetsForOrgId(loaded.test.org_id!)
-  if (org.credits_remaining <= 0) {
-    throw new Error(
-      "This assessment is temporarily unavailable — the hiring team has no candidate credits remaining.",
-    )
-  }
+  const orgId = loaded.test.org_id!
+  const proctored = loaded.test.requires_proctoring
+  const org = await ensureMonthlyResetsForOrgId(orgId)
 
   const supabase = createAdminClient()
   const { data: existing } = await supabase
@@ -601,7 +614,27 @@ export async function startAttempt(input: {
   }
 
   if (existing?.id) {
+    // Resuming an existing attempt — proctoring credits were already consumed
+    // when the attempt was first created, so no fresh credit check is needed.
     return { attemptId: existing.id, resumed: true }
+  }
+
+  // Proctoring is a paid feature. If the org has since downgraded to Free while
+  // proctored tests still exist, block new attempts rather than silently running
+  // them unproctored. (Existing in-progress attempts above are allowed to resume.)
+  if (proctored && !proctoringEnabledForTier(org.plan_tier as PlanTier)) {
+    throw new Error(
+      "This proctored assessment is temporarily unavailable — the hiring team needs to upgrade their plan to run it.",
+    )
+  }
+
+  // Only new attempts reserve credits: proctored attempts reserve 2 at start
+  // (recording begins now); unproctored attempts reserve nothing until submit.
+  const requiredAtStart = proctored ? 2 : 1
+  if (org.credits_remaining < requiredAtStart) {
+    throw new Error(
+      "This assessment is temporarily unavailable — the hiring team has no candidate credits remaining.",
+    )
   }
 
   const now = new Date().toISOString()
@@ -615,7 +648,36 @@ export async function startAttempt(input: {
     .select("id")
     .single()
 
-  if (error || !attempt) throw new Error(error?.message ?? "Could not start attempt")
+  if (error || !attempt) {
+    // A concurrent start won the race and created the row first — resume it
+    // rather than creating a duplicate (unique index on invite+email).
+    if (error?.code === "23505") {
+      const { data: raced } = await supabase
+        .from("attempts")
+        .select("id")
+        .eq("test_invite_id", loaded.invite.id)
+        .eq("candidate_email", input.email.toLowerCase())
+        .maybeSingle()
+      if (raced?.id) return { attemptId: raced.id, resumed: true }
+    }
+    throw new Error(error?.message ?? "Could not start attempt")
+  }
+
+  if (proctored) {
+    try {
+      await consumeCredits(orgId, attempt.id, "proctored_start")
+    } catch (err) {
+      // Reserve failed (e.g. concurrent depletion) — roll back the attempt row.
+      await supabase.from("attempts").delete().eq("id", attempt.id)
+      if (err instanceof InsufficientCreditsError) {
+        throw new Error(
+          "This assessment is temporarily unavailable — the hiring team has no candidate credits remaining.",
+        )
+      }
+      throw err
+    }
+  }
+
   return { attemptId: attempt.id, resumed: false }
 }
 
@@ -685,6 +747,17 @@ export async function recordConsent(input: {
   if (!loaded) throw new Error("Invalid test link")
 
   const supabase = createAdminClient()
+
+  // Ensure the attempt actually belongs to this invite/token (prevents recording
+  // consent against another org's attempt id).
+  const { data: ownedAttempt } = await supabase
+    .from("attempts")
+    .select("id")
+    .eq("id", input.attemptId)
+    .eq("test_invite_id", loaded.invite.id)
+    .maybeSingle()
+  if (!ownedAttempt) throw new Error("Attempt does not match this test link")
+
   const { data: existing } = await supabase
     .from("consents")
     .select("id")
@@ -693,12 +766,118 @@ export async function recordConsent(input: {
 
   if (existing) return
 
-  await supabase.from("consents").insert({
+  const { error: insertError } = await supabase.from("consents").insert({
     attempt_id: input.attemptId,
     consent_text_version: input.version,
     consent_text_snapshot: input.snapshot,
     ip_address: input.ipAddress ?? null,
   })
+  if (insertError) {
+    throw new Error(`Failed to record consent: ${insertError.message}`)
+  }
+}
+
+const PROCTORING_MEDIA_KINDS = ["camera", "screen", "face_match"] as const
+type ProctoringMediaKind = (typeof PROCTORING_MEDIA_KINDS)[number]
+
+const PROCTORING_EXTENSIONS: Record<ProctoringMediaKind, readonly string[]> = {
+  camera: ["jpg", "jpeg", "png"],
+  screen: ["jpg", "jpeg", "png"],
+  face_match: ["jpg", "jpeg", "png"],
+}
+
+const PROCTORING_CONTENT_TYPES: Record<ProctoringMediaKind, readonly string[]> = {
+  camera: ["image/jpeg", "image/png"],
+  screen: ["image/jpeg", "image/png"],
+  face_match: ["image/jpeg", "image/png"],
+}
+
+function validateProctoringMediaInput(input: {
+  kind: string
+  extension: string
+  contentType: string
+}): ProctoringMediaKind {
+  if (!PROCTORING_MEDIA_KINDS.includes(input.kind as ProctoringMediaKind)) {
+    throw new Error("Invalid proctoring media kind")
+  }
+  const kind = input.kind as ProctoringMediaKind
+  const extension = input.extension.trim().toLowerCase()
+  if (
+    !extension ||
+    extension.includes("/") ||
+    extension.includes("\\") ||
+    extension.includes("..")
+  ) {
+    throw new Error("Invalid proctoring media extension")
+  }
+  if (!PROCTORING_EXTENSIONS[kind].includes(extension)) {
+    throw new Error("Invalid proctoring media extension")
+  }
+  const contentType = input.contentType.trim().toLowerCase()
+  if (!PROCTORING_CONTENT_TYPES[kind].includes(contentType)) {
+    throw new Error("Invalid proctoring media content type")
+  }
+  return kind
+}
+
+export async function recordProctoringMedia(input: {
+  token: string
+  attemptId: string
+  kind: "camera" | "screen" | "face_match"
+  bytes: Buffer
+  contentType: string
+  extension: string
+}): Promise<string> {
+  const loaded = await loadTestByToken(input.token)
+  if (!loaded) throw new Error("Invalid test link")
+
+  const kind = validateProctoringMediaInput(input)
+  const extension = input.extension.trim().toLowerCase()
+  const contentType = input.contentType.trim().toLowerCase()
+
+  const supabase = createAdminClient()
+  const { data: attempt, error: claimError } = await supabase
+    .from("attempts")
+    .update({ disposition: "under_review" })
+    .eq("id", input.attemptId)
+    .eq("test_invite_id", loaded.invite.id)
+    .eq("disposition", "under_review")
+    .is("submitted_at", null)
+    .select("id")
+    .maybeSingle()
+
+  if (claimError) {
+    throw new Error(`Failed to claim attempt: ${claimError.message}`)
+  }
+  if (!attempt) {
+    throw new Error("Invalid or completed attempt")
+  }
+
+  const storagePath = `${loaded.invite.id}/${input.attemptId}/${kind}-${Date.now()}.${extension}`
+  const { error: uploadError } = await supabase.storage
+    .from("proctoring")
+    .upload(storagePath, input.bytes, {
+      contentType,
+      upsert: false,
+    })
+
+  if (uploadError) {
+    throw new Error(`Failed to store proctoring media: ${uploadError.message}`)
+  }
+
+  const { error: rowError } = await supabase.from("proctoring_media").insert({
+    attempt_id: input.attemptId,
+    kind,
+    storage_path: storagePath,
+    expires_at: proctoringExpiresAt(),
+  })
+
+  if (rowError) {
+    await supabase.storage.from("proctoring").remove([storagePath])
+    throw new Error(`Failed to record proctoring media: ${rowError.message}`)
+  }
+
+  return storagePath
 }
 
 export async function submitAttemptRecord(input: {
@@ -745,7 +924,10 @@ export async function submitAttemptRecord(input: {
     return { candidate, certificate }
   }
 
-  if (org.credits_remaining <= 0) {
+  // Proctored attempts already consumed their 2 credits at start; only
+  // unproctored attempts consume a credit on completion.
+  const proctored = loaded.test.requires_proctoring
+  if (!proctored && org.credits_remaining < 1) {
     throw new Error(
       "Submission failed — the hiring team has no candidate credits remaining.",
     )
@@ -817,6 +999,13 @@ export async function submitAttemptRecord(input: {
     })
   }
 
+  // Consume the completion credit BEFORE finalizing the attempt so an exhausted
+  // balance can never yield a free scored completion. consume_credits is
+  // idempotent per (attempt_id, reason), so retries/races don't double-charge.
+  if (!proctored) {
+    await consumeCredits(orgId, input.attemptId, "completion")
+  }
+
   const now = new Date().toISOString()
   const { data: updated, error } = await supabase
     .from("attempts")
@@ -831,8 +1020,6 @@ export async function submitAttemptRecord(input: {
     .single()
 
   if (error || !updated) throw new Error(error?.message ?? "Submit failed")
-
-  await deductCredit(orgId)
 
   const { data: consent } = await supabase
     .from("consents")

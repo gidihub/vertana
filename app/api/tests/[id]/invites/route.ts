@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 
 import { handleApiAuth } from "@/lib/auth/api"
+import { auditRecruiterAction } from "@/lib/audit/events"
 import {
   createCandidateInvite,
   loadEmailInvitesForTest,
@@ -32,11 +33,23 @@ export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  return handleApiAuth(async () => {
+  return handleApiAuth(async (ctx) => {
     try {
       const { id } = await params
       const body = inviteSchema.parse(await req.json())
       const invite = await createCandidateInvite({ testId: id, email: body.email })
+      try {
+        await auditRecruiterAction({
+          orgId: ctx.orgId,
+          userId: ctx.user.id,
+          action: "invite.created",
+          resourceType: "test_invite",
+          resourceId: invite.id,
+          metadata: { testId: id, email: body.email },
+        })
+      } catch {
+        // Audit failure is logged in writeAuditLog; don't block invite creation.
+      }
       return NextResponse.json({ invite })
     } catch (err) {
       return NextResponse.json(

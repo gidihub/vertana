@@ -49,7 +49,7 @@ export const BLOG_POSTS: BlogPost[] = [
     role: "Head of Talent Science",
     date: "2026-06-24",
     readMinutes: 8,
-    featured: true,
+    featured: false,
     blocks: [
       {
         type: "paragraph",
@@ -317,6 +317,114 @@ export const BLOG_POSTS: BlogPost[] = [
       { label: "Results and reporting", href: "/features/results-reporting" },
       { label: "For recruiters", href: "/use-cases/recruiters" },
       { label: "GDPR compliance", href: "/legal/gdpr" },
+    ],
+  },
+  {
+    slug: "hiring-in-the-age-of-ai-cheating",
+    title: "Hiring in the age of AI cheating: a practical playbook",
+    category: "Guides",
+    intent: "AI cheating in hiring assessments",
+    excerpt:
+      "Candidates can paste prompts into ChatGPT faster than you can schedule interviews. Here's how to design assessments that still produce defensible signal.",
+    author: "Dana Whitfield",
+    role: "Head of Talent Science",
+    date: "2026-07-10",
+    readMinutes: 9,
+    featured: true,
+    blocks: [
+      {
+        type: "paragraph",
+        text: "Generative AI didn't invent cheating — but it lowered the friction to near zero. The response isn't to ban laptops or chase detection arms races alone. It's to design assessments where pasted answers fail: sandboxed execution, structured reasoning, and integrity signals you can explain to candidates up front.",
+      },
+      {
+        type: "heading",
+        text: "What still produces signal in 2026",
+      },
+      {
+        type: "bullets",
+        items: [
+          "Coding questions with hidden test cases — output must run, not just read well.",
+          "Scenario judgment with trade-offs — there is no single 'correct' paragraph.",
+          "Timed, mixed-format tests — speed and prioritisation matter.",
+          "Tab-focus integrity monitoring with explicit consent.",
+        ],
+      },
+      {
+        type: "callout",
+        title: "Positioning wedge",
+        text: "Vertana treats AI resistance as a product principle, not a footnote on individual questions.",
+      },
+      {
+        type: "paragraph",
+        text: "Tag questions by resistance level, mix formats deliberately, and show candidates exactly what integrity monitoring means before they start. Fair process is part of the signal.",
+      },
+    ],
+    related: [
+      { label: "Proctoring", href: "/features/proctoring" },
+      { label: "React developer assessment", href: "/assessments/react-developer-assessment" },
+      { label: "AI question generation", href: "/features/ai-question-generation" },
+    ],
+  },
+  {
+    slug: "ai-resistant-interview-questions",
+    title: "What makes an interview question AI-resistant?",
+    category: "Hiring science",
+    intent: "AI-proof interview questions",
+    excerpt:
+      "Not every hard question resists AI. Learn the design patterns that force original reasoning instead of polished generic answers.",
+    author: "Dana Whitfield",
+    role: "Head of Talent Science",
+    date: "2026-07-08",
+    readMinutes: 7,
+    blocks: [
+      {
+        type: "paragraph",
+        text: "AI-resistant doesn't mean obscure. It means the question binds to context: a broken system, a ambiguous metric, a constrained timeline. Generic best-practice lists score well in ChatGPT and poorly in hiring.",
+      },
+      {
+        type: "heading",
+        text: "Patterns that work",
+      },
+      {
+        type: "bullets",
+        items: [
+          "Broken-state debugging with specific symptoms.",
+          "Prioritisation under constraints (time, scope, risk).",
+          "Explain-your-trade-off prompts with no single answer key.",
+          "Executable coding with multiple hidden edge cases.",
+        ],
+      },
+      {
+        type: "paragraph",
+        text: "Vertana's library tags questions by AI resistance so recruiters can bias toward high-signal items without rewriting every screen from scratch.",
+      },
+    ],
+    related: [
+      { label: "Question library", href: "/library" },
+      { label: "Backend engineer assessment", href: "/assessments/backend-engineer-assessment" },
+      { label: "Test builder", href: "/features/test-builder" },
+    ],
+  },
+  {
+    slug: "structured-hiring-reduces-bias",
+    title: "How structured hiring reduces bias without slowing you down",
+    category: "Hiring science",
+    intent: "structured hiring reduce bias",
+    excerpt:
+      "Structure isn't bureaucracy — it's how you make comparable decisions at speed.",
+    author: "Dana Whitfield",
+    role: "Head of Talent Science",
+    date: "2026-06-18",
+    readMinutes: 6,
+    blocks: [
+      {
+        type: "paragraph",
+        text: "Unstructured interviews optimise for confidence, not competence. A consistent question set, rubric, and integrity context lets you move fast without guessing.",
+      },
+    ],
+    related: [
+      { label: "For recruiters", href: "/use-cases/recruiters" },
+      { label: "Results and reporting", href: "/features/results-reporting" },
     ],
   },
 ]

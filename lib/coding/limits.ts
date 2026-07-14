@@ -1,4 +1,5 @@
 import type { PlanTier } from "@/lib/plans"
+import type { PppTier } from "@/lib/billing/ppp"
 import { codingQuestionsEnabledForTier } from "@/lib/plans"
 import type { Question, TestCase } from "@/lib/types"
 
@@ -14,35 +15,48 @@ export function clampTestCases(testCases: TestCase[] | undefined): TestCase[] {
   }))
 }
 
+/** Coding is available on every plan, in every region. */
+export function codingAllowedForOrg(
+  _tier: PlanTier,
+  _pppTier?: PppTier | null,
+): boolean {
+  return true
+}
+
+export type CodingBlockReason = "plan" | "ppp_floor"
+
+export function codingStatusForOrg(
+  _tier: PlanTier,
+  _pppTier?: PppTier | null,
+): {
+  allowed: boolean
+  detail: string
+  showUpgrade: boolean
+  reason?: CodingBlockReason
+} {
+  return { allowed: true, detail: "Coding enabled", showUpgrade: false }
+}
+
+export function newCodingQuestionBlockedMessage(
+  _tier: PlanTier,
+  _pppTier?: PppTier | null,
+): string {
+  return "Coding questions are available on your plan."
+}
+
 /**
- * On Free/Starter: keep existing coding questions unchanged, block new ones and
- * edits to existing coding questions. On Growth+: clamp test case count.
+ * Coding is available everywhere, so the only normalization needed is clamping
+ * the number of auto-grade test cases per coding question.
  */
 export function sanitizeQuestionsForPlan(
   incoming: Question[],
-  existing: Question[],
-  tier: PlanTier,
+  _existing: Question[],
+  _tier: PlanTier,
+  _pppTier?: PppTier | null,
 ): Question[] {
-  const existingById = new Map(existing.map((q) => [q.id, q]))
-
-  if (codingQuestionsEnabledForTier(tier)) {
-    return incoming.map((q) =>
-      q.type === "coding"
-        ? { ...q, test_cases: clampTestCases(q.test_cases) }
-        : q,
-    )
-  }
-
-  return incoming.map((q) => {
-    if (q.type !== "coding") return q
-
-    const prev = existingById.get(q.id)
-    if (prev?.type === "coding") {
-      return prev
-    }
-
-    throw new Error(
-      "Coding questions require a Growth plan or higher. Upgrade to add new coding questions.",
-    )
-  })
+  return incoming.map((q) =>
+    q.type === "coding"
+      ? { ...q, test_cases: clampTestCases(q.test_cases) }
+      : q,
+  )
 }

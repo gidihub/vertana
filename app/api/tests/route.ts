@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 
 import { handleApiAuth } from "@/lib/auth/api"
+import { auditRecruiterAction } from "@/lib/audit/events"
 import {
   countInvitesByTest,
   countNeedsScoringByTest,
@@ -30,6 +31,18 @@ export async function POST(req: Request) {
         creatorEmail: ctx.user.email,
         creatorUserId: ctx.user.id,
       })
+      try {
+        await auditRecruiterAction({
+          orgId: ctx.orgId,
+          userId: ctx.user.id,
+          action: "test.created",
+          resourceType: "test",
+          resourceId: saved.id,
+          metadata: { title: saved.title },
+        })
+      } catch {
+        // Audit failure is logged in writeAuditLog; don't block test creation.
+      }
       return NextResponse.json({ test: saved })
     } catch (err) {
       const message = (err as Error).message

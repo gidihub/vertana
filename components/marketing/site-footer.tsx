@@ -11,21 +11,35 @@ const PRODUCT_LINKS = [
 ]
 
 const USE_CASE_LINKS = [
-  { label: "For recruiters", href: "/use-cases/recruiters" },
-  { label: "For remote hiring", href: "/use-cases/remote-hiring" },
-  { label: "For technical teams", href: "/use-cases/technical-teams" },
+  { label: "Technical hiring", href: "/use-cases/technical-hiring" },
+  { label: "Remote hiring", href: "/use-cases/remote-hiring" },
+  { label: "High-volume screening", href: "/use-cases/high-volume-screening" },
+  { label: "Recruitment agencies", href: "/use-cases/recruitment-agencies" },
+  { label: "Graduate & campus hiring", href: "/use-cases/graduate-campus-hiring" },
+  { label: "First technical hire", href: "/use-cases/first-technical-hire" },
+]
+
+const COMPARE_LINKS = [
+  { label: "Vertana vs TestTrick", href: "/compare/vertana-vs-testtrick" },
+  { label: "Vertana vs TestDome", href: "/compare/vertana-vs-testdome" },
+  { label: "Vertana vs TestGorilla", href: "/compare/vertana-vs-testgorilla" },
+  { label: "Vertana vs HackerRank", href: "/compare/vertana-vs-hackerrank" },
+  { label: "Vertana vs Quilgo", href: "/compare/vertana-vs-quilgo" },
 ]
 
 const LEGAL_LINKS = [
   { label: "Privacy policy", href: "/legal/privacy" },
   { label: "GDPR compliance", href: "/legal/gdpr" },
   { label: "Terms of use", href: "/legal/terms" },
+  { label: "Data processing agreement", href: "/legal/dpa" },
 ]
 
 const RESOURCE_LINKS = [
   { label: "Blog", href: "/blog" },
-  { label: "Assess frontend engineers", href: "/blog/how-to-assess-frontend-engineers" },
+  { label: "Hiring assessments", href: "/assessments" },
+  { label: "React developer test", href: "/assessments/react-developer-assessment" },
   { label: "Prevent interview cheating", href: "/blog/prevent-cheating-remote-technical-interviews" },
+  { label: "Hiring in the age of AI", href: "/blog/hiring-in-the-age-of-ai-cheating" },
 ]
 
 export function SiteFooter() {
@@ -55,9 +69,10 @@ export function SiteFooter() {
 
       {/* Link columns */}
       <div className="border-t border-sage-line/70">
-        <div className="mx-auto grid w-full max-w-6xl grid-cols-2 gap-8 px-4 py-12 sm:px-6 md:grid-cols-3 lg:grid-cols-6">
+        <div className="mx-auto grid w-full max-w-6xl grid-cols-2 gap-8 px-4 py-12 sm:px-6 md:grid-cols-4 lg:grid-cols-7">
           <FooterColumn title="Product" links={PRODUCT_LINKS} />
           <FooterColumn title="Use cases" links={USE_CASE_LINKS} />
+          <FooterColumn title="Compare" links={COMPARE_LINKS} />
           <FooterColumn title="Resources" links={RESOURCE_LINKS} />
           <FooterColumn title="Legal" links={LEGAL_LINKS} />
 

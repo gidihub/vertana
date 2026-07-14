@@ -3,10 +3,14 @@ import { z } from "zod"
 
 import { handleApiAuth } from "@/lib/auth/api"
 import { ensureStripeCustomerForOrg } from "@/lib/billing/customer"
+import {
+  detectCountryFromRequest,
+  pppTierForCountry,
+} from "@/lib/billing/ppp"
+import { resolvePlanPriceId } from "@/lib/billing/catalog"
 import { getOrganization } from "@/lib/org"
 import { getSiteUrl, isStripeConfigured } from "@/lib/stripe/env"
 import { getStripe } from "@/lib/stripe/client"
-import { priceIdForTier } from "@/lib/stripe/prices"
 
 const checkoutSchema = z.object({
   tier: z.enum(["starter", "growth"]),
@@ -31,7 +35,12 @@ export async function POST(req: Request) {
 
     try {
       const body = checkoutSchema.parse(await req.json())
-      const priceId = priceIdForTier(body.tier, body.cycle)
+      const pppTier = pppTierForCountry(detectCountryFromRequest(req))
+      const priceId = await resolvePlanPriceId(
+        body.tier,
+        pppTier,
+        body.cycle === "annual" ? "yearly" : "monthly",
+      )
       if (!priceId) {
         return NextResponse.json(
           {
@@ -69,12 +78,14 @@ export async function POST(req: Request) {
           org_id: orgId,
           plan_tier: body.tier,
           billing_cycle: body.cycle,
+          ppp_tier: pppTier,
         },
         subscription_data: {
           metadata: {
             org_id: orgId,
             plan_tier: body.tier,
             billing_cycle: body.cycle,
+            ppp_tier: pppTier,
           },
         },
         allow_promotion_codes: true,

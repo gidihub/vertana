@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 
 import { handleApiAuth } from "@/lib/auth/api"
+import { auditRecruiterAction } from "@/lib/audit/events"
 import {
   createTeamInvite,
   loadTeamInvites,
@@ -45,6 +46,18 @@ export async function POST(req: Request) {
         inviterEmail: user.email ?? "A teammate",
         orgName: org.name,
       })
+      try {
+        await auditRecruiterAction({
+          orgId,
+          userId: user.id,
+          action: "team.invite_created",
+          resourceType: "team_invite",
+          resourceId: invite.id,
+          metadata: { email: body.email, role: body.role },
+        })
+      } catch {
+        // Audit failure is logged in writeAuditLog; don't block team invite.
+      }
       return NextResponse.json({ invite })
     } catch (err) {
       return NextResponse.json(

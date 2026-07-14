@@ -23,8 +23,29 @@ function isRecruiterRoute(pathname: string): boolean {
   )
 }
 
+/**
+ * The homepage and pricing page each render one URL but vary their prices by the
+ * trusted `x-vercel-ip-country` edge header (PPP). Tell the CDN to key its cache
+ * on that header so each region gets the right prices without creating duplicate,
+ * separately-indexed URLs. Crawlers (no geo header) receive the anchor version.
+ */
+const PPP_CACHED_PATHS = new Set(["/", "/pricing"])
+
+function withPricingCacheHeaders(response: NextResponse): NextResponse {
+  response.headers.set("Vary", "x-vercel-ip-country")
+  response.headers.set(
+    "Cache-Control",
+    "public, s-maxage=3600, stale-while-revalidate=86400",
+  )
+  return response
+}
+
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request })
+
+  if (PPP_CACHED_PATHS.has(request.nextUrl.pathname)) {
+    return withPricingCacheHeaders(response)
+  }
 
   const url = getSupabaseUrl()
   const key = getSupabaseAnonKey()
@@ -70,6 +91,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/pricing",
     "/dashboard/:path*",
     "/team/:path*",
     "/settings/:path*",

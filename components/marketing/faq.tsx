@@ -7,26 +7,56 @@ import {
 
 const FAQS = [
   {
+    q: "How is Vertana different from other assessment tools?",
+    a: "Most tools fight AI cheating with surveillance. We design assessments an AI can't complete for the candidate, and treat monitoring as consented evidence, not a cage.",
+  },
+  {
+    q: "Can candidates just use ChatGPT to pass?",
+    a: "No. Library questions are screened for how easily an LLM solves them, and work-sample questions are scored on how well a candidate directs AI — not whether they avoided it.",
+  },
+  {
+    q: "Is proctoring required?",
+    a: "No. Proctoring and face verification are optional, consent-first features on Starter and above. Candidates must explicitly agree before any monitoring begins.",
+  },
+  {
+    q: "How does regional pricing work?",
+    a: "Prices adjust automatically to your country's purchasing power. Every plan includes the same features and the same credit allowance everywhere — only the price changes. Billing is in USD.",
+  },
+  {
     q: "Can I change my plan later?",
-    a: "Yes. Upgrade or downgrade at any time from your account settings — changes take effect on your next billing cycle, and unused time is prorated.",
+    a: "Yes — upgrade or downgrade any time from Settings. Changes apply to your next billing cycle.",
   },
   {
     q: "Can I cancel anytime?",
-    a: "Absolutely. There are no long-term contracts on Starter or Pro. Cancel whenever you like and you'll keep access through the end of your current period.",
+    a: "Yes, there's no lock-in contract. Cancel from Settings and you'll keep access through the end of your current billing period.",
   },
   {
     q: "Is candidate data private?",
-    a: "Candidate submissions and any proctoring data are only visible to your team, are never sold, and are retained on a defined schedule tied to the hiring decision before being deleted.",
+    a: "Yes. Candidate data is only visible to your hiring team, never shared or sold, and session recordings are deleted on a fixed retention schedule.",
   },
   {
     q: "What happens if a candidate doesn't consent to proctoring?",
-    a: "Consent is required before proctoring begins. If a candidate declines, they can still take an un-proctored version where allowed, or opt out — you decide the policy per test, and their choice is recorded.",
+    a: "They can still take the assessment unmonitored where your plan allows, or you can require consent as a condition of starting the test — the choice is yours.",
   },
 ]
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQS.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+}
 
 export function Faq() {
   return (
     <section id="faq" className="border-b border-sage-line/70 bg-card">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:py-24">
         <div>
           <p className="text-sm font-semibold uppercase tracking-widest text-pine">

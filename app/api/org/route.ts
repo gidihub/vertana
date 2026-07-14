@@ -24,6 +24,7 @@ export async function GET() {
         subscription_status: org.subscription_status ?? null,
         billing_cycle: org.billing_cycle ?? null,
         current_period_end: org.current_period_end ?? null,
+        ppp_tier: org.ppp_tier ?? null,
       },
     })
   })

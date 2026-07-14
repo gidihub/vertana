@@ -1,6 +1,8 @@
 // Shared data model for the recruiting test platform.
 // These types map 1:1 onto the Supabase tables you'll create later.
 
+import type { PppTier } from "@/lib/pricing/geo"
+
 export type TestStatus = "draft" | "active" | "closed"
 
 export type TimingPolicy = "strict" | "normal" | "relaxed"
@@ -84,6 +86,7 @@ export interface Organization {
   subscription_status?: string | null
   billing_cycle?: "monthly" | "annual" | null
   current_period_end?: string | null
+  ppp_tier?: PppTier | null
 }
 
 // Table: questions

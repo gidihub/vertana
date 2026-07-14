@@ -37,7 +37,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
           "Account details for hiring teams, such as name and email address.",
           "Assessment content you create, including questions and scoring settings.",
           "Candidate submissions, including answers, scores, and timing.",
-          "Integrity signals when proctoring is enabled, such as camera verification and focus events — always with the candidate's prior consent.",
+          "Integrity signals when proctoring is enabled, such as tab-focus events — and, when available, camera verification — always with the candidate's prior consent.",
         ],
       },
       {
@@ -164,6 +164,44 @@ export const LEGAL_DOCS: LegalDoc[] = [
         heading: "Contact",
         paragraphs: [
           "Questions about these terms can be sent to legal@vertana.io.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "dpa",
+    title: "Data processing agreement",
+    summary:
+      "Processor terms for hiring teams using Vertana to evaluate candidates (Custom tier).",
+    updated: "July 12, 2026",
+    sections: [
+      {
+        heading: "Scope",
+        paragraphs: [
+          "This Data Processing Agreement (DPA) applies when your organization engages Vertana to process candidate personal data on your behalf. You remain the controller; Vertana acts as processor for assessment delivery, scoring, and integrity signals.",
+        ],
+      },
+      {
+        heading: "Processing instructions",
+        paragraphs: [
+          "Vertana processes candidate data only to provide the assessment services you configure — including invitations, submissions, results, and optional integrity monitoring with consent.",
+        ],
+        bullets: [
+          "No sale of candidate personal data.",
+          "Subprocessors limited to infrastructure required to run the service (e.g. hosting, database, email).",
+          "Deletion or export available on request for Custom customers.",
+        ],
+      },
+      {
+        heading: "Security & retention",
+        paragraphs: [
+          "We maintain administrative and technical safeguards appropriate to the risk. Retention defaults follow your configured assessment settings and published privacy schedules unless a custom retention window is agreed in writing.",
+        ],
+      },
+      {
+        heading: "Contact",
+        paragraphs: [
+          "To execute a DPA for your organization, contact legal@vertana.io with your company name, billing contact, and desired retention terms.",
         ],
       },
     ],

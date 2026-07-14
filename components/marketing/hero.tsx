@@ -61,8 +61,8 @@ export function Hero() {
           </div>
 
           <p className="mt-6 text-sm text-ink-muted">
-            No credit card to start · Free while you evaluate · Consent-first
-            proctoring
+            No credit card to start · 10 free candidates every month ·
+            Consent-first proctoring
           </p>
         </div>
 
@@ -132,7 +132,7 @@ export function Hero() {
                   <span className="absolute inline-flex size-full rounded-full bg-lime opacity-70 motion-safe:animate-ping" />
                   <span className="relative inline-flex size-2 rounded-full bg-lime" />
                 </span>
-                Proctoring on · camera verified
+                Proctoring on · tab focus monitored
               </span>
               <span className="inline-flex items-center gap-1 rounded-full bg-pine px-3 py-1.5 text-xs font-semibold text-pine-foreground">
                 Next

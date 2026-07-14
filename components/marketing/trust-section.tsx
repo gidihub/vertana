@@ -4,12 +4,12 @@ const POINTS = [
   {
     icon: UserCheck,
     title: "Consent is required",
-    body: "Proctoring never starts silently. Candidates must explicitly agree before any camera or activity monitoring begins.",
+    body: "Integrity monitoring never starts silently. Candidates must explicitly agree before any tab-focus tracking begins.",
   },
   {
     icon: Eye,
     title: "Clearly disclosed",
-    body: "Exactly what's captured — camera checks, tab switches, timing — is shown to the candidate up front, in plain language.",
+    body: "Exactly what's captured is shown up front in plain language: tab switches and session timing on every proctored test, plus a one-time JPEG/PNG camera snapshot at test start when camera verification is enabled — uploaded for identity checks, reviewed only by the hiring team, and deleted after 90 days.",
   },
   {
     icon: CalendarClock,

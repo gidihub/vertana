@@ -4,7 +4,8 @@ import { useMemo, useState } from "react"
 import { Plus } from "lucide-react"
 
 import type { AiResistance, Question } from "@/lib/types"
-import { codingQuestionsEnabledForTier, type PlanTier } from "@/lib/plans"
+import { codingStatusForOrg } from "@/lib/coding/limits"
+import { type PlanTier } from "@/lib/plans"
 import { useOrganization } from "@/lib/store"
 import { DescribeGeneratePanel } from "@/components/builder/describe-generate-panel"
 import { LibraryBrowsePanel } from "@/components/builder/library-browse-panel"
@@ -56,9 +57,9 @@ export function QuestionsSection({
   onSuggestedTime?: (minutes: number) => void
 }) {
   const org = useOrganization()
-  const codingEnabled = org
-    ? codingQuestionsEnabledForTier(org.plan_tier as PlanTier)
-    : false
+  const tier = (org?.plan_tier ?? "free") as PlanTier
+  const codingStatus = codingStatusForOrg(tier, org?.ppp_tier ?? null)
+  const codingEnabled = codingStatus.allowed
 
   const [tab, setTab] = useState("describe")
   const [filterResistance, setFilterResistance] = useState<AiResistance | "all">(
@@ -212,6 +213,7 @@ export function QuestionsSection({
                   index={index}
                   total={questions.length}
                   codingEnabled={codingEnabled}
+                  codingLockReason={codingStatus.reason}
                   onChange={onUpdate}
                   onRemove={() => onRemove(q.id)}
                   onMove={(dir) => onMove(index, dir)}

@@ -12,6 +12,7 @@
     "start": "next start",
     "lint": "eslint .",
     "migrate": "node scripts/migrate.mjs",
+    "setup:stripe": "node --experimental-strip-types --import ./scripts/resolve-ts-alias.mjs scripts/setup-stripe.ts",
     "generate:ml-library": "node scripts/build-ml-library.mjs",
     "apply:ml-library": "node scripts/apply-ml-library.mjs",
     "generate:mbb-library": "node scripts/build-mbb-library.mjs",
@@ -26,7 +27,9 @@
     "seed:library": "node scripts/seed-full-library.mjs",
     "validate:library": "node scripts/validate-library.mjs",
     "validate:library:full": "node scripts/validate-library.mjs --mcq-audit",
-    "test:rate-limit": "node --experimental-strip-types --test lib/rate-limit.test.ts"
+    "test:rate-limit": "node --experimental-strip-types --test lib/rate-limit.test.ts",
+    "test:coding-limits": "node --experimental-strip-types --import ./scripts/resolve-ts-alias.mjs --test lib/coding/limits.test.ts",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.0",
@@ -39,6 +42,7 @@
     "ai": "^7.0.16",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "country-flag-icons": "^1.6.20",
     "date-fns": "^4.4.0",
     "lucide-react": "^1.16.0",
     "next": "16.2.6",
@@ -55,6 +59,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@tailwindcss/postcss": "^4.2.0",
     "@types/node": "^24",
     "@types/react": "^19",

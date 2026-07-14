@@ -3,15 +3,13 @@
 import { useState } from "react"
 import {
   ShieldCheck,
-  Video,
   Monitor,
-  ScanFace,
   Users,
   Clock,
   Lock,
 } from "lucide-react"
 
-import { CONSENT_COPY, CONSENT_DECLINED_MESSAGE } from "@/lib/consent"
+import { CONSENT_DECLINED_MESSAGE, getConsentCopy } from "@/lib/consent"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -25,7 +23,7 @@ import {
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { Field, FieldLabel } from "@/components/ui/field"
 
-const POINT_ICONS = [Video, ScanFace, Users, Clock]
+const POINT_ICONS = [Monitor, Users, Clock, Lock]
 
 export function ConsentStep({
   onAccept,
@@ -36,6 +34,7 @@ export function ConsentStep({
 }) {
   const [checked, setChecked] = useState(false)
   const [declined, setDeclined] = useState(false)
+  const consentCopy = getConsentCopy()
 
   if (declined) {
     return (
@@ -65,15 +64,15 @@ export function ConsentStep({
         <div className="mb-2 flex size-11 items-center justify-center rounded-full bg-accent text-accent-foreground">
           <ShieldCheck className="size-5" />
         </div>
-        <CardTitle className="text-balance">{CONSENT_COPY.title}</CardTitle>
+        <CardTitle className="text-balance">{consentCopy.title}</CardTitle>
         <CardDescription className="text-pretty">
-          {CONSENT_COPY.intro}
+          {consentCopy.intro}
         </CardDescription>
       </CardHeader>
 
       <CardContent className="flex flex-col gap-5">
         <ul className="flex flex-col gap-4">
-          {CONSENT_COPY.points.map((point, i) => {
+          {consentCopy.points.map((point, i) => {
             const Icon = POINT_ICONS[i] ?? Monitor
             return (
               <li key={point.heading} className="flex gap-3">
@@ -103,8 +102,7 @@ export function ConsentStep({
               htmlFor="consent-check"
               className="text-sm font-normal leading-relaxed"
             >
-              I have read the above and I consent to being recorded and verified
-              for the purpose of this assessment.
+              {consentCopy.checkboxLabel}
             </FieldLabel>
           </Field>
         </div>
@@ -112,10 +110,10 @@ export function ConsentStep({
 
       <CardFooter className="flex-col-reverse gap-2 sm:flex-row sm:justify-between">
         <Button variant="ghost" onClick={() => setDeclined(true)}>
-          {CONSENT_COPY.declineLabel}
+          {consentCopy.declineLabel}
         </Button>
         <Button disabled={!checked} onClick={onAccept}>
-          {CONSENT_COPY.acceptLabel}
+          {consentCopy.acceptLabel}
         </Button>
       </CardFooter>
     </Card>

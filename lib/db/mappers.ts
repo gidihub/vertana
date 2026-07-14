@@ -31,6 +31,7 @@ export interface OrganizationRow {
   subscription_status: string | null
   billing_cycle: "monthly" | "annual" | null
   current_period_end: string | null
+  ppp_tier: string | null
 }
 
 export interface TestRow {
@@ -290,6 +291,14 @@ export function generateToken(): string {
   return crypto.randomUUID().replace(/-/g, "").slice(0, 16)
 }
 
+function normalizeShortAnswer(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .replace(/[.,;:!?]+$/g, "")
+}
+
 export function gradeAnswer(
   question: QuestionRow,
   response: string,
@@ -308,12 +317,14 @@ export function gradeAnswer(
   }
 
   if (question.type === "short_answer") {
-    const expected =
+    const rawExpected =
       question.correct_answer?.kind === "exact"
-        ? question.correct_answer.value.trim().toLowerCase()
+        ? question.correct_answer.value
         : null
+    if (rawExpected === null) return { isCorrect: null, pointsAwarded: 0 }
+    const expected = normalizeShortAnswer(rawExpected)
     if (!expected) return { isCorrect: null, pointsAwarded: 0 }
-    const isCorrect = response.trim().toLowerCase() === expected
+    const isCorrect = normalizeShortAnswer(response) === expected
     return {
       isCorrect,
       pointsAwarded: isCorrect ? question.points : 0,

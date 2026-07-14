@@ -10,6 +10,7 @@ import {
   getOrganizationByStripeCustomerId,
   getOrganizationByStripeSubscriptionId,
 } from "@/lib/billing/customer"
+import { recordPackPurchase } from "@/lib/credits/ledger"
 import { getStripe } from "@/lib/stripe/client"
 import { createAdminClient } from "@/lib/supabase/admin"
 import type { OrganizationRow } from "@/lib/db/mappers"
@@ -64,6 +65,32 @@ export async function handleStripeWebhookEvent(
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session
+
+      // One-time credit-pack purchase.
+      if (session.mode === "payment" && session.metadata?.kind === "credit_pack") {
+        const org = await resolveOrgFromCheckoutSession(session)
+        if (!org) break
+
+        const credits = Number.parseInt(session.metadata.credits ?? "0", 10)
+        if (!Number.isFinite(credits) || credits <= 0) break
+
+        const paymentIntentId =
+          typeof session.payment_intent === "string"
+            ? session.payment_intent
+            : (session.payment_intent?.id ?? null)
+
+        await recordPackPurchase({
+          orgId: org.id,
+          creditPackId: session.metadata.credit_pack_id || null,
+          credits,
+          pricePaidCents: session.amount_total ?? 0,
+          // Fall back to the (unique) checkout session id so a duplicate webhook
+          // delivery can't double-credit even when payment_intent is absent.
+          stripePaymentIntentId: paymentIntentId ?? session.id,
+        })
+        break
+      }
+
       if (session.mode !== "subscription" || !session.subscription) break
 
       const org = await resolveOrgFromCheckoutSession(session)

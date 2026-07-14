@@ -316,7 +316,7 @@ export function DescribeGeneratePanel({
     )
     const skippedCoding = plan.questions.length - eligible.length
     if (eligible.length === 0) {
-      toast.error("Coding questions require a Growth plan. Upgrade to add them.")
+      toast.error("Coding questions aren't available on your plan.")
       return
     }
     onSuggestedTime?.(plan.total_time_minutes)
@@ -326,7 +326,7 @@ export function DescribeGeneratePanel({
     setBrief("")
     if (skippedCoding > 0) {
       toast.success(
-        `Added ${eligible.length} questions (${skippedCoding} coding skipped — Growth plan required)`,
+        `Added ${eligible.length} questions (${skippedCoding} coding skipped — not available on your plan)`,
       )
     } else {
       toast.success(`Added ${eligible.length} questions to your test`)

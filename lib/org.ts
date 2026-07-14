@@ -1,4 +1,7 @@
 import { requireRecruiter } from "@/lib/auth/recruiter"
+import { grantMonthlyCredits, nextMonthlyExpiryISO } from "@/lib/credits/ledger"
+import { monthlyCreditsForPlan } from "@/lib/pricing/config"
+import type { PlanName } from "@/lib/pricing/config"
 import { createAdminClient } from "@/lib/supabase/admin"
 import type { OrganizationRow } from "@/lib/db/mappers"
 
@@ -43,7 +46,35 @@ export async function ensureMonthlyResetsForOrgId(
   if (!needsCreditReset && !needsAiReset && !needsCodeReset) return org
 
   const admin = createAdminClient()
-  await admin.rpc("reset_monthly_credits")
+
+  // AI + code-execution counters reset on a monthly cadence (candidate credits
+  // are owned by the ledger, not this RPC).
+  if (needsAiReset || needsCodeReset) {
+    const { error } = await admin.rpc("reset_monthly_credits")
+    if (error) throw new Error(`Failed to reset monthly counters: ${error.message}`)
+  }
+
+  if (needsCreditReset) {
+    const nextReset = nextMonthlyExpiryISO()
+    // Grant this month's credits for every active plan (idempotent per calendar
+    // month). This is the primary monthly cadence — including for annual
+    // subscribers, whose Stripe webhooks only fire yearly. Custom plans have no
+    // fixed allowance and are managed manually.
+    if (org.plan_tier !== "custom") {
+      const credits = monthlyCreditsForPlan(org.plan_tier as PlanName)
+      if (credits > 0) {
+        await grantMonthlyCredits(orgId, credits, nextReset)
+      }
+    }
+    const { error } = await admin
+      .from("organizations")
+      .update({ credits_reset_at: nextReset })
+      .eq("id", orgId)
+    if (error) {
+      throw new Error(`Failed to advance credit reset window: ${error.message}`)
+    }
+  }
+
   return getOrganizationById(orgId)
 }
 
