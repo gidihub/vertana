@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 
 import { setupOrganizationForUser } from "@/lib/auth/recruiter"
+import { publicOrigin } from "@/lib/http/origin"
 import { createClient } from "@/lib/supabase/server"
 
 function safeRedirectPath(next: string | null, origin: string): string {
@@ -18,7 +19,9 @@ function safeRedirectPath(next: string | null, origin: string): string {
 }
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url)
+  const { searchParams } = new URL(request.url)
+  // Use the public origin (not request.url) so redirects work behind a proxy.
+  const origin = publicOrigin(request)
   const code = searchParams.get("code")
   const destination = safeRedirectPath(searchParams.get("next"), origin)
 

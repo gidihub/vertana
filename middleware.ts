@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr"
 import { type NextRequest, NextResponse } from "next/server"
 
+import { publicOrigin } from "@/lib/http/origin"
 import { getSupabaseAnonKey, getSupabaseUrl } from "@/lib/supabase/env"
 
 const RECRUITER_PREFIXES = ["/dashboard", "/tests", "/team", "/settings", "/candidates", "/library", "/analytics"]
@@ -81,7 +82,7 @@ export async function middleware(request: NextRequest) {
     if (request.nextUrl.pathname.startsWith("/api/")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
-    const login = new URL("/login", request.url)
+    const login = new URL("/login", publicOrigin(request))
     login.searchParams.set("next", request.nextUrl.pathname)
     return NextResponse.redirect(login)
   }
