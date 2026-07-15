@@ -1,18 +1,16 @@
 "use client"
 
 import Link from "next/link"
-import { useMemo, useState } from "react"
-import { Search } from "lucide-react"
+import { useEffect, useMemo, useState } from "react"
+import { ChevronRight, Search } from "lucide-react"
 
-import type { Candidate, CandidateDisposition, CandidateStatus, Test } from "@/lib/types"
+import type { Candidate, Test } from "@/lib/types"
 import { hasIntegrityConcern } from "@/lib/integrity"
 import { numericText } from "@/lib/design-tokens"
 import { useStore } from "@/lib/store"
-import { CandidateDispositionSelect } from "@/components/candidates/candidate-disposition"
+import { candidateDisplayName, candidateInitials } from "@/lib/candidate-name"
 import { IntegrityConcernBadge } from "@/components/integrity-concern-badge"
-import { CandidateStatusBadge, PassFailBadge } from "@/components/status-badge"
-import { evaluatePass } from "@/lib/passing"
-import { DISPOSITION_FILTER_OPTIONS } from "@/lib/disposition"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
   Select,
@@ -32,15 +30,16 @@ import {
 import { formatDateTime } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
-type Row = Candidate & { testTitle: string }
-
-const STATUS_OPTIONS: { value: CandidateStatus | "all"; label: string }[] = [
-  { value: "all", label: "All statuses" },
-  { value: "invited", label: "Not started" },
-  { value: "in_progress", label: "In progress" },
-  { value: "submitted", label: "Completed" },
-  { value: "expired", label: "Expired" },
-]
+interface CandidateGroup {
+  email: string
+  name: string
+  attempts: Candidate[]
+  assessments: number
+  completed: number
+  avgScore: number | null
+  lastActivity: string | null
+  flagged: boolean
+}
 
 export function GlobalCandidatesTable() {
   const tests = useStore((db) => db.tests)
@@ -52,54 +51,70 @@ export function GlobalCandidatesTable() {
 
   const [search, setSearch] = useState("")
   const [testFilter, setTestFilter] = useState<string>("all")
-  const [statusFilter, setStatusFilter] = useState<CandidateStatus | "all">(
-    "all",
-  )
-  const [dispositionFilter, setDispositionFilter] = useState<
-    CandidateDisposition | "all"
-  >("all")
+  const [page, setPage] = useState(1)
+  const pageSize = 10
 
-  const testById = useMemo(
-    () => new Map(tests.map((t) => [t.id, t] as const)),
-    [tests],
-  )
-
-  const testFilterItems = useMemo(
-    () => ({
-      all: "All tests",
-      ...Object.fromEntries(tests.map((t) => [t.id, t.title])),
-    }),
-    [tests],
-  )
-
-  const rows = useMemo(() => {
+  const groups = useMemo(() => {
     const q = search.trim().toLowerCase()
-    return candidates
-      .map((c): Row => ({
-        ...c,
-        testTitle: testById.get(c.test_id)?.title ?? "Unknown test",
-      }))
-      .filter((row) => {
-        if (testFilter !== "all" && row.test_id !== testFilter) return false
-        if (statusFilter !== "all" && row.status !== statusFilter) return false
-        if (
-          dispositionFilter !== "all" &&
-          (row.disposition ?? "under_review") !== dispositionFilter
-        ) {
-          return false
-        }
-        if (!q) return true
-        return (
-          row.email.toLowerCase().includes(q) ||
-          row.testTitle.toLowerCase().includes(q)
-        )
+    const byEmail = new Map<string, Candidate[]>()
+
+    for (const c of candidates) {
+      if (testFilter !== "all" && c.test_id !== testFilter) continue
+      const key = c.email.toLowerCase()
+      const list = byEmail.get(key)
+      if (list) list.push(c)
+      else byEmail.set(key, [c])
+    }
+
+    const result: CandidateGroup[] = []
+    for (const [email, attempts] of byEmail) {
+      const name = candidateDisplayName(attempts[0].email)
+      if (q && !email.includes(q) && !name.toLowerCase().includes(q)) continue
+
+      const testIds = new Set(attempts.map((a) => a.test_id))
+      const scored = attempts.filter((a) => a.score !== null)
+      const avgScore =
+        scored.length > 0
+          ? Math.round(
+              scored.reduce((sum, a) => sum + (a.score ?? 0), 0) / scored.length,
+            )
+          : null
+      const lastActivity =
+        attempts
+          .map((a) => a.submitted_at ?? a.started_at ?? "")
+          .filter(Boolean)
+          .sort((a, b) => b.localeCompare(a))[0] ?? null
+      const flagged = attempts.some((a) =>
+        hasIntegrityConcern(a.tab_switch_count, integrityThreshold),
+      )
+
+      result.push({
+        email: attempts[0].email,
+        name,
+        attempts,
+        assessments: testIds.size,
+        completed: attempts.filter((a) => a.status === "submitted").length,
+        avgScore,
+        lastActivity,
+        flagged,
       })
-      .sort((a, b) => {
-        const aTime = a.submitted_at ?? a.started_at ?? ""
-        const bTime = b.submitted_at ?? b.started_at ?? ""
-        return bTime.localeCompare(aTime)
-      })
-  }, [candidates, dispositionFilter, search, statusFilter, testById, testFilter])
+    }
+
+    return result.sort((a, b) =>
+      (b.lastActivity ?? "").localeCompare(a.lastActivity ?? ""),
+    )
+  }, [candidates, integrityThreshold, search, testFilter])
+
+  const totalPages = Math.max(1, Math.ceil(groups.length / pageSize))
+  const currentPage = Math.min(page, totalPages)
+  const pageGroups = useMemo(
+    () => groups.slice((currentPage - 1) * pageSize, currentPage * pageSize),
+    [groups, currentPage],
+  )
+
+  useEffect(() => {
+    setPage(1)
+  }, [search, testFilter])
 
   return (
     <div className="flex flex-col gap-4">
@@ -107,7 +122,7 @@ export function GlobalCandidatesTable() {
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search by email or test name…"
+            placeholder="Search any candidate by name or email…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -116,50 +131,15 @@ export function GlobalCandidatesTable() {
         <Select
           value={testFilter}
           onValueChange={(v) => setTestFilter(v ?? "all")}
-          items={testFilterItems}
         >
           <SelectTrigger className="h-9 w-full min-w-0 sm:w-52">
-            <SelectValue placeholder="All tests" />
+            <SelectValue placeholder="All assessments" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All tests</SelectItem>
+            <SelectItem value="all">All assessments</SelectItem>
             {tests.map((t: Test) => (
               <SelectItem key={t.id} value={t.id}>
                 {t.title}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select
-          value={statusFilter}
-          onValueChange={(v) =>
-            setStatusFilter(v as CandidateStatus | "all")
-          }
-        >
-          <SelectTrigger className="w-full sm:w-44">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            {STATUS_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select
-          value={dispositionFilter}
-          onValueChange={(v) =>
-            setDispositionFilter(v as CandidateDisposition | "all")
-          }
-        >
-          <SelectTrigger className="w-full sm:w-44">
-            <SelectValue placeholder="Disposition" />
-          </SelectTrigger>
-          <SelectContent>
-            {DISPOSITION_FILTER_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
               </SelectItem>
             ))}
           </SelectContent>
@@ -171,94 +151,115 @@ export function GlobalCandidatesTable() {
           <TableHeader>
             <TableRow>
               <TableHead>Candidate</TableHead>
-              <TableHead>Test</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Disposition</TableHead>
-              <TableHead className="text-right">Score</TableHead>
-              <TableHead>Result</TableHead>
-              <TableHead>Submitted</TableHead>
+              <TableHead className="text-center">Assessments</TableHead>
+              <TableHead className="text-right">Avg score</TableHead>
+              <TableHead>Last activity</TableHead>
+              <TableHead className="w-10" />
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="text-center text-muted-foreground"
-                >
+                <TableCell colSpan={5} className="text-center text-muted-foreground">
                   Loading candidates…
                 </TableCell>
               </TableRow>
-            ) : rows.length === 0 ? (
+            ) : groups.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="text-center text-muted-foreground"
-                >
+                <TableCell colSpan={5} className="text-center text-muted-foreground">
                   No candidates match your filters.
                 </TableCell>
               </TableRow>
             ) : (
-              rows.map((row) => {
-                const integrity = hasIntegrityConcern(
-                  row.tab_switch_count,
-                  integrityThreshold,
-                )
-                const passResult = evaluatePass(
-                  row.score,
-                  testById.get(row.test_id)?.passing_score ?? 70,
-                )
-                return (
-                  <TableRow key={row.id}>
-                    <TableCell className="font-medium">{row.email}</TableCell>
-                    <TableCell>
-                      <Link
-                        href={`/tests/${row.test_id}/results`}
-                        className="text-pine hover:underline"
-                      >
-                        {row.testTitle}
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      <CandidateStatusBadge status={row.status} />
-                    </TableCell>
-                    <TableCell>
-                      <CandidateDispositionSelect candidate={row} compact />
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {integrity ? (
-                        <div className="flex justify-end">
-                          <IntegrityConcernBadge compact variant="danger" />
-                        </div>
-                      ) : (
-                        <span
-                          className={cn(
-                            "font-semibold",
-                            numericText,
-                            row.score === null && "text-muted-foreground",
-                          )}
-                        >
-                          {row.score === null ? "—" : `${row.score}%`}
+              pageGroups.map((group) => (
+                <TableRow key={group.email} className="relative cursor-pointer">
+                  <TableCell>
+                    <Link
+                      href={`/candidates/${encodeURIComponent(group.email)}`}
+                      className="absolute inset-0 z-0 rounded-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                    >
+                      <span className="sr-only">
+                        View {group.name} ({group.email})
+                      </span>
+                    </Link>
+                    <div className="flex items-center gap-3">
+                      <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-semibold text-accent-foreground">
+                        {candidateInitials(group.email)}
+                      </span>
+                      <div className="flex min-w-0 flex-col">
+                        <span className="truncate font-medium">{group.name}</span>
+                        <span className="truncate text-xs text-muted-foreground">
+                          {group.email}
                         </span>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <span className={numericText}>{group.assessments}</span>
+                    {group.completed < group.assessments && (
+                      <span className="ml-1 text-xs text-muted-foreground">
+                        ({group.completed} done)
+                      </span>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {group.flagged && (
+                      <span className="mr-2 inline-flex align-middle">
+                        <IntegrityConcernBadge compact variant="danger" />
+                      </span>
+                    )}
+                    <span
+                      className={cn(
+                        "font-semibold align-middle",
+                        numericText,
+                        group.avgScore === null && "text-muted-foreground",
                       )}
-                    </TableCell>
-                    <TableCell>
-                      {passResult ? (
-                        <PassFailBadge result={passResult} />
-                      ) : (
-                        <span className="text-muted-foreground">—</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {formatDateTime(row.submitted_at)}
-                    </TableCell>
-                  </TableRow>
-                )
-              })
+                    >
+                      {group.avgScore === null ? "—" : `${group.avgScore}%`}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {formatDateTime(group.lastActivity)}
+                  </TableCell>
+                  <TableCell>
+                    <ChevronRight className="size-4 text-muted-foreground" />
+                  </TableCell>
+                </TableRow>
+              ))
             )}
           </TableBody>
         </Table>
       </div>
+
+      {groups.length > pageSize && (
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-xs text-muted-foreground">
+            Showing {(currentPage - 1) * pageSize + 1}–
+            {Math.min(currentPage * pageSize, groups.length)} of {groups.length}
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+            >
+              Previous
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              Page {currentPage} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage >= totalPages}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

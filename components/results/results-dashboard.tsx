@@ -14,6 +14,10 @@ import {
   ChevronDown,
   ChevronRight,
   Pencil,
+  Eye,
+  Camera,
+  Loader2,
+  ImageOff,
 } from "lucide-react"
 import { toast } from "sonner"
 
@@ -24,9 +28,12 @@ import {
   useStore,
   getConsent,
   loadTestResults,
+  loadProctoringMedia,
   gradeAttempt,
   refreshStore,
   type AttemptAnswerView,
+  type ProctoringMediaView,
+  type InviteFunnelStats,
 } from "@/lib/store"
 import { formatDateTime } from "@/lib/format"
 import { timingPolicyLabel } from "@/lib/test-timing"
@@ -71,6 +78,9 @@ import { CandidateInvitesPanel } from "@/components/results/candidate-invites-pa
 import { CandidateDispositionSelect } from "@/components/candidates/candidate-disposition"
 import { ResultsSummary } from "@/components/results/results-summary"
 import { ResultsFunnel } from "@/components/results/results-funnel"
+import { TopPerformers } from "@/components/results/top-performers"
+import { GradingDistribution } from "@/components/results/grading-distribution"
+import { PerformanceByCategory } from "@/components/results/performance-by-category"
 import { ResultsTableSkeleton } from "@/components/loading-skeletons"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
@@ -164,13 +174,54 @@ export function ResultsDashboard({
   const [selected, setSelected] = useState<Candidate | null>(null)
   const [loading, setLoading] = useState(true)
   const [answers, setAnswers] = useState<Record<string, AttemptAnswerView[]>>({})
+  const [inviteStats, setInviteStats] = useState<InviteFunnelStats>({
+    invited: 0,
+    opened: 0,
+    clicked: 0,
+  })
   const [grading, setGrading] = useState(false)
+  const [media, setMedia] = useState<ProctoringMediaView[]>([])
+  const [mediaLoading, setMediaLoading] = useState(false)
+  const [mediaError, setMediaError] = useState(false)
 
   useEffect(() => {
     void loadTestResults(testId)
-      .then((data) => setAnswers(data.answers))
+      .then((data) => {
+        setAnswers(data.answers)
+        setInviteStats(data.inviteStats)
+      })
       .finally(() => setLoading(false))
   }, [testId])
+
+  const selectedId = selected?.id ?? null
+
+  useEffect(() => {
+    if (!selectedId || !test?.requires_proctoring) {
+      setMedia([])
+      setMediaError(false)
+      return
+    }
+    let cancelled = false
+    setMediaLoading(true)
+    setMedia([])
+    setMediaError(false)
+    void loadProctoringMedia(testId, selectedId)
+      .then((rows) => {
+        if (!cancelled) setMedia(rows)
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setMedia([])
+          setMediaError(true)
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setMediaLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [selectedId, testId, test?.requires_proctoring])
 
   const sortedCandidates = useMemo(() => {
     return [...candidates].sort((a, b) => {
@@ -271,6 +322,7 @@ export function ResultsDashboard({
       setSelected(updated)
       const data = await loadTestResults(testId)
       setAnswers(data.answers)
+      setInviteStats(data.inviteStats)
       toast.success("Grades saved")
     } catch (err) {
       toast.error((err as Error).message)
@@ -328,6 +380,12 @@ export function ResultsDashboard({
                     {test?.title ?? "Loading…"}
                   </h1>
                   {test && <TestStatusBadge status={test.status} />}
+                  {test?.requires_proctoring && (
+                    <Badge variant="secondary" className="gap-1">
+                      <Eye className="size-3" />
+                      Proctored
+                    </Badge>
+                  )}
                   {test?.forbid_ai_tools && (
                     <Badge variant="outline" className="border-primary/30 text-primary">
                       AI tools: not permitted
@@ -340,11 +398,41 @@ export function ResultsDashboard({
                   )}
                 </div>
                 <p className="text-muted-foreground">Results & candidate activity</p>
+                {test && (
+                  <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+                    <span className={numericText}>
+                      {test.time_limit_minutes} min
+                    </span>
+                    <span aria-hidden>·</span>
+                    <span>
+                      <span className={numericText}>{test.questions.length}</span>{" "}
+                      question{test.questions.length === 1 ? "" : "s"}
+                    </span>
+                    <span aria-hidden>·</span>
+                    <span>
+                      Passing{" "}
+                      <span className={numericText}>{test.passing_score}%</span>
+                    </span>
+                    <span aria-hidden>·</span>
+                    <span className="inline-flex items-center gap-1">
+                      <LinkIcon className="size-3.5" />
+                      {test.status === "active"
+                        ? "Public link active"
+                        : "Public link inactive"}
+                    </span>
+                  </div>
+                )}
               </>
             )}
             {embedded && test && (
               <div className="flex flex-wrap items-center gap-2">
                 <TestStatusBadge status={test.status} />
+                {test.requires_proctoring && (
+                  <Badge variant="secondary" className="gap-1">
+                    <Eye className="size-3" />
+                    Proctored
+                  </Badge>
+                )}
                 {test.forbid_ai_tools && (
                   <Badge variant="outline" className="border-primary/30 text-primary">
                     AI tools: not permitted
@@ -405,8 +493,11 @@ export function ResultsDashboard({
           )}
           {test && (
             <ResultsFunnel
-              stats={funnelForTest(candidates, inviteCount)}
-              description="Email invites sent → started → completed for this assessment."
+              stats={funnelForTest(candidates, inviteCount, {
+                opened: inviteStats.opened,
+                clicked: inviteStats.clicked,
+              })}
+              description="Sent → opened → clicked → started → completed for this assessment."
               usesShareLink={test.status === "active"}
             />
           )}
@@ -460,8 +551,11 @@ export function ResultsDashboard({
 
           {test && (
             <ResultsFunnel
-              stats={funnelForTest(candidates, inviteCount)}
-              description="Email invites sent → started → completed for this assessment."
+              stats={funnelForTest(candidates, inviteCount, {
+                opened: inviteStats.opened,
+                clicked: inviteStats.clicked,
+              })}
+              description="Sent → opened → clicked → started → completed for this assessment."
               usesShareLink={test.status === "active"}
             />
           )}
@@ -472,6 +566,16 @@ export function ResultsDashboard({
               candidates={candidates}
               inviteCount={inviteCount}
             />
+          )}
+
+          {test && (
+            <div className="grid gap-4 lg:grid-cols-2">
+              <TopPerformers candidates={candidates} test={test} />
+              <GradingDistribution candidates={candidates} />
+              <div className="lg:col-span-2">
+                <PerformanceByCategory test={test} answers={answers} />
+              </div>
+            </div>
           )}
 
           <Card>
@@ -541,9 +645,18 @@ export function ResultsDashboard({
                         </TableCell>
                         <TableCell>
                           {hasIntegrityConcern(c.tab_switch_count, integrityThreshold) ? (
-                            <IntegrityConcernBadge compact />
+                            <span className="flex items-center gap-1.5">
+                              <IntegrityConcernBadge compact />
+                              <span className="text-xs text-muted-foreground">
+                                {c.tab_switch_count} tab switch
+                                {c.tab_switch_count === 1 ? "" : "es"}
+                              </span>
+                            </span>
                           ) : (
-                            <span className="text-muted-foreground">—</span>
+                            <span className="text-xs text-muted-foreground">
+                              {c.tab_switch_count} tab switch
+                              {c.tab_switch_count === 1 ? "" : "es"}
+                            </span>
                           )}
                         </TableCell>
                       </TableRow>
@@ -646,6 +759,62 @@ export function ResultsDashboard({
                   "Not proctored"
                 )}
               </DetailRow>
+
+              {test?.requires_proctoring && (
+                <>
+                  <Separator />
+                  <div className="flex flex-col gap-2">
+                    <span className="flex items-center gap-1.5 text-sm font-medium">
+                      <Camera className="size-4 text-muted-foreground" />
+                      Identity verification
+                    </span>
+                    {mediaLoading ? (
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Loader2 className="size-3.5 animate-spin" />
+                        Loading snapshot…
+                      </div>
+                    ) : media.length > 0 ? (
+                      <div className="flex flex-wrap gap-3">
+                        {media.map((m) => (
+                          <figure key={m.id} className="flex flex-col gap-1">
+                            {m.url ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={m.url}
+                                alt={`${m.kind} snapshot`}
+                                className="h-32 w-32 rounded-lg border border-border object-cover"
+                              />
+                            ) : (
+                              <div className="flex h-32 w-32 flex-col items-center justify-center gap-1 rounded-lg border border-border bg-muted text-muted-foreground">
+                                <ImageOff className="size-5" />
+                                <span className="text-[10px]">Expired</span>
+                              </div>
+                            )}
+                            <figcaption className="text-[10px] text-muted-foreground">
+                              {m.kind === "face_match"
+                                ? "Face verification"
+                                : m.kind === "camera"
+                                  ? "Camera"
+                                  : "Screen"}{" "}
+                              · {formatDateTime(m.created_at)}
+                            </figcaption>
+                          </figure>
+                        ))}
+                      </div>
+                    ) : mediaError ? (
+                      <p className="flex items-center gap-1.5 text-xs text-destructive">
+                        <ImageOff className="size-3.5" />
+                        Couldn’t load camera snapshots. Please try again.
+                      </p>
+                    ) : (
+                      <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <ImageOff className="size-3.5" />
+                        No camera snapshot captured for this attempt.
+                      </p>
+                    )}
+                  </div>
+                </>
+              )}
 
               {selectedAnswers.length > 0 && (
                 <>

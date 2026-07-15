@@ -8,6 +8,7 @@ import {
   submitAttempt,
   startCandidateAttempt,
   loadResumeAttempt,
+  type ProctoringPolicyView,
 } from "@/lib/store"
 import { buildConsentSnapshot, getConsentCopy } from "@/lib/consent"
 import { isCameraProctoringEnabledClient } from "@/lib/proctoring/config"
@@ -25,9 +26,11 @@ type Step = "start" | "consent" | "proctoring" | "test" | "certificate" | "done"
 export function CandidateFlow({
   test,
   token,
+  proctoringPolicy,
 }: {
   test: Test
   token: string
+  proctoringPolicy?: ProctoringPolicyView | null
 }) {
   const [step, setStep] = useState<Step>("start")
   const [email, setEmail] = useState("")
@@ -178,6 +181,7 @@ export function CandidateFlow({
             startedAt={startedAt}
             initialAnswers={initialAnswers}
             initialTabSwitches={initialTabSwitches}
+            proctoringPolicy={proctoringPolicy}
             onSubmit={handleSubmit}
           />
         )}

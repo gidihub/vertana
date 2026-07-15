@@ -5,6 +5,7 @@ import {
   loadAttemptAnswers,
   loadCandidatesForTest,
   loadConsent,
+  loadInviteFunnelStats,
   loadTestById,
 } from "@/lib/db/queries"
 
@@ -33,6 +34,8 @@ export async function GET(
       }
     }
 
-    return NextResponse.json({ test, candidates, consents, answers })
+    const inviteStats = await loadInviteFunnelStats(id)
+
+    return NextResponse.json({ test, candidates, consents, answers, inviteStats })
   })
 }

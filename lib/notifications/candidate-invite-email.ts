@@ -28,7 +28,10 @@ export async function sendCandidateInviteEmail(input: {
   /** Per-invite deadline (ISO); shown to the candidate when present. */
   deadline?: string | null
 }): Promise<{ ok: boolean; error?: string; configured: boolean }> {
-  const assessmentUrl = `${appOrigin()}/t/${input.token}`
+  // CTA routes through a redirect wrapper so we can record click-through, then
+  // hands the candidate off to /t/[token]. The open pixel records email opens.
+  const ctaTrackingUrl = `${appOrigin()}/api/e/${input.token}/click`
+  const openPixelUrl = `${appOrigin()}/api/e/${input.token}/open`
   const subject =
     input.subject?.trim() || `You're invited: ${input.testTitle}`
   const firstName = firstNameFromEmail(input.to)
@@ -79,14 +82,15 @@ export async function sendCandidateInviteEmail(input: {
     <p style="margin:0;color:${colors.inkMuted};font-size:14px;">
       This link is personal to <strong>${escapeHtml(input.to)}</strong>. Open it on a desktop
       with a stable connection when you're ready to begin.
-    </p>`
+    </p>
+    <img src="${openPixelUrl}" width="1" height="1" alt="" style="display:none;width:1px;height:1px;" />`
 
   const html = brandedEmailLayout({
     preheader: `Complete ${input.testTitle} (${input.timeLimitMinutes} min)`,
     title: "Assessment invitation",
     bodyHtml,
     ctaLabel: "Start assessment",
-    ctaUrl: assessmentUrl,
+    ctaUrl: ctaTrackingUrl,
     footerHtml: `<p style="margin:0;color:${colors.inkMuted};font-size:13px;line-height:1.5;">
       If you weren't expecting this, you can ignore this email.
     </p>`,

@@ -225,3 +225,37 @@
     @apply font-sans;
   }
 }
+
+/* Print: isolate an element marked #print-report so recruiter chrome (sidebar,
+   top bar, buttons) is excluded and only the report prints / saves to PDF. */
+@media print {
+  body {
+    background: #fff;
+  }
+  body * {
+    visibility: hidden;
+  }
+  #print-report,
+  #print-report * {
+    visibility: visible;
+  }
+  #print-report {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 24px;
+  }
+  .print\:hidden {
+    display: none !important;
+  }
+  .print-avoid-break {
+    break-inside: avoid;
+  }
+  /* When the recruiter opts out of snapshots, exclude media sections from the
+     printed report. */
+  #print-report.print-no-media .print-media {
+    display: none !important;
+  }
+}

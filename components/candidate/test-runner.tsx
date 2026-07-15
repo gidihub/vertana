@@ -4,7 +4,11 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { Clock, ChevronLeft, ChevronRight, Eye, Send } from "lucide-react"
 
 import type { Question, Test } from "@/lib/types"
-import { autosaveAnswer, reportTabSwitch } from "@/lib/store"
+import {
+  autosaveAnswer,
+  reportTabSwitch,
+  type ProctoringPolicyView,
+} from "@/lib/store"
 import {
   computeRemainingSeconds,
   effectiveTimeLimitMinutes,
@@ -14,6 +18,8 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { CodeEditorPanel } from "@/components/candidate/code-editor-panel"
+import { ProctoringMonitor } from "@/components/candidate/proctoring-monitor"
+import { isCameraProctoringEnabledClient } from "@/lib/proctoring/config"
 import { codingResponseIsEmpty } from "@/lib/coding/response"
 import { Badge } from "@/components/ui/badge"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
@@ -53,6 +59,7 @@ export function TestRunner({
   startedAt,
   initialAnswers = {},
   initialTabSwitches = 0,
+  proctoringPolicy,
   onSubmit,
 }: {
   test: Test
@@ -61,6 +68,7 @@ export function TestRunner({
   startedAt?: string
   initialAnswers?: Record<string, string>
   initialTabSwitches?: number
+  proctoringPolicy?: ProctoringPolicyView | null
   onSubmit: (result: {
     answers: Record<string, string>
     tabSwitchCount: number
@@ -169,6 +177,16 @@ export function TestRunner({
 
   return (
     <div className="flex flex-col gap-4">
+      {test.requires_proctoring &&
+        isCameraProctoringEnabledClient() &&
+        (proctoringPolicy?.maxSnapshots ?? 0) > 0 && (
+          <ProctoringMonitor
+            token={token}
+            attemptId={attemptId}
+            intervalMs={proctoringPolicy?.intervalMs}
+            maxSnapshots={proctoringPolicy?.maxSnapshots}
+          />
+        )}
       <div className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-card/95 px-4 py-3 backdrop-blur">
         <div className="flex items-center gap-3">
           <span className="text-sm font-medium">{test.title}</span>

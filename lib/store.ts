@@ -180,17 +180,25 @@ export async function deleteTest(id: string): Promise<void> {
   await refreshStore()
 }
 
+export interface InviteFunnelStats {
+  invited: number
+  opened: number
+  clicked: number
+}
+
 export async function loadTestResults(testId: string): Promise<{
   test: Test
   candidates: Candidate[]
   consents: Record<string, ConsentRecord>
   answers: Record<string, AttemptAnswerView[]>
+  inviteStats: InviteFunnelStats
 }> {
   const data = await api<{
     test: Test
     candidates: Candidate[]
     consents: Record<string, ConsentRecord>
     answers: Record<string, AttemptAnswerView[]>
+    inviteStats: InviteFunnelStats
   }>(`/api/tests/${testId}/results`)
 
   db = {
@@ -206,6 +214,46 @@ export async function loadTestResults(testId: string): Promise<{
   }
   emit()
   return data
+}
+
+export interface ProctoringMediaView {
+  id: string
+  kind: "camera" | "screen" | "face_match"
+  created_at: string
+  expires_at: string
+  url: string | null
+}
+
+export async function loadProctoringMedia(
+  testId: string,
+  attemptId: string,
+): Promise<ProctoringMediaView[]> {
+  const data = await api<{ media: ProctoringMediaView[] }>(
+    `/api/tests/${testId}/results/${attemptId}/proctoring`,
+  )
+  return data.media
+}
+
+export interface CandidateAttemptDetail {
+  candidate: Candidate
+  test: Test
+  answers: AttemptAnswerView[]
+  consent: ConsentRecord | null
+  media: ProctoringMediaView[]
+}
+
+export interface CandidateProfileData {
+  email: string
+  attempts: CandidateAttemptDetail[]
+}
+
+export async function loadCandidateProfile(
+  email: string,
+): Promise<CandidateProfileData> {
+  const data = await api<{ profile: CandidateProfileData }>(
+    `/api/candidates/${encodeURIComponent(email)}`,
+  )
+  return data.profile
 }
 
 export interface AttemptAnswerView {
@@ -243,9 +291,20 @@ export async function fetchTestById(id: string): Promise<Test | null> {
   return data.test
 }
 
-export async function fetchTestByToken(token: string): Promise<Test | null> {
-  const data = await api<{ test: Test }>(`/api/candidate/${token}`)
-  return data.test
+export interface ProctoringPolicyView {
+  intervalMs: number
+  maxSnapshots: number
+}
+
+export async function fetchTestByToken(token: string): Promise<{
+  test: Test
+  proctoringPolicy: ProctoringPolicyView | null
+}> {
+  const data = await api<{
+    test: Test
+    proctoringPolicy: ProctoringPolicyView | null
+  }>(`/api/candidate/${token}`)
+  return { test: data.test, proctoringPolicy: data.proctoringPolicy ?? null }
 }
 
 export async function checkCandidateStatus(

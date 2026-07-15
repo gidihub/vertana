@@ -73,6 +73,10 @@ export interface TestInvite {
   reminder_not_started_at: string | null
   /** When the "deadline approaching" reminder was sent (null if not sent). */
   reminder_deadline_at: string | null
+  /** First time the invite email's tracking pixel loaded (null if never). */
+  email_opened_at: string | null
+  /** First time the candidate clicked through the invite CTA (null if never). */
+  email_clicked_at: string | null
 }
 
 export type PlanTier = "free" | "starter" | "growth" | "custom"

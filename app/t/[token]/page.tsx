@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { CircleSlash, CalendarX, Lock, Loader2 } from "lucide-react"
 
-import { fetchTestByToken } from "@/lib/store"
+import { fetchTestByToken, type ProctoringPolicyView } from "@/lib/store"
 import { formatDateTime } from "@/lib/format"
 import type { Test } from "@/lib/types"
 import { CandidateFlow } from "@/components/candidate/candidate-flow"
@@ -21,6 +21,8 @@ export default function CandidateTestPage({
 }) {
   const [token, setToken] = useState<string | null>(null)
   const [test, setTest] = useState<Test | null>(null)
+  const [proctoringPolicy, setProctoringPolicy] =
+    useState<ProctoringPolicyView | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -30,7 +32,8 @@ export default function CandidateTestPage({
       setToken(t)
       try {
         const loaded = await fetchTestByToken(t)
-        setTest(loaded)
+        setTest(loaded.test)
+        setProctoringPolicy(loaded.proctoringPolicy)
       } catch (err) {
         setError((err as Error).message)
       } finally {
@@ -92,5 +95,11 @@ export default function CandidateTestPage({
     )
   }
 
-  return <CandidateFlow test={test} token={token} />
+  return (
+    <CandidateFlow
+      test={test}
+      token={token}
+      proctoringPolicy={proctoringPolicy}
+    />
+  )
 }

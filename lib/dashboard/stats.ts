@@ -3,6 +3,10 @@ import type { Candidate, Test } from "@/lib/types"
 export interface TestFunnelStats {
   /** Per-candidate email invites sent (test_invites where is_share_link = false). */
   invited: number
+  /** Invite emails whose tracking pixel loaded (undefined when unavailable). */
+  opened?: number
+  /** Invite CTAs clicked through (undefined when unavailable). */
+  clicked?: number
   started: number
   completed: number
   shortlisted: number
@@ -21,9 +25,12 @@ function dispositionCounts(candidates: Candidate[]) {
 export function funnelForTest(
   candidates: Candidate[],
   inviteCount: number,
+  emailStats?: { opened: number; clicked: number },
 ): TestFunnelStats {
   return {
     invited: inviteCount,
+    opened: emailStats?.opened,
+    clicked: emailStats?.clicked,
     started: candidates.filter((c) => c.started_at != null).length,
     completed: candidates.filter((c) => c.status === "submitted").length,
     ...dispositionCounts(candidates),

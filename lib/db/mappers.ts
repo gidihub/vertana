@@ -99,6 +99,8 @@ export interface TestInviteRow {
   email_reply_to: string | null
   reminder_not_started_at: string | null
   reminder_deadline_at: string | null
+  email_opened_at: string | null
+  email_clicked_at: string | null
 }
 
 export function rowToTestInvite(row: TestInviteRow): TestInvite {
@@ -116,6 +118,8 @@ export function rowToTestInvite(row: TestInviteRow): TestInvite {
     scheduled_at: row.scheduled_at,
     reminder_not_started_at: row.reminder_not_started_at ?? null,
     reminder_deadline_at: row.reminder_deadline_at ?? null,
+    email_opened_at: row.email_opened_at ?? null,
+    email_clicked_at: row.email_clicked_at ?? null,
   }
 }
 

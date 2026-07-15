@@ -15,6 +15,8 @@ import { numericText } from "@/lib/design-tokens"
 
 const STAGE_COLORS = [
   "bg-chart-1",
+  "bg-chart-1",
+  "bg-chart-1",
   "bg-chart-4",
   "bg-chart-3",
   "bg-chart-2",
@@ -37,8 +39,25 @@ export function ResultsFunnel({
     const pctOfInvited = (value: number) =>
       stats.invited > 0 ? Math.round((value / invited) * 100) : 0
 
+    const emailStages =
+      stats.opened !== undefined && stats.clicked !== undefined
+        ? [
+            {
+              label: "Opened",
+              value: stats.opened,
+              pct: pctOfInvited(stats.opened),
+            },
+            {
+              label: "Clicked",
+              value: stats.clicked,
+              pct: pctOfInvited(stats.clicked),
+            },
+          ]
+        : []
+
     return [
       { label: "Invited", value: stats.invited, pct: 100 },
+      ...emailStages,
       { label: "Started", value: stats.started, pct: pctOfInvited(stats.started) },
       {
         label: "Completed",

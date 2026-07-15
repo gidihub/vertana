@@ -40,6 +40,7 @@ import { sendCandidateInviteEmail } from "@/lib/notifications/candidate-invite-e
 import { sendCandidateReminderEmail } from "@/lib/notifications/reminder-email"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { proctoringExpiresAt } from "@/lib/proctoring/retention"
+import { proctoringPolicyForTier } from "@/lib/proctoring/config"
 import type {
   Candidate,
   ConsentRecord,
@@ -414,6 +415,79 @@ export async function loadConsent(consentId: string): Promise<ConsentRecord | nu
   )
 }
 
+export interface ProctoringMediaView {
+  id: string
+  kind: "camera" | "screen" | "face_match"
+  created_at: string
+  expires_at: string
+  /** Short-lived signed URL for the recruiter to view the media. */
+  url: string | null
+}
+
+/**
+ * Recruiter-facing proctoring media for a single attempt, scoped to the caller's
+ * org via the test id. Returns signed URLs (1h) for each stored object.
+ */
+export async function loadProctoringMedia(
+  testId: string,
+  attemptId: string,
+): Promise<ProctoringMediaView[]> {
+  // Enforces org ownership of the test; throws/returns empty otherwise.
+  const test = await loadTestById(testId)
+  if (!test) return []
+
+  const supabase = createAdminClient()
+
+  // Confirm the attempt actually belongs to this test before returning media.
+  const { data: invites } = await supabase
+    .from("test_invites")
+    .select("id")
+    .eq("test_id", testId)
+  const inviteIds = (invites ?? []).map((i) => i.id)
+  if (!inviteIds.length) return []
+
+  const { data: attempt } = await supabase
+    .from("attempts")
+    .select("id")
+    .eq("id", attemptId)
+    .in("test_invite_id", inviteIds)
+    .maybeSingle()
+  if (!attempt) return []
+
+  return signAttemptMedia(supabase, attemptId)
+}
+
+/**
+ * Fetches and signs proctoring media for an attempt WITHOUT re-checking org
+ * ownership or test/attempt linkage. Callers must have already validated that
+ * the attempt belongs to a test the caller's org owns.
+ */
+async function signAttemptMedia(
+  supabase: ReturnType<typeof createAdminClient>,
+  attemptId: string,
+): Promise<ProctoringMediaView[]> {
+  const { data: media } = await supabase
+    .from("proctoring_media")
+    .select("id, kind, storage_path, created_at, expires_at")
+    .eq("attempt_id", attemptId)
+    .order("created_at", { ascending: true })
+
+  if (!media?.length) return []
+
+  const paths = media.map((row) => row.storage_path as string)
+  const { data: signed } = await supabase.storage
+    .from("proctoring")
+    .createSignedUrls(paths, 60 * 60)
+
+  return media.map((row, i) => ({
+    id: row.id as string,
+    kind: row.kind as ProctoringMediaView["kind"],
+    created_at: row.created_at as string,
+    expires_at: row.expires_at as string,
+    url: signed?.[i]?.signedUrl ?? null,
+  }))
+}
+
 export async function loadAllCandidates(): Promise<Candidate[]> {
   const tests = await loadTestsForOrg()
   const all: Candidate[] = []
@@ -422,6 +496,120 @@ export async function loadAllCandidates(): Promise<Candidate[]> {
     all.push(...candidates)
   }
   return all
+}
+
+export interface CandidateAttemptDetail {
+  candidate: Candidate
+  test: Test
+  answers: AttemptAnswerView[]
+  consent: ConsentRecord | null
+  media: ProctoringMediaView[]
+}
+
+export interface CandidateProfileData {
+  email: string
+  attempts: CandidateAttemptDetail[]
+}
+
+/**
+ * Aggregates everything for a single candidate (identified by email) across all
+ * of the caller's org tests: each attempt with its test, graded answers,
+ * consent record, and proctoring media. Scoped to the org by only querying
+ * attempts that belong to org-owned test invites, and filtered to the given
+ * email at the database level.
+ */
+export async function loadCandidateProfile(
+  email: string,
+): Promise<CandidateProfileData> {
+  const normalized = email.trim().toLowerCase()
+  const supabase = createAdminClient()
+
+  // Org-scoped tests double as a warm cache for the attempts below.
+  const tests = await loadTestsForOrg()
+  const testById = new Map(tests.map((t) => [t.id, t]))
+  const testIds = tests.map((t) => t.id)
+  if (!testIds.length) return { email: normalized, attempts: [] }
+
+  const { data: invites } = await supabase
+    .from("test_invites")
+    .select("id, test_id")
+    .in("test_id", testIds)
+
+  const testIdByInvite = new Map<string, string>()
+  for (const inv of invites ?? []) {
+    testIdByInvite.set(inv.id as string, inv.test_id as string)
+  }
+  const inviteIds = [...testIdByInvite.keys()]
+  if (!inviteIds.length) return { email: normalized, attempts: [] }
+
+  // Email- and org-scoped: only this candidate's attempts on org-owned invites.
+  const { data: attemptRows } = await supabase
+    .from("attempts")
+    .select("*")
+    .in("test_invite_id", inviteIds)
+    .ilike("candidate_email", normalized)
+    .order("started_at", { ascending: false })
+
+  if (!attemptRows?.length) return { email: normalized, attempts: [] }
+
+  const attemptIds = (attemptRows as AttemptRow[]).map((a) => a.id)
+  const { data: consents } = await supabase
+    .from("consents")
+    .select("id, attempt_id")
+    .in("attempt_id", attemptIds)
+
+  const consentByAttempt = new Map<string, string>()
+  for (const c of consents ?? []) {
+    consentByAttempt.set(c.attempt_id as string, c.id as string)
+  }
+
+  const attempts = await Promise.all(
+    (attemptRows as AttemptRow[]).map(async (row) => {
+      const testId = testIdByInvite.get(row.test_invite_id) ?? ""
+      const test = testById.get(testId)
+      if (!test) return null
+
+      const candidate = rowToCandidate(
+        row,
+        testId,
+        consentByAttempt.get(row.id) ?? null,
+      )
+
+      const [answers, consent, media] = await Promise.all([
+        candidate.status === "submitted"
+          ? loadAttemptAnswers(testId, candidate.id)
+          : Promise.resolve([]),
+        candidate.consent_id
+          ? loadConsent(candidate.consent_id)
+          : Promise.resolve(null),
+        // Test ownership and attempt linkage are already validated above, so we
+        // sign media directly instead of re-running loadProctoringMedia's checks.
+        test.requires_proctoring
+          ? signAttemptMedia(supabase, candidate.id)
+          : Promise.resolve([]),
+      ])
+
+      return {
+        candidate,
+        test,
+        answers,
+        consent,
+        media,
+      } satisfies CandidateAttemptDetail
+    }),
+  )
+
+  const resolved = attempts.filter(
+    (a): a is CandidateAttemptDetail => a !== null,
+  )
+
+  resolved.sort((a, b) => {
+    const at = a.candidate.submitted_at ?? a.candidate.started_at ?? ""
+    const bt = b.candidate.submitted_at ?? b.candidate.started_at ?? ""
+    return bt.localeCompare(at)
+  })
+
+  return { email: normalized, attempts: resolved }
 }
 
 export async function loadTestByToken(token: string): Promise<{
@@ -879,8 +1067,9 @@ export async function recordProctoringMedia(input: {
     throw new Error(`Failed to store proctoring media: ${uploadError.message}`)
   }
 
-  // Resolve the org's configured retention window (falls back to the global
-  // default when unset) so media expires per the organization's data policy.
+  // Resolve the retention window: the org's configured value (clamped to its
+  // plan-tier maximum) if set, otherwise the plan-tier default. This ties how
+  // long proctoring media is kept — and therefore storage cost — to the plan.
   let retentionDays: number | null = null
   const { data: testOrg } = await supabase
     .from("tests")
@@ -890,10 +1079,18 @@ export async function recordProctoringMedia(input: {
   if (testOrg?.org_id) {
     const { data: orgRow } = await supabase
       .from("organizations")
-      .select("data_retention_days")
+      .select("data_retention_days, plan_tier, is_comp")
       .eq("id", testOrg.org_id)
       .maybeSingle()
-    retentionDays = (orgRow?.data_retention_days as number | null) ?? null
+    const tier: PlanTier = orgRow?.is_comp
+      ? "custom"
+      : ((orgRow?.plan_tier as PlanTier) ?? "starter")
+    const policy = proctoringPolicyForTier(tier)
+    const configured = (orgRow?.data_retention_days as number | null) ?? null
+    retentionDays =
+      configured != null
+        ? Math.min(configured, policy.maxRetentionDays)
+        : policy.defaultRetentionDays
   }
 
   const { error: rowError } = await supabase.from("proctoring_media").insert({
@@ -1455,6 +1652,75 @@ export async function loadEmailInvitesForTest(testId: string): Promise<TestInvit
 
   if (error) throw new Error(error.message)
   return ((data ?? []) as TestInviteRow[]).map(rowToTestInvite)
+}
+
+/**
+ * Records the first email open for an invite (via tracking pixel). Public,
+ * token-scoped, and best-effort — only sets the timestamp when not already set.
+ */
+export async function markInviteOpened(token: string): Promise<void> {
+  const supabase = createAdminClient()
+  await supabase
+    .from("test_invites")
+    .update({ email_opened_at: new Date().toISOString() })
+    .eq("token", token)
+    .is("email_opened_at", null)
+}
+
+/**
+ * Records the first CTA click for an invite (via redirect wrapper). A click
+ * implies an open, so backfill email_opened_at when it wasn't recorded.
+ */
+export async function markInviteClicked(token: string): Promise<void> {
+  const supabase = createAdminClient()
+  const now = new Date().toISOString()
+  await supabase
+    .from("test_invites")
+    .update({ email_clicked_at: now })
+    .eq("token", token)
+    .is("email_clicked_at", null)
+  await supabase
+    .from("test_invites")
+    .update({ email_opened_at: now })
+    .eq("token", token)
+    .is("email_opened_at", null)
+}
+
+export interface InviteFunnelStats {
+  invited: number
+  opened: number
+  clicked: number
+}
+
+/**
+ * Email-delivery funnel counts for a single test (email invites only): how many
+ * were sent, opened, and clicked. Scoped to the caller's org via loadTestById.
+ */
+export async function loadInviteFunnelStats(
+  testId: string,
+): Promise<InviteFunnelStats> {
+  const test = await loadTestById(testId)
+  if (!test) return { invited: 0, opened: 0, clicked: 0 }
+
+  const supabase = createAdminClient()
+  // Only successfully sent email invites count toward the funnel — pending,
+  // scheduled, and failed rows never reached a candidate, so they can't be
+  // opened or clicked. opened/clicked derive from this same sent-email set.
+  const { data, error } = await supabase
+    .from("test_invites")
+    .select("email_opened_at, email_clicked_at")
+    .eq("test_id", testId)
+    .eq("is_share_link", false)
+    .not("email_sent_at", "is", null)
+
+  if (error) throw new Error(error.message)
+
+  const rows = data ?? []
+  return {
+    invited: rows.length,
+    opened: rows.filter((r) => r.email_opened_at != null).length,
+    clicked: rows.filter((r) => r.email_clicked_at != null).length,
+  }
 }
 
 async function deliverCandidateInviteEmail(input: {
