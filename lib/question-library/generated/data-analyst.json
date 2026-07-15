@@ -1235,5 +1235,43 @@
     "estimated_minutes": 15,
     "difficulty": "hard",
     "points": 3
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "You join a customers table (one row per customer) to an orders table (many rows per customer) and then SUM a customer-level lifetime_value column. The total is far larger than expected. What is the most likely cause?",
+    "options": [
+      "The join fans out each customer row across their orders, duplicating lifetime_value before the sum",
+      "The lifetime_value column contains negative numbers",
+      "The join dropped customers who have no orders",
+      "SUM silently ignores NULL values"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "data-analyst",
+    "category_id": "data-analyst",
+    "type": "multiple_choice",
+    "prompt": "An A/B test shows a 3% conversion lift with p = 0.02, but it ran for only two weekend days and most users came from a single marketing campaign. Which threat to validity is most important to flag before rolling out?",
+    "options": [
+      "Selection bias and short duration make the result unlikely to generalize despite significance",
+      "The p-value proves the effect is large enough to ship",
+      "A 3% lift is always practically insignificant",
+      "Statistical significance guarantees there are no confounders"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 6,
+    "difficulty": "hard",
+    "points": 3
   }
 ]

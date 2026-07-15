@@ -1297,5 +1297,43 @@
     "estimated_minutes": 4,
     "difficulty": "medium",
     "points": 1
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "A React list of expensive item components re-renders every item whenever a single item is added, causing visible jank. Which change most directly prevents unchanged items from re-rendering?",
+    "options": [
+      "Wrap each item in React.memo and pass stable, referentially-equal props",
+      "Move the list into a class component",
+      "Use larger numeric values for the key prop",
+      "Render the list from inside a useEffect callback"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "frontend-engineering",
+    "category_id": "frontend-engineering",
+    "type": "multiple_choice",
+    "prompt": "After server-side rendering, users see critical interactive controls stay unresponsive briefly while the whole page hydrates. Which approach most directly reduces this hydration delay for the most important UI?",
+    "options": [
+      "Stream and selectively hydrate interactive components so critical UI becomes interactive first",
+      "Disable SSR and render everything on the client",
+      "Inline every JavaScript bundle into the HTML document",
+      "Increase the client cache TTL for static assets"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "difficulty": "hard",
+    "points": 3
   }
 ]

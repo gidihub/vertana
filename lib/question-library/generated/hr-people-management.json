@@ -493,5 +493,24 @@
     "estimated_minutes": 5,
     "difficulty": "medium",
     "points": 1
+  },
+  {
+    "category": "hr-people-management",
+    "category_id": "hr-people-management",
+    "type": "multiple_choice",
+    "prompt": "You must design a performance calibration process across several teams to reduce inconsistency in how different managers assign ratings. Which approach most directly mitigates manager-to-manager rating bias?",
+    "options": [
+      "Run cross-team calibration sessions using shared, behavior-based rating criteria",
+      "Let each manager use their own private rating scale",
+      "Force a fixed bell-curve distribution regardless of actual team performance",
+      "Base all ratings solely on employee tenure"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 6,
+    "difficulty": "hard",
+    "points": 3
   }
 ]

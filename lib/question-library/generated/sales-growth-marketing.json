@@ -689,5 +689,24 @@
     "estimated_minutes": 5,
     "difficulty": "hard",
     "points": 1
+  },
+  {
+    "category": "sales-growth-marketing",
+    "category_id": "sales-growth-marketing",
+    "type": "multiple_choice",
+    "prompt": "A SaaS company's paid acquisition channel has a CAC payback period of 18 months, while the median customer churns after 12 months. Which conclusion is most defensible?",
+    "options": [
+      "The channel is likely unprofitable as-is because customers churn before recouping their acquisition cost",
+      "The channel is profitable because CAC is only a one-time cost",
+      "Increasing ad spend will automatically shorten the payback period",
+      "Payback period is irrelevant as long as top-of-funnel traffic is high"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 6,
+    "difficulty": "hard",
+    "points": 3
   }
 ]

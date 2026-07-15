@@ -728,5 +728,43 @@
     "estimated_minutes": 7,
     "difficulty": "medium",
     "points": 1
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "multiple_choice",
+    "prompt": "Your end-to-end suite frequently fails because some tests depend on data created by earlier tests running first. Which practice most improves reliability?",
+    "options": [
+      "Make each test set up and tear down its own independent data (test isolation)",
+      "Always run the tests in alphabetical order",
+      "Add fixed sleep() delays between tests",
+      "Collapse the suite into a single large test"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "qa-testing",
+    "category_id": "qa-testing",
+    "type": "multiple_choice",
+    "prompt": "A safety-critical module already has 100% line coverage, yet defects hide in complex boolean conditions. Which coverage metric best exposes untested combinations of individual boolean sub-conditions?",
+    "options": [
+      "Modified condition/decision coverage (MC/DC)",
+      "Statement coverage",
+      "Function coverage",
+      "Line coverage"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "hard",
+    "points": 3
   }
 ]

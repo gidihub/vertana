@@ -72,6 +72,9 @@ export function GlobalCandidatesTable() {
       if (q && !email.includes(q) && !name.toLowerCase().includes(q)) continue
 
       const testIds = new Set(attempts.map((a) => a.test_id))
+      const completedTestIds = new Set(
+        attempts.filter((a) => a.status === "submitted").map((a) => a.test_id),
+      )
       const scored = attempts.filter((a) => a.score !== null)
       const avgScore =
         scored.length > 0
@@ -93,7 +96,7 @@ export function GlobalCandidatesTable() {
         name,
         attempts,
         assessments: testIds.size,
-        completed: attempts.filter((a) => a.status === "submitted").length,
+        completed: completedTestIds.size,
         avgScore,
         lastActivity,
         flagged,
@@ -115,6 +118,10 @@ export function GlobalCandidatesTable() {
   useEffect(() => {
     setPage(1)
   }, [search, testFilter])
+
+  useEffect(() => {
+    if (currentPage !== page) setPage(currentPage)
+  }, [currentPage, page])
 
   return (
     <div className="flex flex-col gap-4">

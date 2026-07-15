@@ -709,5 +709,24 @@
     "estimated_minutes": 5,
     "difficulty": "hard",
     "points": 1
+  },
+  {
+    "category": "business-financial-analysis",
+    "category_id": "business-financial-analysis",
+    "type": "multiple_choice",
+    "prompt": "Two projects have identical total undiscounted cash inflows, but Project A returns most of its cash in the early years and Project B in the later years. Using discounted cash flow analysis, which statement is correct?",
+    "options": [
+      "Project A has the higher NPV because earlier cash flows are discounted less",
+      "Both projects have identical NPV because total inflows are equal",
+      "Project B has the higher NPV because later cash flows are worth more",
+      "NPV cannot be compared unless the projects have equal lifespans in name"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 6,
+    "difficulty": "hard",
+    "points": 3
   }
 ]

@@ -10,17 +10,20 @@ const PIXEL = Buffer.from(
 
 export const dynamic = "force-dynamic"
 
+// Cap how long open tracking may delay the pixel response.
+const TRACKING_TIMEOUT_MS = 1000
+
 export async function GET(
   _req: Request,
   { params }: { params: Promise<{ token: string }> },
 ) {
   const { token } = await params
-  // Best-effort: never fail the pixel even if tracking write errors.
-  try {
-    await markInviteOpened(token)
-  } catch {
-    // ignore
-  }
+  // Best-effort: never fail or indefinitely delay the pixel, even if the
+  // tracking write errors or stalls.
+  await Promise.race([
+    markInviteOpened(token).catch(() => {}),
+    new Promise((resolve) => setTimeout(resolve, TRACKING_TIMEOUT_MS)),
+  ])
 
   return new NextResponse(PIXEL, {
     status: 200,

@@ -539,5 +539,24 @@
     "estimated_minutes": 10,
     "difficulty": "hard",
     "points": 2
+  },
+  {
+    "category": "ux-design",
+    "category_id": "ux-design",
+    "type": "multiple_choice",
+    "prompt": "During usability testing, all five participants struggle to find the 'export' action, even though it is present in a menu. Which change best addresses this specific finding?",
+    "options": [
+      "Improve the discoverability of export by surfacing it as a primary, clearly labeled control in context",
+      "Recruit more participants until some of them succeed",
+      "Remove the export feature entirely",
+      "Change the application's color palette"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 2
   }
 ]

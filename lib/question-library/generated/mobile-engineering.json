@@ -566,5 +566,24 @@
     "estimated_minutes": 4,
     "difficulty": "easy",
     "points": 1
+  },
+  {
+    "category": "mobile-engineering",
+    "category_id": "mobile-engineering",
+    "type": "multiple_choice",
+    "prompt": "Your mobile app must sync large amounts of data over an unreliable network while staying responsive, and users often background the app mid-sync. Which approach best ensures the sync completes reliably without blocking the UI?",
+    "options": [
+      "Use a background-capable, resumable sync via a work scheduler (e.g., WorkManager/BackgroundTasks) with checkpointing",
+      "Run the sync on the main/UI thread so it finishes faster",
+      "Block the UI with a modal spinner until the sync completes",
+      "Restart the sync from the beginning each time the app returns to the foreground"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "difficulty": "hard",
+    "points": 3
   }
 ]

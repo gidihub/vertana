@@ -489,5 +489,24 @@
     "estimated_minutes": 8,
     "difficulty": "hard",
     "points": 1
+  },
+  {
+    "category": "customer-technical-support",
+    "category_id": "customer-technical-support",
+    "type": "multiple_choice",
+    "prompt": "A customer reports an urgent outage, but their description is vague and emotional. Which first response best balances empathy with efficient resolution?",
+    "options": [
+      "Acknowledge the impact, then ask targeted diagnostic questions to reproduce the issue",
+      "Escalate to engineering immediately without gathering any details",
+      "Ask the customer to restart and then close the ticket",
+      "Explain the internal architecture in depth before troubleshooting"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 2
   }
 ]

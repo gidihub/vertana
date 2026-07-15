@@ -34,7 +34,15 @@ export async function GET(
       }
     }
 
-    const inviteStats = await loadInviteFunnelStats(id)
+    // Analytics are non-essential: never let a funnel-stats failure drop the
+    // core results payload.
+    let inviteStats: Awaited<ReturnType<typeof loadInviteFunnelStats>> | undefined
+    try {
+      inviteStats = await loadInviteFunnelStats(id)
+    } catch (err) {
+      console.error("Failed to load invite funnel stats:", err)
+      inviteStats = undefined
+    }
 
     return NextResponse.json({ test, candidates, consents, answers, inviteStats })
   })

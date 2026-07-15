@@ -559,5 +559,24 @@
     "estimated_minutes": 4,
     "difficulty": "easy",
     "points": 1
+  },
+  {
+    "category": "database-administration",
+    "category_id": "database-administration",
+    "type": "multiple_choice",
+    "prompt": "A frequently run query filters on a low-cardinality column (a status where 95% of rows share one value), and a standard B-tree index on it barely helps. Which approach most improves performance when querying the selective minority value?",
+    "options": [
+      "Create a partial index that covers only the selective minority value",
+      "Add a second identical B-tree index on the same column",
+      "Drop all indexes and rely on full table scans",
+      "Increase the storage size of the column's data type"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 2
   }
 ]

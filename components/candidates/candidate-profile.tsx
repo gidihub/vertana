@@ -459,11 +459,14 @@ function AnswerView({
             {expanded ? "Hide" : "Show"} submitted code
             {coding ? ` (${languageLabel(coding.language)})` : ""}
           </button>
-          {expanded && (
-            <pre className="mt-2 max-h-48 overflow-auto rounded-md bg-muted p-3 font-mono text-xs whitespace-pre-wrap">
-              {coding?.code || "(no code)"}
-            </pre>
-          )}
+          <pre
+            className={cn(
+              "mt-2 max-h-48 overflow-auto rounded-md bg-muted p-3 font-mono text-xs whitespace-pre-wrap print:block print:max-h-none print:overflow-visible",
+              !expanded && "hidden",
+            )}
+          >
+            {coding?.code || "(no code)"}
+          </pre>
         </div>
       ) : (
         <p className="mt-2 whitespace-pre-wrap text-muted-foreground">

@@ -1236,5 +1236,43 @@
     "estimated_minutes": 4,
     "difficulty": "medium",
     "points": 2
+  },
+  {
+    "category": "backend-engineering",
+    "category_id": "backend-engineering",
+    "type": "multiple_choice",
+    "prompt": "A payment-creation POST endpoint is retried by clients after network timeouts, occasionally charging the customer twice. Which mechanism best prevents duplicate charges from client retries?",
+    "options": [
+      "Require an idempotency key on the request and de-duplicate server-side",
+      "Change the endpoint from POST to PUT",
+      "Return HTTP 200 immediately before processing the payment",
+      "Increase the client-side request timeout"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "backend-engineering",
+    "category_id": "backend-engineering",
+    "type": "multiple_choice",
+    "prompt": "Two services must each update their own database as part of one business operation and stay consistent, but distributed two-phase commit is not available. Which pattern best maintains eventual consistency with the ability to recover on failure?",
+    "options": [
+      "Saga pattern with compensating transactions coordinated via events",
+      "A single database transaction spanning both services",
+      "Independent optimistic locking on each service",
+      "Buffer both updates and flush them in a nightly batch job"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "difficulty": "hard",
+    "points": 3
   }
 ]

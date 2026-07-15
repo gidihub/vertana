@@ -543,11 +543,12 @@ export async function loadCandidateProfile(
   if (!inviteIds.length) return { email: normalized, attempts: [] }
 
   // Email- and org-scoped: only this candidate's attempts on org-owned invites.
+  const escapedEmail = normalized.replace(/[%_\\]/g, (ch) => `\\${ch}`)
   const { data: attemptRows } = await supabase
     .from("attempts")
     .select("*")
     .in("test_invite_id", inviteIds)
-    .ilike("candidate_email", normalized)
+    .ilike("candidate_email", escapedEmail)
     .order("started_at", { ascending: false })
 
   if (!attemptRows?.length) return { email: normalized, attempts: [] }

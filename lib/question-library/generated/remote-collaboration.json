@@ -538,5 +538,24 @@
     "estimated_minutes": 4,
     "difficulty": "medium",
     "points": 1
+  },
+  {
+    "category": "remote-collaboration",
+    "category_id": "remote-collaboration",
+    "type": "multiple_choice",
+    "prompt": "A distributed team spread across many time zones loses hours waiting on quick clarifications that only happen in synchronous meetings. Which practice most improves throughput without excluding anyone?",
+    "options": [
+      "Default to async communication with clear written context and documented decisions",
+      "Require everyone to attend daily live meetings regardless of time zone",
+      "Communicate only through ephemeral voice calls",
+      "Restrict all decisions to a single time zone's working hours"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 2
   }
 ]

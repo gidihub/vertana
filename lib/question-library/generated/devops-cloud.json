@@ -722,5 +722,43 @@
     "estimated_minutes": 4,
     "difficulty": "easy",
     "points": 1
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "A Kubernetes Deployment sometimes routes requests to pods that are still starting and cannot serve traffic yet. Which configuration most directly stops traffic from reaching not-yet-ready pods?",
+    "options": [
+      "Configure a readiness probe on the pods",
+      "Increase the number of replicas",
+      "Configure a liveness probe on the pods",
+      "Attach a horizontal pod autoscaler"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 4,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "devops-cloud",
+    "category_id": "devops-cloud",
+    "type": "multiple_choice",
+    "prompt": "A teammate manually changed a cloud resource in the console, and the next terraform apply now proposes reverting it even though the manual change should stay. Which action best reconciles state and configuration while preserving the intended change?",
+    "options": [
+      "Update the Terraform configuration to match the change, then apply so state and config converge",
+      "Delete the Terraform state file and start fresh",
+      "Run terraform destroy and recreate all resources",
+      "Add lifecycle ignore_changes to every attribute of the resource"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 7,
+    "difficulty": "hard",
+    "points": 3
   }
 ]

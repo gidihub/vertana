@@ -550,5 +550,43 @@
     "estimated_minutes": 10,
     "difficulty": "easy",
     "points": 2
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "A model recommends loan approvals, and regulators require you to explain individual decisions to affected applicants. Which practice best supports this requirement?",
+    "options": [
+      "Provide per-decision explanations that surface the key features and reasons behind each recommendation",
+      "Publish only the model's overall accuracy metric",
+      "Keep the model architecture confidential from all reviewers",
+      "Rely solely on the vendor's marketing documentation"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "medium",
+    "estimated_minutes": 5,
+    "difficulty": "medium",
+    "points": 2
+  },
+  {
+    "category": "ai-governance",
+    "category_id": "ai-governance",
+    "type": "multiple_choice",
+    "prompt": "An AI hiring tool selects proportionally fewer candidates from a protected group even though the group label was never an input feature. What is the most likely cause and the appropriate first response?",
+    "options": [
+      "Proxy variables correlated with the protected attribute cause disparate impact; audit features and measure fairness metrics",
+      "The model cannot be biased because the protected attribute was excluded",
+      "Enlarge the training set and take no further action",
+      "Uniformly lower the decision threshold for every candidate"
+    ],
+    "correct_option_index": 0,
+    "correct_answer_exact": null,
+    "test_cases": [],
+    "ai_resistance": "high",
+    "estimated_minutes": 6,
+    "difficulty": "hard",
+    "points": 3
   }
 ]
