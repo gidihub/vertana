@@ -87,7 +87,7 @@ export function AddToTestDialog({
       const skipped = questions.length - eligible.length + duplicateSkipped
       const msg =
         skipped > 0
-          ? `Added ${copies.length} questions (${skipped} skipped)`
+          ? `Added ${copies.length} question${copies.length === 1 ? "" : "s"} (${skipped} skipped)`
           : `Added ${copies.length} question${copies.length === 1 ? "" : "s"} to "${test.title}"`
       toast.success(msg)
       onOpenChange(false)

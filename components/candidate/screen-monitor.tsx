@@ -36,6 +36,7 @@ export function ScreenMonitor({
   maxSnapshots?: number
 }) {
   const videoRef = useRef<HTMLVideoElement>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
   const uploadingRef = useRef(false)
   const countRef = useRef(0)
   const capturedRef = useRef<Set<string>>(new Set())
@@ -141,6 +142,48 @@ export function ScreenMonitor({
     }
   }, [token, attemptId, questionId, questionIndex, activeStream, ended, maxSnapshots])
 
+  // While the restoration prompt is shown the assessment must be inert: move
+  // focus into the dialog and trap it there so underlying answer controls can't
+  // receive keyboard interaction until sharing is restored.
+  useEffect(() => {
+    if (!ended) return
+    const previouslyFocused = document.activeElement as HTMLElement | null
+    dialogRef.current?.querySelector<HTMLElement>("button")?.focus()
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return
+      const dialog = dialogRef.current
+      if (!dialog) return
+      const focusable = dialog.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      )
+      const enabled = Array.from(focusable).filter((el) => !el.hasAttribute("disabled"))
+      if (enabled.length === 0) {
+        e.preventDefault()
+        return
+      }
+      const first = enabled[0]
+      const last = enabled[enabled.length - 1]
+      const active = document.activeElement as HTMLElement | null
+      if (e.shiftKey && active === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault()
+        first.focus()
+      } else if (active && !dialog.contains(active)) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown, true)
+    return () => {
+      document.removeEventListener("keydown", onKeyDown, true)
+      previouslyFocused?.focus?.()
+    }
+  }, [ended])
+
   const restoreSharing = useCallback(async () => {
     if (restoring) return
     setRestoring(true)
@@ -170,8 +213,10 @@ export function ScreenMonitor({
       />
       {ended && (
         <div
+          ref={dialogRef}
           role="alertdialog"
           aria-modal="true"
+          aria-labelledby="screen-share-restore-title"
           className="fixed inset-0 z-50 flex items-center justify-center bg-background/90 p-4 backdrop-blur"
         >
           <div className="flex max-w-sm flex-col items-center gap-4 rounded-xl border border-border bg-card p-6 text-center">
@@ -179,7 +224,9 @@ export function ScreenMonitor({
               <Monitor className="size-5" />
             </div>
             <div className="flex flex-col gap-1">
-              <p className="text-base font-semibold">Screen sharing stopped</p>
+              <p id="screen-share-restore-title" className="text-base font-semibold">
+                Screen sharing stopped
+              </p>
               <p className="text-sm text-muted-foreground">
                 This assessment requires screen sharing. Restore it to continue
                 — choose <strong>your entire screen</strong> when prompted.

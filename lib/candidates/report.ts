@@ -15,7 +15,7 @@ export type AnswerBucket =
 export const ANSWER_BUCKET_LABELS: Record<AnswerBucket, string> = {
   correct: "Correct",
   incorrect: "Incorrect",
-  partial: "Partially",
+  partial: "Partial credit",
   needs_review: "Needs review",
   not_attempted: "Not attempted",
 }

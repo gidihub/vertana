@@ -144,6 +144,8 @@ export function IntegrationsSettings() {
   }
 
   async function sendTest(provider: IntegrationProvider) {
+    // Only one test event may be in flight at a time across all providers.
+    if (testing) return
     setTesting(provider.id)
     try {
       const res = await fetch("/api/integrations/test", {
@@ -270,7 +272,7 @@ export function IntegrationsSettings() {
                       variant="outline"
                       size="sm"
                       className="w-full"
-                      disabled={testing === provider.id}
+                      disabled={testing !== null}
                       onClick={() => void sendTest(provider)}
                     >
                       {testing === provider.id ? (

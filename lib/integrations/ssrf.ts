@@ -35,11 +35,21 @@ function isPrivateIpv4(host: string): boolean {
 function isBlockedIpv6(host: string): boolean {
   const h = host.replace(/^\[|\]$/g, "").toLowerCase()
   if (h === "::1" || h === "::") return true // loopback / unspecified
-  if (h.startsWith("fe80")) return true // link-local
+  // IPv4-mapped IPv6 can smuggle an internal v4 target past a naive check using
+  // either dotted (::ffff:127.0.0.1) or hextet (::ffff:7f00:1) form — block the
+  // whole mapped prefix outright before any embedded-v4 parsing.
+  if (h.startsWith("::ffff:")) return true
   if (h.startsWith("fc") || h.startsWith("fd")) return true // unique-local fc00::/7
-  if (h.startsWith("::ffff:")) {
-    // IPv4-mapped IPv6 — validate the embedded v4.
-    return isPrivateIpv4(h.slice("::ffff:".length))
+  // Link-local fe80::/10 covers the first-hextet range fe80–febf, not just fe80.
+  if (h.includes(":")) {
+    const firstHextet = parseInt(h.split(":")[0], 16)
+    if (
+      Number.isFinite(firstHextet) &&
+      firstHextet >= 0xfe80 &&
+      firstHextet <= 0xfebf
+    ) {
+      return true
+    }
   }
   return false
 }

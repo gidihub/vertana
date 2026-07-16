@@ -18,6 +18,7 @@ export function ProctoringSetupStep({
   token,
   attemptId,
   screenRecording = false,
+  screenOnly = false,
   onComplete,
   onSkip,
 }: {
@@ -25,6 +26,11 @@ export function ProctoringSetupStep({
   attemptId: string
   /** When true, require the candidate to share their screen before starting. */
   screenRecording?: boolean
+  /**
+   * When true, skip identity/face capture and only reacquire the display
+   * stream. Used when a screen-recorded attempt is resumed after a reload.
+   */
+  screenOnly?: boolean
   onComplete: (screenStream?: MediaStream | null) => void
   onSkip: () => void
 }) {
@@ -33,7 +39,9 @@ export function ProctoringSetupStep({
   const [ready, setReady] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [stage, setStage] = useState<"identity" | "screen">("identity")
+  const [stage, setStage] = useState<"identity" | "screen">(
+    screenOnly ? "screen" : "identity",
+  )
   const [sharing, setSharing] = useState(false)
 
   const stopStream = useCallback(() => {
@@ -175,14 +183,16 @@ export function ProctoringSetupStep({
           </div>
           <CardTitle>Share your screen</CardTitle>
           <CardDescription>
-            This assessment records your screen for integrity. Choose{" "}
-            <strong>your entire screen</strong> when prompted. Screen sharing
-            stops automatically when you submit.
+            This assessment captures a still screenshot for integrity. Choose{" "}
+            <strong>your entire screen</strong> when prompted.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center gap-3 text-center text-sm text-muted-foreground">
           <Monitor className="size-10 text-muted-foreground" />
-          <p>Periodic screenshots are captured while you take the test.</p>
+          <p>
+            One screenshot is captured after you settle on each question — your
+            screen is not recorded continuously.
+          </p>
         </CardContent>
         <CardFooter className="flex-col gap-2 sm:flex-row sm:justify-between">
           <Button type="button" variant="ghost" onClick={onSkip}>
@@ -214,7 +224,7 @@ export function ProctoringSetupStep({
         <CardTitle>Identity verification</CardTitle>
         <CardDescription>
           Take a one-time camera snapshot before the test starts. Periodic
-          camera snapshots{screenRecording ? " and screen recording are" : " are"}{" "}
+          camera snapshots{screenRecording ? " and per-question screen screenshots are" : " are"}{" "}
           captured during the assessment.
         </CardDescription>
       </CardHeader>

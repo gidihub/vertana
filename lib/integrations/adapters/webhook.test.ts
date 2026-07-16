@@ -5,12 +5,14 @@ import { describe, it } from "node:test"
 import { serializeAtsEvent, type AtsEvent } from "../events.ts"
 import {
   WEBHOOK_EVENT_HEADER,
+  WEBHOOK_IDEMPOTENCY_HEADER,
   WEBHOOK_SIGNATURE_HEADER,
   signWebhookBody,
   webhookAdapter,
 } from "./webhook.ts"
 
 const sampleEvent: AtsEvent = {
+  id: "11111111-1111-1111-1111-111111111111",
   type: "attempt.submitted",
   payload: {
     orgId: "org-1",
@@ -50,15 +52,21 @@ describe("webhookAdapter.deliver", () => {
     const body = captured.init?.body as string
     assert.equal(
       body,
-      JSON.stringify({ event: "attempt.submitted", data: sampleEvent.payload }),
+      JSON.stringify({
+        id: sampleEvent.id,
+        event: "attempt.submitted",
+        data: sampleEvent.payload,
+      }),
     )
     assert.deepEqual(JSON.parse(body), {
+      id: sampleEvent.id,
       event: "attempt.submitted",
       data: sampleEvent.payload,
     })
 
     const headers = captured.init?.headers as Record<string, string>
     assert.equal(headers[WEBHOOK_EVENT_HEADER], "attempt.submitted")
+    assert.equal(headers[WEBHOOK_IDEMPOTENCY_HEADER], sampleEvent.id)
   })
 
   it("signs the body with a verifiable HMAC-SHA256 signature", async () => {

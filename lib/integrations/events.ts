@@ -42,6 +42,13 @@ export interface AtsEventPayload {
 }
 
 export interface AtsEvent {
+  /**
+   * Stable, immutable identifier for this event, assigned once at creation and
+   * preserved across queueing and retries. Used as the outbound idempotency key
+   * so a receiver can deduplicate re-delivered events, and to enforce
+   * uniqueness on (org_id, provider, event_id) in the delivery queue.
+   */
+  id: string
   type: AtsEventType
   payload: AtsEventPayload
 }
@@ -52,5 +59,5 @@ export interface AtsEvent {
  * in `payload.occurredAt`.
  */
 export function serializeAtsEvent(event: AtsEvent): string {
-  return JSON.stringify({ event: event.type, data: event.payload })
+  return JSON.stringify({ id: event.id, event: event.type, data: event.payload })
 }

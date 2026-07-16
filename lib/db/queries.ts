@@ -184,7 +184,10 @@ export async function loadTestsForOrg(orgId?: string): Promise<Test[]> {
   const testIds = tests.map((t) => t.id)
   // Questions and share-link invites both depend only on testIds, so fetch them
   // concurrently rather than serially.
-  const [{ data: questions }, { data: invites }] = await Promise.all([
+  const [
+    { data: questions, error: questionsError },
+    { data: invites, error: invitesError },
+  ] = await Promise.all([
     supabase
       .from("questions")
       .select("*")
@@ -196,6 +199,8 @@ export async function loadTestsForOrg(orgId?: string): Promise<Test[]> {
       .in("test_id", testIds)
       .eq("is_share_link", true),
   ])
+  if (questionsError) throw new Error(questionsError.message)
+  if (invitesError) throw new Error(invitesError.message)
 
   const questionsByTest = new Map<string, QuestionRow[]>()
   for (const q of (questions ?? []) as QuestionRow[]) {
@@ -512,7 +517,9 @@ async function signAttemptMedia(
  */
 async function fetchByIdsInChunks<T>(
   ids: string[],
-  fetchChunk: (chunk: string[]) => PromiseLike<{ data: T[] | null }>,
+  fetchChunk: (
+    chunk: string[],
+  ) => PromiseLike<{ data: T[] | null; error?: { message: string } | null }>,
   chunkSize = 300,
 ): Promise<T[]> {
   if (!ids.length) return []
@@ -521,6 +528,10 @@ async function fetchByIdsInChunks<T>(
     chunks.push(ids.slice(i, i + chunkSize))
   }
   const results = await Promise.all(chunks.map((chunk) => fetchChunk(chunk)))
+  // Surface any chunk failure instead of silently returning partial results.
+  for (const r of results) {
+    if (r.error) throw new Error(r.error.message)
+  }
   return results.flatMap((r) => r.data ?? [])
 }
 
@@ -1108,42 +1119,23 @@ export async function recordAttemptSignals(input: {
   if (!loaded) throw new Error("Invalid test link")
 
   const supabase = createAdminClient()
-  const { data: attempt } = await supabase
-    .from("attempts")
-    .select(
-      "user_agent, dual_screen, fullscreen_exits, mouse_out_count, time_outside_ms, submitted_at",
-    )
-    .eq("id", input.attemptId)
-    .eq("test_invite_id", loaded.invite.id)
-    .maybeSingle()
-
-  if (!attempt || attempt.submitted_at) return
-
-  const update: Record<string, unknown> = {}
-  if (input.userAgent && !attempt.user_agent) {
-    update.user_agent = input.userAgent.slice(0, 512)
-  }
-  if (typeof input.dualScreen === "boolean" && attempt.dual_screen === null) {
-    update.dual_screen = input.dualScreen
-  }
-  if (input.fullscreenExit) {
-    update.fullscreen_exits = (attempt.fullscreen_exits ?? 0) + 1
-  }
-  if (input.mouseOut) {
-    update.mouse_out_count = (attempt.mouse_out_count ?? 0) + 1
-  }
-  if (typeof input.outsideMs === "number" && input.outsideMs > 0) {
-    update.time_outside_ms =
-      Number(attempt.time_outside_ms ?? 0) + Math.round(input.outsideMs)
-  }
-
-  if (Object.keys(update).length === 0) return
-
-  await supabase
-    .from("attempts")
-    .update(update)
-    .eq("id", input.attemptId)
-    .eq("test_invite_id", loaded.invite.id)
+  // Accumulate all counters atomically in a single statement (ownership +
+  // submitted-at enforced inside the function) so concurrent signal posts can't
+  // clobber each other's increments. Validation/clamping of outsideMs happens
+  // server-side in the function.
+  const { error } = await supabase.rpc("record_attempt_signals", {
+    p_attempt_id: input.attemptId,
+    p_invite_id: loaded.invite.id,
+    p_user_agent: input.userAgent ?? null,
+    p_dual_screen: typeof input.dualScreen === "boolean" ? input.dualScreen : null,
+    p_fullscreen_exit: input.fullscreenExit === true,
+    p_mouse_out: input.mouseOut === true,
+    p_outside_ms:
+      typeof input.outsideMs === "number" && input.outsideMs > 0
+        ? Math.round(input.outsideMs)
+        : 0,
+  })
+  if (error) throw new Error(error.message)
 }
 
 export async function recordConsent(input: {
@@ -2757,7 +2749,9 @@ export async function countNeedsScoringByTest(
       .in("attempt_id", chunk),
   )
 
-  const counts: Record<string, number> = {}
+  // Count attempts (not answers) needing manual scoring, so an attempt with
+  // several manually-scored questions contributes only once per test.
+  const attemptsByTest = new Map<string, Set<string>>()
   for (const a of answers) {
     const testId = testIdByAttempt.get(a.attempt_id)
     if (!testId) continue
@@ -2769,7 +2763,15 @@ export async function countNeedsScoringByTest(
       is_correct: a.is_correct,
       points_awarded: a.points_awarded,
     })
-    if (needs) counts[testId] = (counts[testId] ?? 0) + 1
+    if (!needs) continue
+    const set = attemptsByTest.get(testId) ?? new Set<string>()
+    set.add(a.attempt_id)
+    attemptsByTest.set(testId, set)
+  }
+
+  const counts: Record<string, number> = {}
+  for (const [testId, set] of attemptsByTest) {
+    counts[testId] = set.size
   }
 
   return counts

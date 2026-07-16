@@ -23,6 +23,10 @@ describe("toScoreDistribution", () => {
       buckets.map((b) => b.pct),
       [30, 10, 60],
     )
+    assert.deepEqual(
+      buckets.map((b) => b.label),
+      ["Incorrect", "Ungraded", "Correct"],
+    )
   })
 
   it("maps coding pass rates into score buckets", () => {
@@ -40,6 +44,10 @@ describe("toScoreDistribution", () => {
     assert.deepEqual(
       buckets.map((b) => b.count),
       [2, 4, 4],
+    )
+    assert.deepEqual(
+      buckets.map((b) => b.label),
+      ["0%", "1–99%", "100%"],
     )
   })
 })

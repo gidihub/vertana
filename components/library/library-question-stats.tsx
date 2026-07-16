@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { Loader2 } from "lucide-react"
 
 import { LIBRARY_STATS_MIN_ATTEMPTS } from "@/lib/db/library-stats"
@@ -29,6 +29,9 @@ export function useLibraryQuestionStats(questionId: string) {
   )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // Monotonic request token: only the newest in-flight load may touch state,
+  // so a slow response for a previous questionId can't clobber the current one.
+  const requestRef = useRef(0)
 
   const load = useCallback(async () => {
     if (statsCache.has(questionId)) {
@@ -36,6 +39,8 @@ export function useLibraryQuestionStats(questionId: string) {
       setStats(cached)
       return cached
     }
+    const requestId = ++requestRef.current
+    const isActive = () => requestRef.current === requestId
     setLoading(true)
     setError(null)
     try {
@@ -43,18 +48,22 @@ export function useLibraryQuestionStats(questionId: string) {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Failed to load stats")
       statsCache.set(questionId, data.stats)
-      setStats(data.stats)
+      if (isActive()) setStats(data.stats)
       return data.stats as LibraryQuestionStats
     } catch (err) {
-      setStats(null)
-      setError(err instanceof Error ? err.message : "Failed to load stats")
+      if (isActive()) {
+        setStats(null)
+        setError(err instanceof Error ? err.message : "Failed to load stats")
+      }
       return null
     } finally {
-      setLoading(false)
+      if (isActive()) setLoading(false)
     }
   }, [questionId])
 
   useEffect(() => {
+    // Invalidate any in-flight request from a previous questionId.
+    requestRef.current++
     setStats(statsCache.get(questionId) ?? null)
     setError(null)
     setLoading(false)

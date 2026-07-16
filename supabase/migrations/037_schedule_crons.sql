@@ -50,6 +50,16 @@ begin
     raise exception 'Missing vault secret "cron_secret"; run vault.create_secret(...) first';
   end if;
 
+  -- Only allow the known cron endpoints. Prevents a caller from redirecting the
+  -- bearer CRON_SECRET to an arbitrary path/endpoint.
+  if path not in (
+    '/api/cron/process-scheduled-invites',
+    '/api/cron/send-invite-reminders',
+    '/api/cron/process-ats-deliveries'
+  ) then
+    raise exception 'Unsupported cron path: %', path;
+  end if;
+
   select net.http_post(
     url := base_url || path,
     headers := jsonb_build_object(
@@ -63,6 +73,12 @@ begin
   return req_id;
 end;
 $$;
+
+-- This function carries the CRON_SECRET, so it must not be callable by anyone.
+-- Revoke the default PUBLIC execute grant and allow only the role that owns the
+-- scheduled cron jobs (postgres in Supabase) to invoke it.
+revoke execute on function public.invoke_app_cron(text) from public;
+grant execute on function public.invoke_app_cron(text) to postgres;
 
 -- Remove any prior copies of these jobs so re-running the migration is safe.
 select cron.unschedule(jobid)

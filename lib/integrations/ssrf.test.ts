@@ -37,6 +37,10 @@ describe("assertSafeWebhookUrl", () => {
   it("rejects private IPv6 ranges", () => {
     assert.equal(isSafeWebhookUrl("https://[fd00::1]/x"), false)
     assert.equal(isSafeWebhookUrl("https://[fe80::1]/x"), false)
+    // Link-local spans fe80–febf, not just fe80.
+    assert.equal(isSafeWebhookUrl("https://[fe90::1]/x"), false)
+    // IPv4-mapped IPv6 loopback in hextet form must also be blocked.
+    assert.equal(isSafeWebhookUrl("https://[::ffff:7f00:1]/x"), false)
   })
 
   it("rejects malformed URLs", () => {

@@ -44,6 +44,10 @@ export function CandidateFlow({
   const cameraProctoring = isCameraProctoringEnabledClient()
   const screenRecording = cameraProctoring && (proctoringPolicy?.screenRecording ?? false)
   const [screenStream, setScreenStream] = useState<MediaStream | null>(null)
+  // A resumed screen-recorded attempt only needs to reacquire the display
+  // stream (it can't survive a reload) — it must NOT re-run the identity flow
+  // or upload another face snapshot.
+  const [proctoringScreenOnly, setProctoringScreenOnly] = useState(false)
 
   async function persistConsent(id: string) {
     const copy = getConsentCopy()
@@ -86,8 +90,14 @@ export function CandidateFlow({
         setInitialTabSwitches(resume.tabSwitchCount)
         setStartedAt(resume.startedAt ?? new Date().toISOString())
         // A live display stream can't survive a page reload, so a screen-recorded
-        // resume must re-run the proctoring setup to reacquire it before the test.
-        setStep(screenRecording ? "proctoring" : "test")
+        // resume must re-acquire it before the test — but only the screen-sharing
+        // step, not the full identity/face-capture flow.
+        if (screenRecording) {
+          setProctoringScreenOnly(true)
+          setStep("proctoring")
+        } else {
+          setStep("test")
+        }
         return
       }
 
@@ -177,11 +187,12 @@ export function CandidateFlow({
             token={token}
             attemptId={attemptId}
             screenRecording={screenRecording}
+            screenOnly={proctoringScreenOnly}
             onComplete={handleProctoringComplete}
             onSkip={() => setStep("consent")}
           />
         )}
-        {step === "test" && attemptId && (!screenRecording || screenStream) && (
+        {step === "test" && attemptId && (
           <TestRunner
             test={test}
             token={token}

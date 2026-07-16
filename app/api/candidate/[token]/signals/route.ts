@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { z } from "zod"
 
 import { recordAttemptSignals } from "@/lib/db/queries"
 
@@ -9,12 +10,14 @@ import { recordAttemptSignals } from "@/lib/db/queries"
  */
 const MAX_OUTSIDE_MS_PER_UPDATE = 60 * 60 * 1000
 
-function normalizeOutsideMs(value: unknown): number | undefined {
-  if (typeof value !== "number" || !Number.isInteger(value) || value < 0) {
-    return undefined
-  }
-  return Math.min(value, MAX_OUTSIDE_MS_PER_UPDATE)
-}
+const bodySchema = z.object({
+  attemptId: z.string().uuid(),
+  userAgent: z.string().max(2000).optional(),
+  dualScreen: z.boolean().optional(),
+  fullscreenExit: z.boolean().optional(),
+  mouseOut: z.boolean().optional(),
+  outsideMs: z.number().int().min(0).optional(),
+})
 
 /**
  * Accumulates proctoring integrity signals for an in-progress attempt
@@ -28,18 +31,11 @@ export async function POST(
 ) {
   try {
     const { token } = await params
-    const body = (await req.json().catch(() => null)) as {
-      attemptId?: string
-      userAgent?: string
-      dualScreen?: boolean
-      fullscreenExit?: boolean
-      mouseOut?: boolean
-      outsideMs?: number
-    } | null
-
-    if (!body?.attemptId) {
+    const parsed = bodySchema.safeParse(await req.json().catch(() => null))
+    if (!parsed.success) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 })
     }
+    const body = parsed.data
 
     await recordAttemptSignals({
       token,
@@ -48,11 +44,18 @@ export async function POST(
       dualScreen: typeof body.dualScreen === "boolean" ? body.dualScreen : null,
       fullscreenExit: body.fullscreenExit === true,
       mouseOut: body.mouseOut === true,
-      outsideMs: normalizeOutsideMs(body.outsideMs),
+      outsideMs:
+        body.outsideMs === undefined
+          ? undefined
+          : Math.min(body.outsideMs, MAX_OUTSIDE_MS_PER_UPDATE),
     })
 
     return NextResponse.json({ ok: true })
   } catch (err) {
-    return NextResponse.json({ error: (err as Error).message }, { status: 500 })
+    console.error("Failed to record attempt signals", err)
+    return NextResponse.json(
+      { error: "Failed to record signals" },
+      { status: 500 },
+    )
   }
 }

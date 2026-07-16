@@ -4,6 +4,7 @@ import { z } from "zod"
 
 import { handleApiAuth } from "@/lib/auth/api"
 import { getOpenAiModel, requireOpenAiApiKey } from "@/lib/ai/model"
+import { buildGradingPrompt } from "@/lib/ai/grade-prompt"
 import {
   loadGradeSuggestionContext,
   saveGradeSuggestion,
@@ -70,25 +71,12 @@ export async function POST(
     const { output } = await generateText({
       model: getOpenAiModel(),
       output: Output.object({ schema: suggestionSchema }),
-      prompt: `You are grading a candidate's free-text answer to a hiring-assessment question. Award an integer score from 0 to ${ctx.maxPoints} (partial credit allowed).
-
-Question:
-"""
-${ctx.prompt.slice(0, 1500)}
-"""
-${
-  ctx.expected
-    ? `\nReference / expected answer:\n"""\n${ctx.expected.slice(0, 1500)}\n"""\n`
-    : ""
-}
-Candidate answer:
-"""
-${ctx.response.slice(0, 3000)}
-"""
-
-Return:
-- score: an integer between 0 and ${ctx.maxPoints}.
-- rationale: one concise sentence (max ~200 characters) explaining the score. Be strict but fair; reward correct reasoning, penalize vague or incorrect answers.`,
+      prompt: buildGradingPrompt({
+        maxPoints: ctx.maxPoints,
+        prompt: ctx.prompt,
+        expected: ctx.expected,
+        response: ctx.response,
+      }),
     })
 
     const points = Math.max(

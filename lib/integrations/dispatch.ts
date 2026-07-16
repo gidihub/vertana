@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto"
+
 import type { SupabaseClient } from "@supabase/supabase-js"
 
 import { createAdminClient } from "@/lib/supabase/admin"
@@ -30,6 +32,7 @@ export function buildAtsEvent(input: {
   percentile?: number | null
 }): AtsEvent {
   return {
+    id: randomUUID(),
     type: input.type,
     payload: {
       orgId: input.orgId,
@@ -82,6 +85,7 @@ function toJob(orgId: string, provider: string, event: AtsEvent, now: string) {
   return {
     org_id: orgId,
     provider,
+    event_id: event.id,
     event_type: event.type,
     payload: event.payload,
     status: "pending" as const,
@@ -137,6 +141,7 @@ export async function dispatchTestEvent(
 
   const now = new Date().toISOString()
   const event: AtsEvent = {
+    id: randomUUID(),
     type: "attempt.submitted",
     payload: {
       orgId,
@@ -187,6 +192,7 @@ interface DeliveryJobRow {
   id: string
   org_id: string
   provider: string
+  event_id: string
   event_type: AtsEventType
   payload: AtsEvent["payload"]
   attempts: number
@@ -194,18 +200,41 @@ interface DeliveryJobRow {
 }
 
 /**
+ * How long a claimed ("delivering") job may run before it's considered stale.
+ * A worker that crashes mid-delivery would otherwise strand the job forever;
+ * after this window another run reclaims it back to pending.
+ */
+const DELIVERY_LEASE_MS = 5 * 60 * 1000
+
+/**
  * Drain due delivery jobs. Claims each job optimistically, runs its adapter,
  * then records the outcome: delivered, retried with backoff (transient errors
  * under the attempt cap), or failed (permanent 4xx or attempts exhausted).
+ *
+ * Before draining, jobs stuck in "delivering" past the lease window are
+ * reclaimed to "pending" so a crashed worker can't strand them. Adapter calls
+ * and the follow-up status writes are wrapped so an exception can never leave a
+ * job in "delivering".
  */
 export async function processAtsDeliveryJobs(
   limit = 25,
 ): Promise<{ processed: number; delivered: number; retried: number; failed: number }> {
   const db = createAdminClient()
+
+  // Reclaim stale leases: only jobs whose claim is older than the lease window,
+  // so an actively-processing job (recent updated_at) is never disturbed.
+  const staleCutoff = new Date(Date.now() - DELIVERY_LEASE_MS).toISOString()
+  const { error: reclaimError } = await db
+    .from("ats_delivery_jobs")
+    .update({ status: "pending", updated_at: new Date().toISOString() })
+    .eq("status", "delivering")
+    .lt("updated_at", staleCutoff)
+  if (reclaimError) throw new Error(reclaimError.message)
+
   const now = new Date().toISOString()
   const { data: due, error } = await db
     .from("ats_delivery_jobs")
-    .select("id, org_id, provider, event_type, payload, attempts, max_attempts")
+    .select("id, org_id, provider, event_id, event_type, payload, attempts, max_attempts")
     .eq("status", "pending")
     .lte("next_attempt_at", now)
     .order("next_attempt_at", { ascending: true })
@@ -215,88 +244,140 @@ export async function processAtsDeliveryJobs(
   let delivered = 0
   let retried = 0
   let failed = 0
+  // Cache entitlement per org for this run to avoid re-querying per job.
+  const atsByOrg = new Map<string, boolean>()
 
   for (const job of (due ?? []) as DeliveryJobRow[]) {
-    // Optimistic claim: only proceed if we flip pending -> delivering.
-    const { data: claimed } = await db
+    // Optimistic claim: only proceed if we flip pending -> delivering. The
+    // updated_at doubles as the lease start used by stale reclaiming above.
+    const { data: claimed, error: claimError } = await db
       .from("ats_delivery_jobs")
       .update({ status: "delivering", updated_at: new Date().toISOString() })
       .eq("id", job.id)
       .eq("status", "pending")
       .select("id")
       .maybeSingle()
+    if (claimError) throw new Error(claimError.message)
     if (!claimed) continue
 
-    const adapter = adapterForProvider(job.provider)
-    const { data: integ } = await db
-      .from("org_integrations")
-      .select("config, secret, status")
-      .eq("org_id", job.org_id)
-      .eq("provider", job.provider)
-      .maybeSingle()
-
-    let result: DeliveryResult
-    if (!adapter) {
-      result = { ok: false, error: `No adapter for ${job.provider}`, retriable: false }
-    } else if (!integ || integ.status !== "connected") {
-      result = { ok: false, error: "Integration not connected", retriable: false }
-    } else {
-      result = await adapter.deliver(
-        { type: job.event_type, payload: job.payload },
-        (integ.config as Record<string, string> | null) ?? {},
-        { secret: (integ.secret as string | null) ?? undefined },
-      )
-    }
-
     const attempts = (job.attempts ?? 0) + 1
-    const updatedAt = new Date().toISOString()
 
-    if (result.ok) {
-      await db
+    try {
+      let result: DeliveryResult
+      const adapter = adapterForProvider(job.provider)
+
+      // Re-check entitlement at delivery time: an org may have downgraded after
+      // the job was enqueued. Without ATS entitlement, terminally skip the job.
+      let hasAts = atsByOrg.get(job.org_id)
+      if (hasAts === undefined) {
+        hasAts = await orgHasAts(db, job.org_id)
+        atsByOrg.set(job.org_id, hasAts)
+      }
+
+      if (!hasAts) {
+        result = {
+          ok: false,
+          error: "ATS integrations require the Growth plan or higher.",
+          retriable: false,
+        }
+      } else if (!adapter) {
+        result = { ok: false, error: `No adapter for ${job.provider}`, retriable: false }
+      } else {
+        const { data: integ } = await db
+          .from("org_integrations")
+          .select("config, secret, status")
+          .eq("org_id", job.org_id)
+          .eq("provider", job.provider)
+          .maybeSingle()
+        if (!integ || integ.status !== "connected") {
+          result = { ok: false, error: "Integration not connected", retriable: false }
+        } else {
+          result = await adapter.deliver(
+            { id: job.event_id, type: job.event_type, payload: job.payload },
+            (integ.config as Record<string, string> | null) ?? {},
+            { secret: (integ.secret as string | null) ?? undefined },
+          )
+        }
+      }
+
+      const updatedAt = new Date().toISOString()
+
+      if (result.ok) {
+        const { error: writeError } = await db
+          .from("ats_delivery_jobs")
+          .update({
+            status: "delivered",
+            attempts,
+            last_status: result.status ?? null,
+            last_error: null,
+            updated_at: updatedAt,
+          })
+          .eq("id", job.id)
+        if (writeError) throw new Error(writeError.message)
+        await markIntegration(db, job.org_id, job.provider, { ok: true })
+        delivered++
+      } else if (result.retriable && attempts < (job.max_attempts ?? 3)) {
+        const { error: writeError } = await db
+          .from("ats_delivery_jobs")
+          .update({
+            status: "pending",
+            attempts,
+            next_attempt_at: new Date(Date.now() + nextBackoffMs(attempts)).toISOString(),
+            last_status: result.status ?? null,
+            last_error: result.error ?? null,
+            updated_at: updatedAt,
+          })
+          .eq("id", job.id)
+        if (writeError) throw new Error(writeError.message)
+        await markIntegration(db, job.org_id, job.provider, {
+          ok: false,
+          error: result.error,
+        })
+        retried++
+      } else {
+        const { error: writeError } = await db
+          .from("ats_delivery_jobs")
+          .update({
+            status: "failed",
+            attempts,
+            last_status: result.status ?? null,
+            last_error: result.error ?? null,
+            updated_at: updatedAt,
+          })
+          .eq("id", job.id)
+        if (writeError) throw new Error(writeError.message)
+        await markIntegration(db, job.org_id, job.provider, {
+          ok: false,
+          error: result.error,
+        })
+        failed++
+      }
+    } catch (err) {
+      // The adapter or a status write threw: never leave the job "delivering".
+      // Persist the attempt and either re-queue (under the cap) or fail it.
+      const message = (err as Error).message ?? "Delivery error"
+      const canRetry = attempts < (job.max_attempts ?? 3)
+      const { error: recoveryError } = await db
         .from("ats_delivery_jobs")
         .update({
-          status: "delivered",
+          status: canRetry ? "pending" : "failed",
           attempts,
-          last_status: result.status ?? null,
-          last_error: null,
-          updated_at: updatedAt,
+          next_attempt_at: canRetry
+            ? new Date(Date.now() + nextBackoffMs(attempts)).toISOString()
+            : now,
+          last_error: message,
+          updated_at: new Date().toISOString(),
         })
         .eq("id", job.id)
-      await markIntegration(db, job.org_id, job.provider, { ok: true })
-      delivered++
-    } else if (result.retriable && attempts < (job.max_attempts ?? 3)) {
-      await db
-        .from("ats_delivery_jobs")
-        .update({
-          status: "pending",
-          attempts,
-          next_attempt_at: new Date(Date.now() + nextBackoffMs(attempts)).toISOString(),
-          last_status: result.status ?? null,
-          last_error: result.error ?? null,
-          updated_at: updatedAt,
-        })
-        .eq("id", job.id)
+      // If we can't even persist the recovery state the job is stranded in
+      // "delivering"; surface that rather than silently continuing.
+      if (recoveryError) throw new Error(recoveryError.message)
       await markIntegration(db, job.org_id, job.provider, {
         ok: false,
-        error: result.error,
-      })
-      retried++
-    } else {
-      await db
-        .from("ats_delivery_jobs")
-        .update({
-          status: "failed",
-          attempts,
-          last_status: result.status ?? null,
-          last_error: result.error ?? null,
-          updated_at: updatedAt,
-        })
-        .eq("id", job.id)
-      await markIntegration(db, job.org_id, job.provider, {
-        ok: false,
-        error: result.error,
-      })
-      failed++
+        error: message,
+      }).catch(() => {})
+      if (canRetry) retried++
+      else failed++
     }
   }
 

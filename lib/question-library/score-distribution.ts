@@ -35,7 +35,11 @@ export function toScoreDistribution(
     }
   }
 
-  const labels = ["0–33%", "34–67%", "68–100%"]
+  // Labels must describe the actual aggregation, not arbitrary numeric ranges.
+  const labels =
+    type === "coding"
+      ? ["0%", "1–99%", "100%"]
+      : ["Incorrect", "Ungraded", "Correct"]
   const colors = [BUCKET_COLORS.low, BUCKET_COLORS.mid, BUCKET_COLORS.high]
 
   return labels.map((label, index) => ({

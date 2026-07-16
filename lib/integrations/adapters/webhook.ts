@@ -9,6 +9,7 @@ import type { AtsAdapter, DeliveryResult } from "@/lib/integrations/adapters/typ
 
 export const WEBHOOK_SIGNATURE_HEADER = "X-Vertana-Signature"
 export const WEBHOOK_EVENT_HEADER = "X-Vertana-Event"
+export const WEBHOOK_IDEMPOTENCY_HEADER = "Idempotency-Key"
 const DEFAULT_TIMEOUT_MS = 10_000
 
 /** HMAC-SHA256 over the raw body, hex, prefixed with the algorithm. */
@@ -38,6 +39,8 @@ export const webhookAdapter: AtsAdapter = {
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
       [WEBHOOK_EVENT_HEADER]: event.type,
+      // Stable idempotency key so retries of the same event are dedupable.
+      [WEBHOOK_IDEMPOTENCY_HEADER]: event.id,
     }
     if (opts?.secret) {
       headers[WEBHOOK_SIGNATURE_HEADER] = signWebhookBody(body, opts.secret)

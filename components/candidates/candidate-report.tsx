@@ -89,6 +89,7 @@ export function CandidateReport({
     avg,
     flagged: attempts.filter(
       (a) =>
+        a.candidate.flagged ||
         attemptFlags({
           startedAt: a.candidate.started_at,
           submittedAt: a.candidate.submitted_at,
@@ -186,13 +187,20 @@ function AttemptReportCard({
   const passingScore = test.passing_score ?? 70
   const pass = evaluatePass(candidate.score, passingScore)
   const expectedMinutes = effectiveTimeLimitMinutes(test)
-  const flags = attemptFlags({
+  const derivedFlags = attemptFlags({
     startedAt: candidate.started_at,
     submittedAt: candidate.submitted_at,
     expectedMinutes,
     tabSwitchCount: candidate.tab_switch_count,
     tabSwitchThreshold,
   })
+  // Merge derived flags with the persisted review state so an attempt that was
+  // flagged (and stored as such) is never rendered as unflagged, even when no
+  // derived detector currently fires.
+  const flags =
+    candidate.flagged && derivedFlags.length === 0
+      ? [{ id: "flagged", label: "Flagged for review" }]
+      : derivedFlags
   const breakdown = scoreBreakdown(answers)
   const questionsById = new Map(test.questions.map((q) => [q.id, q]))
 

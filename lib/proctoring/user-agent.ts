@@ -35,6 +35,11 @@ function browserLabel(ua: string): string {
     return m ? `${name} ${m[1]}` : null
   }
   return (
+    // iOS browsers all render with WebKit and carry a vendor token before the
+    // generic Chrome/Firefox markers, so match them first.
+    match(/edgios\/([\d.]+)/i, "Microsoft Edge") ??
+    match(/fxios\/([\d.]+)/i, "Mozilla Firefox") ??
+    match(/crios\/([\d.]+)/i, "Google Chrome") ??
     match(/edg\/([\d.]+)/i, "Microsoft Edge") ??
     match(/opr\/([\d.]+)/i, "Opera") ??
     match(/firefox\/([\d.]+)/i, "Mozilla Firefox") ??

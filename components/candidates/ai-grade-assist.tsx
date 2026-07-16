@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Check, Loader2, Pencil, Sparkles } from "lucide-react"
 import { toast } from "sonner"
@@ -40,21 +40,23 @@ export function AiGradeAssist({
   const [saving, setSaving] = useState(false)
   const [overriding, setOverriding] = useState(false)
   const [overrideValue, setOverrideValue] = useState(String(initialScore ?? 0))
-  const requested = useRef(false)
 
-  useEffect(() => {
-    if (score !== null || requested.current) return
-    requested.current = true
+  async function generateSuggestion() {
     setLoading(true)
-    fetchGradeSuggestion({ testId, attemptId, questionId })
-      .then((res) => {
-        setScore(res.suggestedScore)
-        setRationale(res.rationale)
-        setOverrideValue(String(res.suggestedScore))
-      })
-      .catch((err: Error) => setError(err.message))
-      .finally(() => setLoading(false))
-  }, [testId, attemptId, questionId, score])
+    setError(null)
+    try {
+      const res = await fetchGradeSuggestion({ testId, attemptId, questionId })
+      setScore(res.suggestedScore)
+      setRationale(res.rationale)
+      setOverrideValue(String(res.suggestedScore))
+    } catch (err) {
+      // Leave score null so the user can retry via the action. Always surface a
+      // non-empty message so the failure stays visible in the UI.
+      setError((err as Error).message || "Could not generate suggestion")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   async function writeGrade(points: number) {
     const grade = gradeFromScore(points, maxPoints)
@@ -94,7 +96,18 @@ export function AiGradeAssist({
           Evaluating answer…
         </p>
       ) : error ? (
-        <p className="mt-2 text-sm text-destructive">{error}</p>
+        <div className="mt-2 flex flex-col gap-2">
+          <p className="text-sm text-destructive">{error}</p>
+          <Button
+            size="sm"
+            variant="outline"
+            className="self-start"
+            onClick={() => void generateSuggestion()}
+          >
+            <Sparkles data-icon="inline-start" />
+            Try again
+          </Button>
+        </div>
       ) : score !== null ? (
         <>
           <p className="mt-2 text-sm">
@@ -175,7 +188,22 @@ export function AiGradeAssist({
             </div>
           )}
         </>
-      ) : null}
+      ) : (
+        <div className="mt-2 flex flex-col gap-2">
+          <p className="text-sm text-muted-foreground">
+            Get an AI-suggested score for this answer.
+          </p>
+          <Button
+            size="sm"
+            variant="outline"
+            className="self-start"
+            onClick={() => void generateSuggestion()}
+          >
+            <Sparkles data-icon="inline-start" />
+            Generate suggestion
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
