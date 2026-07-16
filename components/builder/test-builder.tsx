@@ -7,6 +7,11 @@ import { toast } from "sonner"
 
 import type { Question, Test, TimingPolicy } from "@/lib/types"
 import { uid, saveTest, useOrganization } from "@/lib/store"
+import {
+  duplicateQuestionsError,
+  filterNewQuestions,
+} from "@/lib/questions/duplicates"
+import { suggestedTimeLimit } from "@/lib/questions/time-estimate"
 import { proctoringEnabledForTier, type PlanTier } from "@/lib/plans"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -57,6 +62,9 @@ export function TestBuilder({ existing }: { existing?: Test }) {
   const [timeLimit, setTimeLimit] = useState(
     String(existing?.time_limit_minutes ?? 30),
   )
+  // When false, the time limit auto-follows the sum of question durations.
+  // Editing the field (or accepting an AI-suggested time) locks it to manual.
+  const [timeLimitManual, setTimeLimitManual] = useState(existing != null)
   const [passingScore, setPassingScore] = useState(
     String(existing?.passing_score ?? 70),
   )
@@ -100,6 +108,20 @@ export function TestBuilder({ existing }: { existing?: Test }) {
     [questions],
   )
 
+  const suggestedTime = useMemo(
+    () => suggestedTimeLimit(questions),
+    [questions],
+  )
+
+  // In auto mode, keep the time limit in sync with the question durations.
+  useEffect(() => {
+    if (timeLimitManual) return
+    if (suggestedTime == null) return
+    setTimeLimit((current) =>
+      current === String(suggestedTime) ? current : String(suggestedTime),
+    )
+  }, [suggestedTime, timeLimitManual])
+
   useEffect(() => {
     if (existing?.notify_emails?.length) return
     void fetch("/api/org")
@@ -132,10 +154,26 @@ export function TestBuilder({ existing }: { existing?: Test }) {
   }
 
   function insertGenerated(generated: Question[]) {
-    setQuestions((qs) => [
-      ...qs,
-      ...generated.map((q, i) => ({ ...q, position: qs.length + i })),
-    ])
+    let skipped = 0
+    setQuestions((qs) => {
+      const { accepted, skipped: duplicateCount } = filterNewQuestions(
+        qs,
+        generated,
+      )
+      skipped = duplicateCount
+      if (accepted.length === 0) return qs
+      return [
+        ...qs,
+        ...accepted.map((q, i) => ({ ...q, position: qs.length + i })),
+      ]
+    })
+    if (skipped > 0) {
+      toast.error(
+        skipped === 1
+          ? "That question is already on this test"
+          : `${skipped} questions were already on this test and were skipped`,
+      )
+    }
   }
 
   async function suggestDetails() {
@@ -166,6 +204,7 @@ export function TestBuilder({ existing }: { existing?: Test }) {
       setTitle(data.details.title)
       setDescription(data.details.description)
       setTimeLimit(String(data.details.time_limit_minutes))
+      setTimeLimitManual(true)
       if (data.details.suggested_deadline && !deadline) {
         setDeadline(data.details.suggested_deadline.slice(0, 10))
       }
@@ -194,6 +233,8 @@ export function TestBuilder({ existing }: { existing?: Test }) {
           return `Question ${i + 1} needs a correct answer.`
       }
     }
+    const duplicateError = duplicateQuestionsError(questions)
+    if (duplicateError) return duplicateError
     return null
   }
 
@@ -298,8 +339,33 @@ export function TestBuilder({ existing }: { existing?: Test }) {
                   type="number"
                   min={1}
                   value={timeLimit}
-                  onChange={(e) => setTimeLimit(e.target.value)}
+                  onChange={(e) => {
+                    setTimeLimit(e.target.value)
+                    setTimeLimitManual(true)
+                  }}
                 />
+                <FieldDescription>
+                  {!timeLimitManual && suggestedTime != null ? (
+                    "Auto-calculated from question durations. Edit to override."
+                  ) : suggestedTime != null &&
+                    String(suggestedTime) !== timeLimit ? (
+                    <>
+                      Suggested from questions: {suggestedTime} min.{" "}
+                      <button
+                        type="button"
+                        className="font-medium text-primary underline underline-offset-2"
+                        onClick={() => {
+                          setTimeLimit(String(suggestedTime))
+                          setTimeLimitManual(false)
+                        }}
+                      >
+                        Use {suggestedTime} min
+                      </button>
+                    </>
+                  ) : (
+                    "Based on the total length of your questions."
+                  )}
+                </FieldDescription>
               </Field>
               <Field>
                 <FieldLabel htmlFor="deadline">Deadline (optional)</FieldLabel>
@@ -431,7 +497,10 @@ export function TestBuilder({ existing }: { existing?: Test }) {
         onRemove={removeQuestion}
         onMove={moveQuestion}
         onInsert={insertGenerated}
-        onSuggestedTime={(minutes) => setTimeLimit(String(minutes))}
+        onSuggestedTime={(minutes) => {
+          setTimeLimit(String(minutes))
+          setTimeLimitManual(true)
+        }}
       />
 
       <Separator />

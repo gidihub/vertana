@@ -23,6 +23,8 @@ export interface ProctoringPolicy {
   maxSnapshots: number
   defaultRetentionDays: number
   maxRetentionDays: number
+  /** Whether the plan records the candidate's screen alongside the camera. */
+  screenRecording: boolean
 }
 
 const PROCTORING_POLICIES: Record<PlanTier, ProctoringPolicy> = {
@@ -32,24 +34,28 @@ const PROCTORING_POLICIES: Record<PlanTier, ProctoringPolicy> = {
     maxSnapshots: 0,
     defaultRetentionDays: 90,
     maxRetentionDays: 90,
+    screenRecording: false,
   },
   starter: {
     intervalMs: 90_000,
     maxSnapshots: 20,
     defaultRetentionDays: 90,
     maxRetentionDays: 90,
+    screenRecording: false,
   },
   growth: {
     intervalMs: 60_000,
     maxSnapshots: 30,
     defaultRetentionDays: 180,
     maxRetentionDays: 365,
+    screenRecording: true,
   },
   custom: {
     intervalMs: 45_000,
     maxSnapshots: 40,
     defaultRetentionDays: 365,
     maxRetentionDays: 3650,
+    screenRecording: true,
   },
 }
 

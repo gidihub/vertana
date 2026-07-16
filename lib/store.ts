@@ -222,6 +222,8 @@ export interface ProctoringMediaView {
   created_at: string
   expires_at: string
   url: string | null
+  question_id: string | null
+  question_index: number | null
 }
 
 export async function loadProctoringMedia(
@@ -234,12 +236,21 @@ export async function loadProctoringMedia(
   return data.media
 }
 
+export interface AttemptMediaSummary {
+  total: number
+  kinds: ProctoringMediaView["kind"][]
+  earliest: string | null
+  latest: string | null
+  /** Durable marker that media was captured for this attempt, even if since purged. */
+  everCaptured: boolean
+}
+
 export interface CandidateAttemptDetail {
   candidate: Candidate
   test: Test
   answers: AttemptAnswerView[]
   consent: ConsentRecord | null
-  media: ProctoringMediaView[]
+  mediaSummary: AttemptMediaSummary
 }
 
 export interface CandidateProfileData {
@@ -268,6 +279,8 @@ export interface AttemptAnswerView {
   execution_status: string | null
   test_cases_passed: number | null
   test_cases_total: number | null
+  ai_suggested_points: number | null
+  ai_suggested_rationale: string | null
 }
 
 export async function fetchLibraryQuestions(filters?: {
@@ -294,6 +307,7 @@ export async function fetchTestById(id: string): Promise<Test | null> {
 export interface ProctoringPolicyView {
   intervalMs: number
   maxSnapshots: number
+  screenRecording: boolean
 }
 
 export async function fetchTestByToken(token: string): Promise<{
@@ -374,6 +388,37 @@ export async function reportTabSwitch(
   return data.tabSwitchCount
 }
 
+export interface ProctoringSignalInput {
+  attemptId: string
+  userAgent?: string
+  dualScreen?: boolean
+  fullscreenExit?: boolean
+  mouseOut?: boolean
+  outsideMs?: number
+}
+
+/**
+ * Fire-and-forget proctoring signal. Uses keepalive so it still flushes during
+ * page unload; failures are swallowed so tracking never disrupts the candidate.
+ */
+export function reportProctoringSignal(
+  token: string,
+  payload: ProctoringSignalInput,
+): void {
+  try {
+    // Attach a catch so a rejected fetch (network drop, unload) never surfaces
+    // as an unhandled promise rejection; tracking must stay invisible.
+    void fetch(`/api/candidate/${token}/signals`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      keepalive: true,
+    }).catch(() => {})
+  } catch {
+    // best-effort
+  }
+}
+
 interface SubmitAttemptInput {
   token: string
   attemptId: string
@@ -421,6 +466,27 @@ export async function gradeAttempt(input: {
   )
   await refreshStore()
   return data.candidate
+}
+
+export interface GradeSuggestion {
+  suggestedScore: number
+  rationale: string
+  maxPoints: number
+  cached: boolean
+}
+
+export async function fetchGradeSuggestion(input: {
+  testId: string
+  attemptId: string
+  questionId: string
+}): Promise<GradeSuggestion> {
+  return api<GradeSuggestion>(
+    `/api/tests/${input.testId}/results/${input.attemptId}/grade-suggestion`,
+    {
+      method: "POST",
+      body: JSON.stringify({ questionId: input.questionId }),
+    },
+  )
 }
 
 export async function updateCandidateDisposition(input: {

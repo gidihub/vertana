@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
 import { libraryCopy } from "@/lib/question-library/copy"
+import { filterNewQuestions } from "@/lib/questions/duplicates"
 import { fetchTestById, saveTest, useStore } from "@/lib/store"
 import type { Question } from "@/lib/types"
 import { Button } from "@/components/ui/button"
@@ -65,8 +66,17 @@ export function AddToTestDialog({
       const test = await fetchTestById(testId)
       if (!test) throw new Error("Test not found")
 
+      const { accepted, skipped: duplicateSkipped } = filterNewQuestions(
+        test.questions,
+        eligible,
+      )
+      if (accepted.length === 0) {
+        toast.error("These questions are already on the selected test")
+        return
+      }
+
       const start = test.questions.length
-      const copies = eligible.map((q, i) =>
+      const copies = accepted.map((q, i) =>
         libraryCopy(q, test.id, start + i),
       )
       await saveTest({
@@ -74,9 +84,10 @@ export function AddToTestDialog({
         questions: [...test.questions, ...copies],
       })
 
+      const skipped = questions.length - eligible.length + duplicateSkipped
       const msg =
         skipped > 0
-          ? `Added ${copies.length} questions (${skipped} coding skipped — Growth plan)`
+          ? `Added ${copies.length} questions (${skipped} skipped)`
           : `Added ${copies.length} question${copies.length === 1 ? "" : "s"} to "${test.title}"`
       toast.success(msg)
       onOpenChange(false)

@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils"
 import {
   SOURCE_LABELS,
   TYPE_LABELS,
+  TYPE_SHORT_LABELS,
   isLibraryQuestionNew,
   librarySkillTags,
   librarySubcategoryLabel,
@@ -96,12 +97,18 @@ export function LibraryNewBadge() {
 }
 
 /** Question format with type icon. */
-export function LibraryTypeMeta({ type }: { type: QuestionType }) {
+export function LibraryTypeMeta({
+  type,
+  short = false,
+}: {
+  type: QuestionType
+  short?: boolean
+}) {
   const Icon = TYPE_ICONS[type]
   return (
     <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
       <Icon className="size-3.5 shrink-0" />
-      {TYPE_LABELS[type]}
+      {short ? TYPE_SHORT_LABELS[type] : TYPE_LABELS[type]}
     </span>
   )
 }

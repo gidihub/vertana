@@ -8,6 +8,8 @@ const bodySchema = z.object({
   attemptId: z.string().uuid(),
   kind: z.enum(["camera", "screen", "face_match"]),
   imageDataUrl: z.string().startsWith("data:image/"),
+  questionId: z.string().uuid().nullish(),
+  questionIndex: z.number().int().min(0).nullish(),
 })
 
 function parseDataUrl(dataUrl: string): { mime: string; bytes: Buffer } {
@@ -56,6 +58,8 @@ export async function POST(
       bytes,
       contentType: mime,
       extension: ext,
+      questionId: body.questionId ?? null,
+      questionIndex: body.questionIndex ?? null,
     })
 
     return NextResponse.json({ ok: true, storagePath })

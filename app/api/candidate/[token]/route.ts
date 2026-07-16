@@ -22,8 +22,11 @@ export async function GET(
     // Resolve the org's plan-tier proctoring policy (interval + cap) so the
     // candidate app captures at a cadence proportional to the plan. Only sent
     // when camera proctoring is enabled for a proctored test.
-    let proctoringPolicy: { intervalMs: number; maxSnapshots: number } | null =
-      null
+    let proctoringPolicy: {
+      intervalMs: number
+      maxSnapshots: number
+      screenRecording: boolean
+    } | null = null
     if (loaded.test.requires_proctoring && isCameraProctoringEnabled()) {
       const admin = createAdminClient()
       const { data: org } = await admin
@@ -38,6 +41,7 @@ export async function GET(
       proctoringPolicy = {
         intervalMs: policy.intervalMs,
         maxSnapshots: policy.maxSnapshots,
+        screenRecording: policy.screenRecording,
       }
     }
 

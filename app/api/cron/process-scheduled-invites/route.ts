@@ -13,11 +13,9 @@ export const dynamic = "force-dynamic"
  */
 async function handle(req: Request) {
   const secret = process.env.CRON_SECRET
-  if (secret) {
-    const auth = req.headers.get("authorization")
-    if (auth !== `Bearer ${secret}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
+  const auth = req.headers.get("authorization")
+  if (!secret || auth !== `Bearer ${secret}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
   try {

@@ -54,6 +54,11 @@ export function proctoringEnabledForTier(tier: PlanTier): boolean {
   return tier !== "free"
 }
 
+/** ATS integrations (outbound sync) are a Growth+ feature. Mirrors PlanConfig.hasAts. */
+export function atsEnabledForTier(tier: PlanTier): boolean {
+  return tier === "growth" || tier === "custom"
+}
+
 export function isPaidPlanTier(tier: PlanTier): boolean {
   return tier === "starter" || tier === "growth" || tier === "custom"
 }

@@ -228,4 +228,10 @@ export interface Candidate {
   started_at: string | null
   submitted_at: string | null
   disposition: CandidateDisposition
+  user_agent?: string | null
+  fullscreen_exits?: number
+  mouse_out_count?: number
+  time_outside_ms?: number
+  resume_count?: number
+  dual_screen?: boolean | null
 }

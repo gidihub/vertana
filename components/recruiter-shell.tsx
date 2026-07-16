@@ -39,9 +39,14 @@ export function RecruiterShell({
   }, [])
 
   useEffect(() => {
+    // Local JWT verification (no GoTrue round-trip) — we only need the email
+    // for display, not a server-validated user object.
     void createClient()
-      .auth.getUser()
-      .then(({ data }) => setEmail(data.user?.email ?? null))
+      .auth.getClaims()
+      .then(({ data }) =>
+        setEmail((data?.claims?.email as string | undefined) ?? null),
+      )
+      .catch(() => setEmail(null))
   }, [])
 
   useEffect(() => {

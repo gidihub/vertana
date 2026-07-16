@@ -33,6 +33,10 @@ import {
   ArrowLeft,
   ArrowRight,
   Sparkles,
+  Wand2,
+  ShieldCheck,
+  Award,
+  Settings,
   Coins,
   BarChart3,
   Users,
@@ -72,16 +76,25 @@ export const TOUR_STEPS: TourStep[] = [
     id: "create-test",
     title: "Create a test",
     description:
-      "Start here to build a new assessment. Add coding, multiple-choice, or open-ended questions, then publish it to get a shareable link and invite candidates by email.",
+      "Build an assessment from coding, multiple-choice, and short-answer questions. Set a time limit, passing score, and randomized order, then publish to get a shareable link.",
     icon: Plus,
     target: '[data-tour="create-test"]',
     placement: "right",
   },
   {
+    id: "ai-generate",
+    title: "Generate with AI",
+    description:
+      "Short on time? Describe the role and let Vertana draft a full test plan — a balanced mix of question types with runnable coding test cases, ready for you to review and tweak.",
+    icon: Wand2,
+    target: null,
+    placement: "center",
+  },
+  {
     id: "sidebar-usage",
     title: "Plan & credits",
     description:
-      "Keep an eye on your limits here. Each candidate attempt uses a credit, and AI question generation and code executions are metered by plan — you'll need credits available to invite candidates.",
+      "Keep an eye on your limits here. Each candidate attempt uses a credit, and AI generation and code executions are metered by plan — you'll need credits available to invite candidates.",
     icon: Coins,
     target: '[data-tour="sidebar-usage"]',
     placement: "right",
@@ -90,16 +103,25 @@ export const TOUR_STEPS: TourStep[] = [
     id: "nav-tests",
     title: "Your tests",
     description:
-      "All of your assessments live here. Jump into any test to edit questions or review candidate results.",
+      "All of your assessments live here. Jump into any test to edit questions, invite candidates, or review results.",
     icon: LayoutGrid,
     target: '[data-tour="nav-tests"]',
     placement: "right",
   },
   {
+    id: "proctoring",
+    title: "Proctoring & integrity",
+    description:
+      "On paid plans, proctored tests track tab and focus changes and can capture camera snapshots. Attempts that cross your integrity threshold are flagged automatically for review.",
+    icon: ShieldCheck,
+    target: null,
+    placement: "center",
+  },
+  {
     id: "nav-candidates",
     title: "Candidates",
     description:
-      "Browse every candidate who has taken a test, filter by score, and dig into individual submissions.",
+      "Browse everyone who has taken a test, search and filter, then open a profile to see cross-test history, set a disposition (shortlisted, rejected, hired), and export to CSV.",
     icon: UserRound,
     target: '[data-tour="nav-candidates"]',
     placement: "right",
@@ -108,7 +130,7 @@ export const TOUR_STEPS: TourStep[] = [
     id: "nav-library",
     title: "Question library",
     description:
-      "Reuse vetted questions across tests. Save your best prompts here to build assessments in seconds.",
+      "Reuse vetted questions across tests. Browse by category, filter by AI-resistance, or drop in a ready-made bundle to build an assessment in seconds.",
     icon: BookOpen,
     target: '[data-tour="nav-library"]',
     placement: "right",
@@ -117,10 +139,19 @@ export const TOUR_STEPS: TourStep[] = [
     id: "nav-analytics",
     title: "Analytics",
     description:
-      "See how your hiring funnel is performing across all tests — completion rates, score distributions, and integrity flags at a glance.",
+      "See how hiring is performing across all tests — the invite funnel (opened, clicked, started, completed), score and grading distributions, and integrity flags at a glance.",
     icon: BarChart3,
     target: '[data-tour="nav-analytics"]',
     placement: "right",
+  },
+  {
+    id: "certificates",
+    title: "Verifiable certificates",
+    description:
+      "Reward top performers with a shareable, public certificate they can add to LinkedIn — verifiable, with no employer identity attached. Enable it per test when you want it.",
+    icon: Award,
+    target: null,
+    placement: "center",
   },
   {
     id: "nav-team",
@@ -129,6 +160,15 @@ export const TOUR_STEPS: TourStep[] = [
       "Invite teammates to collaborate on tests and review candidates. Manage roles and seats from here.",
     icon: Users,
     target: '[data-tour="nav-team"]',
+    placement: "right",
+  },
+  {
+    id: "nav-settings",
+    title: "Settings & integrations",
+    description:
+      "Manage billing and credits, connect your ATS, configure data retention and Reply-To, and secure your account with MFA — all from Account settings.",
+    icon: Settings,
+    target: '[data-tour="nav-settings"]',
     placement: "right",
   },
   {

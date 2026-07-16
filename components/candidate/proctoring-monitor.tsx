@@ -4,52 +4,90 @@ import { useEffect, useRef } from "react"
 
 /**
  * Silent, consent-gated proctoring monitor. Keeps the candidate's camera stream
- * open for the duration of a proctored test and uploads a still snapshot at a
- * fixed interval (kind: "camera"). Renders a hidden video element; there is no
- * visible UI. Capture stops automatically on unmount (submit/leave) and the
- * server rejects uploads once the attempt is submitted.
+ * open for the duration of a proctored test and uploads a still snapshot each
+ * time the candidate settles on a question (kind: "camera", tagged with the
+ * question id). Renders a hidden video element; there is no visible UI. Capture
+ * stops automatically on unmount (submit/leave) and the server rejects uploads
+ * once the attempt is submitted.
  *
  * Candidates already grant camera permission during the identity step, so this
  * reopens the stream without a second prompt. If the stream can't be opened
  * (permission revoked, no device), it fails silently — tab-focus monitoring and
  * the start snapshot still stand.
  */
-// Conservative fallbacks if a plan policy isn't supplied. The org's plan tier
-// normally drives cadence/cap (see proctoringPolicyForTier). The start identity
-// snapshot is captured separately.
-const DEFAULT_INTERVAL_MS = 60_000
+// A short dwell before capturing avoids burning the per-plan snapshot cap when
+// a candidate quickly pages through questions without stopping to answer.
+const DWELL_MS = 1_500
 const DEFAULT_MAX_SNAPSHOTS = 30
 
 export function ProctoringMonitor({
   token,
   attemptId,
-  intervalMs = DEFAULT_INTERVAL_MS,
+  questionId,
+  questionIndex,
   maxSnapshots = DEFAULT_MAX_SNAPSHOTS,
 }: {
   token: string
   attemptId: string
-  intervalMs?: number
+  questionId: string
+  questionIndex: number
   maxSnapshots?: number
 }) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const uploadingRef = useRef(false)
   const countRef = useRef(0)
+  // Question ids already captured this attempt — one snapshot per question.
+  const capturedRef = useRef<Set<string>>(new Set())
 
+  // Open the camera stream once for the lifetime of the monitor.
   useEffect(() => {
     if (maxSnapshots <= 0) return
     let cancelled = false
-    let intervalId: ReturnType<typeof setInterval> | null = null
+
+    async function start() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } },
+          audio: false,
+        })
+        if (cancelled) {
+          stream.getTracks().forEach((t) => t.stop())
+          return
+        }
+        streamRef.current = stream
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream
+          await videoRef.current.play().catch(() => {})
+        }
+      } catch {
+        // No camera access — monitoring simply doesn't run.
+      }
+    }
+
+    void start()
+
+    return () => {
+      cancelled = true
+      streamRef.current?.getTracks().forEach((t) => t.stop())
+      streamRef.current = null
+    }
+  }, [maxSnapshots])
+
+  // Capture one snapshot per question, after the candidate dwells on it.
+  useEffect(() => {
+    if (maxSnapshots <= 0 || !questionId) return
+    if (capturedRef.current.has(questionId)) return
+
+    let cancelled = false
 
     async function capture() {
       const video = videoRef.current
       const stream = streamRef.current
-      if (!video || !stream || uploadingRef.current) return
+      if (!video || !stream) return
       if (video.videoWidth === 0 || video.videoHeight === 0) return
-      if (countRef.current >= maxSnapshots) {
-        if (intervalId) clearInterval(intervalId)
-        return
-      }
+      if (countRef.current >= maxSnapshots) return
+      if (capturedRef.current.has(questionId)) return
 
       uploadingRef.current = true
       try {
@@ -68,9 +106,17 @@ export function ProctoringMonitor({
             attemptId,
             kind: "camera",
             imageDataUrl: dataUrl,
+            questionId,
+            questionIndex,
           }),
         })
-        if (res.ok) countRef.current += 1
+        // Mark captured on success regardless of whether this effect has since
+        // been cancelled — the upload succeeded, so the question must not be
+        // re-captured on a later revisit.
+        if (res.ok) {
+          countRef.current += 1
+          capturedRef.current.add(questionId)
+        }
       } catch {
         // Silent: a failed periodic snapshot must never disrupt the candidate.
       } finally {
@@ -78,36 +124,31 @@ export function ProctoringMonitor({
       }
     }
 
-    async function start() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } },
-          audio: false,
-        })
-        if (cancelled) {
-          stream.getTracks().forEach((t) => t.stop())
-          return
-        }
-        streamRef.current = stream
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream
-          await videoRef.current.play().catch(() => {})
-        }
-        intervalId = setInterval(() => void capture(), intervalMs)
-      } catch {
-        // No camera access — monitoring simply doesn't run.
+    // Retry briefly so the first capture waits for the stream to warm up, and so
+    // a question whose turn coincides with an in-flight upload is retried once
+    // that upload finishes rather than being silently dropped.
+    const dwell = setTimeout(function attempt() {
+      if (cancelled) return
+      if (capturedRef.current.has(questionId)) return
+      const video = videoRef.current
+      if (!streamRef.current || !video || video.videoWidth === 0) {
+        retry = setTimeout(attempt, 400)
+        return
       }
-    }
-
-    void start()
+      if (uploadingRef.current) {
+        retry = setTimeout(attempt, 400)
+        return
+      }
+      void capture()
+    }, DWELL_MS)
+    let retry: ReturnType<typeof setTimeout> | null = null
 
     return () => {
       cancelled = true
-      if (intervalId) clearInterval(intervalId)
-      streamRef.current?.getTracks().forEach((t) => t.stop())
-      streamRef.current = null
+      clearTimeout(dwell)
+      if (retry) clearTimeout(retry)
     }
-  }, [token, attemptId, intervalMs, maxSnapshots])
+  }, [token, attemptId, questionId, questionIndex, maxSnapshots])
 
   return (
     <video

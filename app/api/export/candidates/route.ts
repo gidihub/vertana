@@ -11,10 +11,8 @@ function csvCell(value: unknown): string {
 
 export async function GET() {
   return handleApiAuth(async () => {
-    const [tests, candidates] = await Promise.all([
-      loadTestsForOrg(),
-      loadAllCandidates(),
-    ])
+    const tests = await loadTestsForOrg()
+    const candidates = await loadAllCandidates(tests)
     const testTitles = new Map(tests.map((t) => [t.id, t.title]))
 
     const header = [

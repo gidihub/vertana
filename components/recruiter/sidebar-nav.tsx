@@ -416,6 +416,7 @@ export function SidebarNav({
               label="Account settings"
               active={pathname === "/settings" || pathname.startsWith("/settings/")}
               onClick={onNavigate}
+              dataTour="nav-settings"
             />
             <a
               href="mailto:support@vertana.app"
@@ -440,6 +441,7 @@ export function SidebarNav({
             <Link
               href="/settings"
               onClick={onNavigate}
+              data-tour="nav-settings"
               className={cn(
                 "flex items-center gap-2 rounded-md px-2 py-2 transition-colors",
                 pathname === "/settings" || pathname.startsWith("/settings/")

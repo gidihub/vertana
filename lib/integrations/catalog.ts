@@ -17,6 +17,11 @@ export interface IntegrationProvider {
   docsUrl?: string
   /** Brand domain, used to render the provider's logo. */
   domain?: string
+  /**
+   * True when Vertana can push events to this provider today (an outbound
+   * adapter is implemented). Client-safe mirror of the server adapter registry.
+   */
+  supportsOutbound?: boolean
 }
 
 export const INTEGRATION_CATEGORIES: Record<IntegrationCategory, string> = {
@@ -205,6 +210,7 @@ export const INTEGRATIONS: IntegrationProvider[] = [
     ],
     docsUrl: "https://platform.zapier.com",
     domain: "zapier.com",
+    supportsOutbound: true,
   },
 ]
 
@@ -216,4 +222,9 @@ export interface IntegrationStatus {
   provider: string
   status: "connected" | "disabled"
   updatedAt: string
+  /** Outbound delivery health (undefined until the first delivery attempt). */
+  syncStatus?: "idle" | "ok" | "error"
+  lastSyncedAt?: string | null
+  lastError?: string | null
+  lastErrorAt?: string | null
 }

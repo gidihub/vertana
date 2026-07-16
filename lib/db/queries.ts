@@ -3,6 +3,7 @@ import {
   generateToken,
   gradeAnswer,
   questionToRow,
+  attemptStatus,
   rowToCandidate,
   rowToConsent,
   rowToQuestion,
@@ -10,11 +11,13 @@ import {
   rowToTestInvite,
   type AnswerRow,
   type AttemptRow,
+  type ConsentRow,
   type QuestionRow,
   type TestInviteRow,
   type TestRow,
 } from "@/lib/db/mappers"
 import { gradeCodingAnswer } from "@/lib/execution/grade-coding"
+import { duplicateQuestionsError } from "@/lib/questions/duplicates"
 import {
   consumeCredits,
   InsufficientCreditsError,
@@ -36,6 +39,7 @@ import {
 import { sanitizeQuestionsForPlan } from "@/lib/coding/limits"
 import type { PppTier } from "@/lib/billing/ppp"
 import { notifyTestCompletion } from "@/lib/notifications/completion-email"
+import { buildAtsEvent, dispatchAtsEvent } from "@/lib/integrations/dispatch"
 import { sendCandidateInviteEmail } from "@/lib/notifications/candidate-invite-email"
 import { sendCandidateReminderEmail } from "@/lib/notifications/reminder-email"
 import { createAdminClient } from "@/lib/supabase/admin"
@@ -104,6 +108,8 @@ export interface AttemptAnswerView {
   execution_status: string | null
   test_cases_passed: number | null
   test_cases_total: number | null
+  ai_suggested_points: number | null
+  ai_suggested_rationale: string | null
 }
 
 export async function fetchShareInvite(
@@ -162,31 +168,34 @@ export async function loadTestById(testId: string): Promise<Test | null> {
   )
 }
 
-export async function loadTestsForOrg(): Promise<Test[]> {
-  const orgId = await getOrgId()
+export async function loadTestsForOrg(orgId?: string): Promise<Test[]> {
+  const resolvedOrgId = orgId ?? (await getOrgId())
   const supabase = createAdminClient()
 
   const { data: tests, error } = await supabase
     .from("tests")
     .select("*")
-    .eq("org_id", orgId)
+    .eq("org_id", resolvedOrgId)
     .order("created_at", { ascending: false })
 
   if (error) throw new Error(error.message)
   if (!tests?.length) return []
 
   const testIds = tests.map((t) => t.id)
-  const { data: questions } = await supabase
-    .from("questions")
-    .select("*")
-    .in("test_id", testIds)
-    .order("order_index", { ascending: true })
-
-  const { data: invites } = await supabase
-    .from("test_invites")
-    .select("*")
-    .in("test_id", testIds)
-    .eq("is_share_link", true)
+  // Questions and share-link invites both depend only on testIds, so fetch them
+  // concurrently rather than serially.
+  const [{ data: questions }, { data: invites }] = await Promise.all([
+    supabase
+      .from("questions")
+      .select("*")
+      .in("test_id", testIds)
+      .order("order_index", { ascending: true }),
+    supabase
+      .from("test_invites")
+      .select("*")
+      .in("test_id", testIds)
+      .eq("is_share_link", true),
+  ])
 
   const questionsByTest = new Map<string, QuestionRow[]>()
   for (const q of (questions ?? []) as QuestionRow[]) {
@@ -222,6 +231,9 @@ export async function saveTestRecord(
       "Proctoring is available on paid plans only. Upgrade to Starter or higher to enable proctoring, or turn it off to save this test.",
     )
   }
+
+  const duplicateError = duplicateQuestionsError(test.questions)
+  if (duplicateError) throw new Error(duplicateError)
 
   if (test.status === "active" && !org.is_comp) {
     const supabase = createAdminClient()
@@ -422,6 +434,9 @@ export interface ProctoringMediaView {
   expires_at: string
   /** Short-lived signed URL for the recruiter to view the media. */
   url: string | null
+  /** Question the candidate was viewing when captured; null for identity/legacy media. */
+  question_id: string | null
+  question_index: number | null
 }
 
 /**
@@ -468,7 +483,7 @@ async function signAttemptMedia(
 ): Promise<ProctoringMediaView[]> {
   const { data: media } = await supabase
     .from("proctoring_media")
-    .select("id, kind, storage_path, created_at, expires_at")
+    .select("id, kind, storage_path, created_at, expires_at, question_id, question_index")
     .eq("attempt_id", attemptId)
     .order("created_at", { ascending: true })
 
@@ -485,17 +500,96 @@ async function signAttemptMedia(
     created_at: row.created_at as string,
     expires_at: row.expires_at as string,
     url: signed?.[i]?.signedUrl ?? null,
+    question_id: (row.question_id as string | null) ?? null,
+    question_index: (row.question_index as number | null) ?? null,
   }))
 }
 
-export async function loadAllCandidates(): Promise<Candidate[]> {
-  const tests = await loadTestsForOrg()
-  const all: Candidate[] = []
-  for (const test of tests) {
-    const candidates = await loadCandidatesForTest(test.id)
-    all.push(...candidates)
+/**
+ * Runs an `.in(column, ids)` fetch in parallel chunks and flattens the result.
+ * Keeps individual PostgREST requests small enough to avoid URL-length limits
+ * on large orgs, while still issuing the chunks concurrently.
+ */
+async function fetchByIdsInChunks<T>(
+  ids: string[],
+  fetchChunk: (chunk: string[]) => PromiseLike<{ data: T[] | null }>,
+  chunkSize = 300,
+): Promise<T[]> {
+  if (!ids.length) return []
+  const chunks: string[][] = []
+  for (let i = 0; i < ids.length; i += chunkSize) {
+    chunks.push(ids.slice(i, i + chunkSize))
   }
-  return all
+  const results = await Promise.all(chunks.map((chunk) => fetchChunk(chunk)))
+  return results.flatMap((r) => r.data ?? [])
+}
+
+export async function loadAllCandidates(tests?: Test[]): Promise<Candidate[]> {
+  const resolvedTests = tests ?? (await loadTestsForOrg())
+  const testIds = resolvedTests.map((t) => t.id)
+  if (!testIds.length) return []
+
+  const supabase = createAdminClient()
+
+  // 1) All email + share invites for the org's tests, in one batched query.
+  const inviteRows = await fetchByIdsInChunks<{ id: string; test_id: string }>(
+    testIds,
+    (chunk) =>
+      supabase.from("test_invites").select("id, test_id").in("test_id", chunk),
+  )
+  const testIdByInvite = new Map<string, string>()
+  for (const inv of inviteRows) testIdByInvite.set(inv.id, inv.test_id)
+  const inviteIds = [...testIdByInvite.keys()]
+  if (!inviteIds.length) return []
+
+  // 2) All attempts across those invites.
+  const attempts = await fetchByIdsInChunks<AttemptRow>(inviteIds, (chunk) =>
+    supabase
+      .from("attempts")
+      .select("*")
+      .in("test_invite_id", chunk)
+      .order("started_at", { ascending: false }),
+  )
+  if (!attempts.length) return []
+
+  // 3) Consents for those attempts (only the id linkage is needed here).
+  const attemptIds = attempts.map((a) => a.id)
+  const consents = await fetchByIdsInChunks<{ id: string; attempt_id: string }>(
+    attemptIds,
+    (chunk) =>
+      supabase.from("consents").select("id, attempt_id").in("attempt_id", chunk),
+  )
+  const consentByAttempt = new Map<string, string>()
+  for (const c of consents) consentByAttempt.set(c.attempt_id, c.id)
+
+  // Global recency order matches the previous per-test ordering closely enough
+  // for the dashboard, which re-sorts client-side.
+  attempts.sort((a, b) =>
+    (b.started_at ?? "").localeCompare(a.started_at ?? ""),
+  )
+
+  return attempts.map((row) =>
+    rowToCandidate(
+      row,
+      testIdByInvite.get(row.test_invite_id) ?? "",
+      consentByAttempt.get(row.id) ?? null,
+    ),
+  )
+}
+
+/**
+ * Lightweight, unsigned proctoring-media metadata for an attempt. Lets the
+ * report decide which evidence tabs to show and whether media was purged,
+ * without signing URLs or fetching biometric imagery on initial load — the
+ * evidence panel signs and loads the actual media only when expanded.
+ */
+export interface AttemptMediaSummary {
+  total: number
+  kinds: ProctoringMediaView["kind"][]
+  earliest: string | null
+  latest: string | null
+  /** Durable marker that media was captured for this attempt, even if since purged. */
+  everCaptured: boolean
 }
 
 export interface CandidateAttemptDetail {
@@ -503,7 +597,44 @@ export interface CandidateAttemptDetail {
   test: Test
   answers: AttemptAnswerView[]
   consent: ConsentRecord | null
-  media: ProctoringMediaView[]
+  mediaSummary: AttemptMediaSummary
+}
+
+async function loadAttemptMediaSummary(
+  supabase: ReturnType<typeof createAdminClient>,
+  attemptId: string,
+  everCapturedMarker: boolean,
+): Promise<AttemptMediaSummary> {
+  const { data, error } = await supabase
+    .from("proctoring_media")
+    .select("kind, created_at")
+    .eq("attempt_id", attemptId)
+    .order("created_at", { ascending: true })
+
+  if (error) {
+    throw new Error(`Failed to load proctoring media summary: ${error.message}`)
+  }
+
+  const rows = (data ?? []) as { kind: string; created_at: string }[]
+  if (rows.length === 0) {
+    return {
+      total: 0,
+      kinds: [],
+      earliest: null,
+      latest: null,
+      everCaptured: everCapturedMarker,
+    }
+  }
+  const kinds = [
+    ...new Set(rows.map((r) => r.kind)),
+  ] as ProctoringMediaView["kind"][]
+  return {
+    total: rows.length,
+    kinds,
+    earliest: rows[0].created_at,
+    latest: rows[rows.length - 1].created_at,
+    everCaptured: everCapturedMarker || rows.length > 0,
+  }
 }
 
 export interface CandidateProfileData {
@@ -576,18 +707,28 @@ export async function loadCandidateProfile(
         consentByAttempt.get(row.id) ?? null,
       )
 
-      const [answers, consent, media] = await Promise.all([
+      const [answers, consent, mediaSummary] = await Promise.all([
         candidate.status === "submitted"
           ? loadAttemptAnswers(testId, candidate.id)
           : Promise.resolve([]),
         candidate.consent_id
           ? loadConsent(candidate.consent_id)
           : Promise.resolve(null),
-        // Test ownership and attempt linkage are already validated above, so we
-        // sign media directly instead of re-running loadProctoringMedia's checks.
+        // Only metadata here (no signed URLs) — the evidence panel lazily signs
+        // and loads media when the recruiter expands it.
         test.requires_proctoring
-          ? signAttemptMedia(supabase, candidate.id)
-          : Promise.resolve([]),
+          ? loadAttemptMediaSummary(
+              supabase,
+              candidate.id,
+              row.proctoring_media_captured === true,
+            )
+          : Promise.resolve({
+              total: 0,
+              kinds: [],
+              earliest: null,
+              latest: null,
+              everCaptured: false,
+            } satisfies AttemptMediaSummary),
       ])
 
       return {
@@ -595,7 +736,7 @@ export async function loadCandidateProfile(
         test,
         answers,
         consent,
-        media,
+        mediaSummary,
       } satisfies CandidateAttemptDetail
     }),
   )
@@ -814,6 +955,16 @@ export async function startAttempt(input: {
   if (existing?.id) {
     // Resuming an existing attempt — proctoring credits were already consumed
     // when the attempt was first created, so no fresh credit check is needed.
+    // Count the resume as an integrity signal ("completed in one attempt").
+    const { data: row } = await supabase
+      .from("attempts")
+      .select("resume_count")
+      .eq("id", existing.id)
+      .maybeSingle()
+    await supabase
+      .from("attempts")
+      .update({ resume_count: (row?.resume_count ?? 0) + 1 })
+      .eq("id", existing.id)
     return { attemptId: existing.id, resumed: true }
   }
 
@@ -939,6 +1090,62 @@ export async function incrementTabSwitch(input: {
   return next
 }
 
+/**
+ * Records proctoring integrity signals for an in-progress attempt: sets the
+ * device user-agent and dual-screen status once, and accumulates full-screen
+ * exits, mouse-out events, and time-outside-window. No-ops once submitted.
+ */
+export async function recordAttemptSignals(input: {
+  token: string
+  attemptId: string
+  userAgent?: string | null
+  dualScreen?: boolean | null
+  fullscreenExit?: boolean
+  mouseOut?: boolean
+  outsideMs?: number
+}): Promise<void> {
+  const loaded = await loadTestByToken(input.token)
+  if (!loaded) throw new Error("Invalid test link")
+
+  const supabase = createAdminClient()
+  const { data: attempt } = await supabase
+    .from("attempts")
+    .select(
+      "user_agent, dual_screen, fullscreen_exits, mouse_out_count, time_outside_ms, submitted_at",
+    )
+    .eq("id", input.attemptId)
+    .eq("test_invite_id", loaded.invite.id)
+    .maybeSingle()
+
+  if (!attempt || attempt.submitted_at) return
+
+  const update: Record<string, unknown> = {}
+  if (input.userAgent && !attempt.user_agent) {
+    update.user_agent = input.userAgent.slice(0, 512)
+  }
+  if (typeof input.dualScreen === "boolean" && attempt.dual_screen === null) {
+    update.dual_screen = input.dualScreen
+  }
+  if (input.fullscreenExit) {
+    update.fullscreen_exits = (attempt.fullscreen_exits ?? 0) + 1
+  }
+  if (input.mouseOut) {
+    update.mouse_out_count = (attempt.mouse_out_count ?? 0) + 1
+  }
+  if (typeof input.outsideMs === "number" && input.outsideMs > 0) {
+    update.time_outside_ms =
+      Number(attempt.time_outside_ms ?? 0) + Math.round(input.outsideMs)
+  }
+
+  if (Object.keys(update).length === 0) return
+
+  await supabase
+    .from("attempts")
+    .update(update)
+    .eq("id", input.attemptId)
+    .eq("test_invite_id", loaded.invite.id)
+}
+
 export async function recordConsent(input: {
   token: string
   attemptId: string
@@ -1030,6 +1237,8 @@ export async function recordProctoringMedia(input: {
   bytes: Buffer
   contentType: string
   extension: string
+  questionId?: string | null
+  questionIndex?: number | null
 }): Promise<string> {
   const loaded = await loadTestByToken(input.token)
   if (!loaded) throw new Error("Invalid test link")
@@ -1099,12 +1308,22 @@ export async function recordProctoringMedia(input: {
     kind,
     storage_path: storagePath,
     expires_at: proctoringExpiresAt(new Date(), retentionDays),
+    question_id: input.questionId ?? null,
+    question_index: input.questionIndex ?? null,
   })
 
   if (rowError) {
     await supabase.storage.from("proctoring").remove([storagePath])
     throw new Error(`Failed to record proctoring media: ${rowError.message}`)
   }
+
+  // Durable marker so the report can distinguish "purged" from "never captured"
+  // after retention deletes the media row. Best-effort: the media is already
+  // stored, so a marker-write hiccup must not fail the capture.
+  await supabase
+    .from("attempts")
+    .update({ proctoring_media_captured: true })
+    .eq("id", input.attemptId)
 
   return storagePath
 }
@@ -1283,6 +1502,18 @@ export async function submitAttemptRecord(input: {
     console.error("[vertana] completion notification failed:", err)
   })
 
+  // Auto-grading is synchronous with submission here, so the attempt is both
+  // submitted and scored — emit the submission event with the final score.
+  void dispatchAtsEvent(
+    buildAtsEvent({
+      type: "attempt.submitted",
+      orgId,
+      test: loaded.test,
+      candidate,
+      percentile: certificate.topPercent ?? null,
+    }),
+  ).catch((err) => console.error("[vertana] ats dispatch failed:", err))
+
   return { candidate, certificate }
 }
 
@@ -1434,25 +1665,18 @@ export async function revokeCertificateRecord(input: {
     .eq("id", cert.id)
 }
 
-export async function loadAttemptAnswers(
-  testId: string,
-  attemptId: string,
-): Promise<AttemptAnswerView[]> {
-  const test = await loadTestById(testId)
-  if (!test) throw new Error("Test not found")
-
-  const supabase = createAdminClient()
-  const { data: answerRows } = await supabase
-    .from("answers")
-    .select("*")
-    .eq("attempt_id", attemptId)
-
-  const answerMap = new Map(
-    ((answerRows ?? []) as AnswerRow[]).map((a) => [a.question_id, a]),
-  )
-
+/**
+ * Projects a test's questions plus an attempt's raw answer rows into the graded
+ * view shape used by the results UI. Pure/in-memory — no DB access — so it can
+ * be reused for both single-attempt and batched (many-attempt) loads.
+ */
+function buildAnswerViews(
+  test: Test,
+  answerRows: AnswerRow[],
+): AttemptAnswerView[] {
+  const answerMap = new Map(answerRows.map((a) => [a.question_id, a]))
   return test.questions.map((q) => {
-    const row = questionToRow(q, testId)
+    const row = questionToRow(q, test.id)
     const answer = answerMap.get(q.id)
     return {
       question_id: q.id,
@@ -1466,8 +1690,77 @@ export async function loadAttemptAnswers(
       execution_status: answer?.execution_status ?? null,
       test_cases_passed: answer?.test_cases_passed ?? null,
       test_cases_total: answer?.test_cases_total ?? null,
+      ai_suggested_points: answer?.ai_suggested_points ?? null,
+      ai_suggested_rationale: answer?.ai_suggested_rationale ?? null,
     }
   })
+}
+
+export async function loadAttemptAnswers(
+  testId: string,
+  attemptId: string,
+): Promise<AttemptAnswerView[]> {
+  const test = await loadTestById(testId)
+  if (!test) throw new Error("Test not found")
+
+  const supabase = createAdminClient()
+  const { data: answerRows } = await supabase
+    .from("answers")
+    .select("*")
+    .eq("attempt_id", attemptId)
+
+  return buildAnswerViews(test, (answerRows ?? []) as AnswerRow[])
+}
+
+/**
+ * Batched sibling of {@link loadAttemptAnswers}: fetches answers for many
+ * attempts of a single (already-loaded) test in a handful of chunked queries,
+ * returning graded views keyed by attempt id. Replaces per-candidate loops.
+ */
+export async function loadAnswersForAttempts(
+  test: Test,
+  attemptIds: string[],
+): Promise<Record<string, AttemptAnswerView[]>> {
+  if (!attemptIds.length) return {}
+
+  const supabase = createAdminClient()
+  const rows = await fetchByIdsInChunks<AnswerRow>(attemptIds, (chunk) =>
+    supabase.from("answers").select("*").in("attempt_id", chunk),
+  )
+
+  const byAttempt = new Map<string, AnswerRow[]>()
+  for (const r of rows) {
+    const list = byAttempt.get(r.attempt_id) ?? []
+    list.push(r)
+    byAttempt.set(r.attempt_id, list)
+  }
+
+  const out: Record<string, AttemptAnswerView[]> = {}
+  for (const attemptId of attemptIds) {
+    out[attemptId] = buildAnswerViews(test, byAttempt.get(attemptId) ?? [])
+  }
+  return out
+}
+
+/**
+ * Batched consent loader for a single test: resolves many consent ids in
+ * chunked queries. Since all consents belong to the given test, the test id is
+ * applied directly instead of re-joining through attempts/invites per row.
+ */
+export async function loadConsentsForTest(
+  testId: string,
+  consentIds: string[],
+): Promise<Record<string, ConsentRecord>> {
+  if (!consentIds.length) return {}
+
+  const supabase = createAdminClient()
+  const rows = await fetchByIdsInChunks<ConsentRow>(consentIds, (chunk) =>
+    supabase.from("consents").select("*").in("id", chunk),
+  )
+
+  const out: Record<string, ConsentRecord> = {}
+  for (const row of rows) out[row.id] = rowToConsent(row, testId)
+  return out
 }
 
 export async function updateAttemptGrades(input: {
@@ -1527,11 +1820,135 @@ export async function updateAttemptGrades(input: {
     .eq("attempt_id", input.attemptId)
     .maybeSingle()
 
-  return rowToCandidate(
+  const candidate = rowToCandidate(
     updated as AttemptRow,
     test.id,
     consent?.id ?? null,
   )
+
+  // Manual grading finalizes/updates the score after review.
+  if (test.org_id) {
+    void dispatchAtsEvent(
+      buildAtsEvent({
+        type: "score.finalized",
+        orgId: test.org_id,
+        test,
+        candidate,
+      }),
+    ).catch((err) => console.error("[vertana] ats dispatch failed:", err))
+  }
+
+  return candidate
+}
+
+export interface GradeSuggestionContext {
+  prompt: string
+  type: QuestionRow["type"]
+  /** Expected/reference answer if the question has one, else null. */
+  expected: string | null
+  response: string
+  maxPoints: number
+  /** Cached suggestion, present once the model has been run for this answer. */
+  cached: { points: number; rationale: string } | null
+}
+
+/**
+ * Loads everything needed to produce (or return a cached) AI grading suggestion
+ * for a single answer, scoped to the caller's org via the test id. Throws if the
+ * test or question isn't found.
+ */
+export async function loadGradeSuggestionContext(input: {
+  testId: string
+  attemptId: string
+  questionId: string
+}): Promise<GradeSuggestionContext> {
+  const test = await loadTestById(input.testId)
+  if (!test) throw new Error("Test not found")
+  const question = test.questions.find((q) => q.id === input.questionId)
+  if (!question) throw new Error("Question not found")
+
+  const row = questionToRow(question, test.id)
+  const supabase = createAdminClient()
+
+  // Ensure the attempt actually belongs to this test (via its invite) before
+  // reading or generating a suggestion — otherwise a mismatched attemptId could
+  // pull an answer from another test.
+  const { data: attempt, error: attemptError } = await supabase
+    .from("attempts")
+    .select("id, test_invites!inner(test_id)")
+    .eq("id", input.attemptId)
+    .maybeSingle()
+  if (attemptError) throw new Error(attemptError.message)
+  const invite = attempt?.test_invites as { test_id: string } | undefined
+  if (!attempt || invite?.test_id !== input.testId) {
+    throw new Error("Attempt not found")
+  }
+
+  const { data: answer, error: answerError } = await supabase
+    .from("answers")
+    .select("response, ai_suggested_points, ai_suggested_rationale, ai_suggested_at")
+    .eq("attempt_id", input.attemptId)
+    .eq("question_id", input.questionId)
+    .maybeSingle()
+  if (answerError) throw new Error(answerError.message)
+  if (!answer) throw new Error("Answer not found")
+
+  const cached =
+    answer?.ai_suggested_at != null &&
+    answer?.ai_suggested_points != null &&
+    answer?.ai_suggested_rationale != null
+      ? {
+          points: Number(answer.ai_suggested_points),
+          rationale: String(answer.ai_suggested_rationale),
+        }
+      : null
+
+  return {
+    prompt: question.prompt,
+    type: question.type,
+    expected: question.correct_answer_exact ?? null,
+    response: String(answer.response ?? ""),
+    maxPoints: row.points,
+    cached,
+  }
+}
+
+/** Persists an AI grading suggestion so it isn't recomputed on every view. */
+export async function saveGradeSuggestion(input: {
+  attemptId: string
+  questionId: string
+  points: number
+  rationale: string
+}): Promise<void> {
+  const supabase = createAdminClient()
+  const { data: answer, error: readError } = await supabase
+    .from("answers")
+    .select("id")
+    .eq("attempt_id", input.attemptId)
+    .eq("question_id", input.questionId)
+    .maybeSingle()
+  if (readError) {
+    throw new Error(`Failed to load answer for grade suggestion: ${readError.message}`)
+  }
+  // Never fabricate/overwrite a candidate response — only cache the suggestion
+  // against an existing answer row.
+  if (!answer) {
+    throw new Error("Answer not found")
+  }
+
+  const { error } = await supabase
+    .from("answers")
+    .update({
+      ai_suggested_points: input.points,
+      ai_suggested_rationale: input.rationale,
+      ai_suggested_at: new Date().toISOString(),
+    })
+    .eq("attempt_id", input.attemptId)
+    .eq("question_id", input.questionId)
+  if (error) {
+    // Surface cache-write failures — otherwise every view silently re-runs the model.
+    throw new Error(`Failed to cache grade suggestion: ${error.message}`)
+  }
 }
 
 export async function updateAttemptDisposition(input: {
@@ -1572,11 +1989,22 @@ export async function updateAttemptDisposition(input: {
     .eq("attempt_id", input.attemptId)
     .maybeSingle()
 
-  return rowToCandidate(
+  const candidate = rowToCandidate(
     updated as AttemptRow,
     test.id,
     consent?.id ?? null,
   )
+
+  void dispatchAtsEvent(
+    buildAtsEvent({
+      type: "disposition.changed",
+      orgId,
+      test,
+      candidate,
+    }),
+  ).catch((err) => console.error("[vertana] ats dispatch failed:", err))
+
+  return candidate
 }
 
 export function evaluateCertificateLocal(
@@ -1620,9 +2048,11 @@ export function answerNeedsManualScoring(answer: {
 }
 
 /** Email invites per test (excludes the shared link row). */
-export async function countInvitesByTest(): Promise<Record<string, number>> {
-  const tests = await loadTestsForOrg()
-  const testIds = tests.map((t) => t.id)
+export async function countInvitesByTest(
+  tests?: Test[],
+): Promise<Record<string, number>> {
+  const resolvedTests = tests ?? (await loadTestsForOrg())
+  const testIds = resolvedTests.map((t) => t.id)
   if (!testIds.length) return {}
 
   const supabase = createAdminClient()
@@ -2275,21 +2705,71 @@ export async function resendCandidateInvite(inviteId: string): Promise<TestInvit
 }
 
 /** Ungraded manual answers per test (answer count, not attempt count). */
-export async function countNeedsScoringByTest(): Promise<Record<string, number>> {
-  const tests = await loadTestsForOrg()
+export async function countNeedsScoringByTest(
+  tests?: Test[],
+): Promise<Record<string, number>> {
+  const resolvedTests = tests ?? (await loadTestsForOrg())
+  const testIds = resolvedTests.map((t) => t.id)
+  if (!testIds.length) return {}
+
+  const supabase = createAdminClient()
+
+  // Question type per id — the only bit of the question needed to decide whether
+  // an answer requires manual grading. Sourced from the already-loaded tests.
+  const questionType = new Map<string, string>()
+  for (const test of resolvedTests) {
+    for (const q of test.questions) questionType.set(q.id, q.type)
+  }
+
+  const inviteRows = await fetchByIdsInChunks<{ id: string; test_id: string }>(
+    testIds,
+    (chunk) =>
+      supabase.from("test_invites").select("id, test_id").in("test_id", chunk),
+  )
+  const testIdByInvite = new Map<string, string>()
+  for (const inv of inviteRows) testIdByInvite.set(inv.id, inv.test_id)
+  const inviteIds = [...testIdByInvite.keys()]
+  if (!inviteIds.length) return {}
+
+  const attempts = await fetchByIdsInChunks<AttemptRow>(inviteIds, (chunk) =>
+    supabase.from("attempts").select("*").in("test_invite_id", chunk),
+  )
+
+  // Only submitted attempts count toward manual-scoring backlog.
+  const testIdByAttempt = new Map<string, string>()
+  for (const row of attempts) {
+    if (attemptStatus(row) !== "submitted") continue
+    const testId = testIdByInvite.get(row.test_invite_id)
+    if (testId) testIdByAttempt.set(row.id, testId)
+  }
+  const attemptIds = [...testIdByAttempt.keys()]
+  if (!attemptIds.length) return {}
+
+  const answers = await fetchByIdsInChunks<
+    Pick<
+      AnswerRow,
+      "attempt_id" | "question_id" | "response" | "is_correct" | "points_awarded"
+    >
+  >(attemptIds, (chunk) =>
+    supabase
+      .from("answers")
+      .select("attempt_id, question_id, response, is_correct, points_awarded")
+      .in("attempt_id", chunk),
+  )
+
   const counts: Record<string, number> = {}
-
-  for (const test of tests) {
-    const candidates = await loadCandidatesForTest(test.id)
-    const submitted = candidates.filter((c) => c.status === "submitted")
-    let need = 0
-
-    for (const candidate of submitted) {
-      const answers = await loadAttemptAnswers(test.id, candidate.id)
-      need += answers.filter(answerNeedsManualScoring).length
-    }
-
-    if (need > 0) counts[test.id] = need
+  for (const a of answers) {
+    const testId = testIdByAttempt.get(a.attempt_id)
+    if (!testId) continue
+    const type = questionType.get(a.question_id)
+    if (!type) continue
+    const needs = answerNeedsManualScoring({
+      type,
+      response: a.response ?? "",
+      is_correct: a.is_correct,
+      points_awarded: a.points_awarded,
+    })
+    if (needs) counts[testId] = (counts[testId] ?? 0) + 1
   }
 
   return counts

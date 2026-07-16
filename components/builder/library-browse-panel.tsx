@@ -9,7 +9,7 @@ export function LibraryBrowsePanel({
 }: {
   testId: string
   codingEnabled: boolean
-  onAdd: (question: Question) => void
+  onAdd: (questions: Question[]) => void
 }) {
   return (
     <LibraryWorkspace mode="builder" testId={testId} onAdd={onAdd} />

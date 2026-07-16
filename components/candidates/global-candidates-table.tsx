@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
 import { ChevronRight, Search } from "lucide-react"
 
@@ -42,6 +43,7 @@ interface CandidateGroup {
 }
 
 export function GlobalCandidatesTable() {
+  const router = useRouter()
   const tests = useStore((db) => db.tests)
   const candidates = useStore((db) => db.candidates)
   const loading = useStore((db) => db.loading)
@@ -178,23 +180,37 @@ export function GlobalCandidatesTable() {
                 </TableCell>
               </TableRow>
             ) : (
-              pageGroups.map((group) => (
-                <TableRow key={group.email} className="relative cursor-pointer">
+              pageGroups.map((group) => {
+                const href = `/candidates/${encodeURIComponent(group.email)}`
+                return (
+                <TableRow
+                  key={group.email}
+                  className="cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                  role="link"
+                  tabIndex={0}
+                  aria-label={`View ${group.name}`}
+                  onClick={() => router.push(href)}
+                  onKeyDown={(e) => {
+                    if (e.target !== e.currentTarget) return
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault()
+                      router.push(href)
+                    }
+                  }}
+                >
                   <TableCell>
-                    <Link
-                      href={`/candidates/${encodeURIComponent(group.email)}`}
-                      className="absolute inset-0 z-0 rounded-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-                    >
-                      <span className="sr-only">
-                        View {group.name} ({group.email})
-                      </span>
-                    </Link>
                     <div className="flex items-center gap-3">
                       <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-semibold text-accent-foreground">
                         {candidateInitials(group.email)}
                       </span>
                       <div className="flex min-w-0 flex-col">
-                        <span className="truncate font-medium">{group.name}</span>
+                        <Link
+                          href={href}
+                          onClick={(e) => e.stopPropagation()}
+                          className="truncate font-medium hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                        >
+                          {group.name}
+                        </Link>
                         <span className="truncate text-xs text-muted-foreground">
                           {group.email}
                         </span>
@@ -232,7 +248,8 @@ export function GlobalCandidatesTable() {
                     <ChevronRight className="size-4 text-muted-foreground" />
                   </TableCell>
                 </TableRow>
-              ))
+                )
+              })
             )}
           </TableBody>
         </Table>

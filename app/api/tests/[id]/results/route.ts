@@ -2,9 +2,9 @@ import { NextResponse } from "next/server"
 
 import { handleApiAuth } from "@/lib/auth/api"
 import {
-  loadAttemptAnswers,
+  loadAnswersForAttempts,
   loadCandidatesForTest,
-  loadConsent,
+  loadConsentsForTest,
   loadInviteFunnelStats,
   loadTestById,
 } from "@/lib/db/queries"
@@ -21,28 +21,23 @@ export async function GET(
     }
 
     const candidates = await loadCandidatesForTest(id)
-    const consents: Record<string, Awaited<ReturnType<typeof loadConsent>>> = {}
-    const answers: Record<string, Awaited<ReturnType<typeof loadAttemptAnswers>>> =
-      {}
+    const submittedIds = candidates
+      .filter((c) => c.status === "submitted")
+      .map((c) => c.id)
+    const consentIds = candidates
+      .map((c) => c.consent_id)
+      .filter((cid): cid is string => Boolean(cid))
 
-    for (const c of candidates) {
-      if (c.consent_id) {
-        consents[c.consent_id] = await loadConsent(c.consent_id)
-      }
-      if (c.status === "submitted") {
-        answers[c.id] = await loadAttemptAnswers(id, c.id)
-      }
-    }
-
-    // Analytics are non-essential: never let a funnel-stats failure drop the
-    // core results payload.
-    let inviteStats: Awaited<ReturnType<typeof loadInviteFunnelStats>> | undefined
-    try {
-      inviteStats = await loadInviteFunnelStats(id)
-    } catch (err) {
-      console.error("Failed to load invite funnel stats:", err)
-      inviteStats = undefined
-    }
+    // Consents, answers, and (non-essential) funnel analytics fetch in parallel;
+    // a funnel-stats failure must never drop the core results payload.
+    const [consents, answers, inviteStats] = await Promise.all([
+      loadConsentsForTest(id, consentIds),
+      loadAnswersForAttempts(test, submittedIds),
+      loadInviteFunnelStats(id).catch((err) => {
+        console.error("Failed to load invite funnel stats:", err)
+        return undefined
+      }),
+    ])
 
     return NextResponse.json({ test, candidates, consents, answers, inviteStats })
   })

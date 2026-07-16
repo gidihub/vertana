@@ -67,18 +67,20 @@ export async function middleware(request: NextRequest) {
     },
   })
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser().catch((err) => {
-    console.error("[middleware] Supabase auth getUser failed:", err)
-    return { data: { user: null }, error: err }
+  // Local JWT verification (cached signing keys) instead of a network call to
+  // the Auth server on every protected navigation/request. Only gates access
+  // here; route handlers re-verify via requireRecruiter.
+  const { data } = await supabase.auth.getClaims().catch((err) => {
+    console.error("[middleware] Supabase auth getClaims failed:", err)
+    return { data: null }
   })
+  const isAuthenticated = Boolean(data?.claims?.sub)
 
   if (!isRecruiterRoute(request.nextUrl.pathname)) {
     return response
   }
 
-  if (!user) {
+  if (!isAuthenticated) {
     if (request.nextUrl.pathname.startsWith("/api/")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }

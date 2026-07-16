@@ -42,6 +42,8 @@ export function CandidateFlow({
   const [startedAt, setStartedAt] = useState<string>("")
   const consentAcceptedRef = useRef(false)
   const cameraProctoring = isCameraProctoringEnabledClient()
+  const screenRecording = cameraProctoring && (proctoringPolicy?.screenRecording ?? false)
+  const [screenStream, setScreenStream] = useState<MediaStream | null>(null)
 
   async function persistConsent(id: string) {
     const copy = getConsentCopy()
@@ -83,7 +85,9 @@ export function CandidateFlow({
         setInitialAnswers(resume.answers)
         setInitialTabSwitches(resume.tabSwitchCount)
         setStartedAt(resume.startedAt ?? new Date().toISOString())
-        setStep("test")
+        // A live display stream can't survive a page reload, so a screen-recorded
+        // resume must re-run the proctoring setup to reacquire it before the test.
+        setStep(screenRecording ? "proctoring" : "test")
         return
       }
 
@@ -115,8 +119,11 @@ export function CandidateFlow({
     }
   }
 
-  function handleProctoringComplete() {
-    setStartedAt(new Date().toISOString())
+  function handleProctoringComplete(stream?: MediaStream | null) {
+    if (stream) setScreenStream(stream)
+    // Preserve a resumed attempt's original start time; only stamp a fresh
+    // start for a brand-new attempt (startedAt still unset).
+    setStartedAt((prev) => prev || new Date().toISOString())
     setStep("test")
   }
 
@@ -169,11 +176,12 @@ export function CandidateFlow({
           <ProctoringSetupStep
             token={token}
             attemptId={attemptId}
+            screenRecording={screenRecording}
             onComplete={handleProctoringComplete}
             onSkip={() => setStep("consent")}
           />
         )}
-        {step === "test" && attemptId && (
+        {step === "test" && attemptId && (!screenRecording || screenStream) && (
           <TestRunner
             test={test}
             token={token}
@@ -182,6 +190,7 @@ export function CandidateFlow({
             initialAnswers={initialAnswers}
             initialTabSwitches={initialTabSwitches}
             proctoringPolicy={proctoringPolicy}
+            screenStream={screenStream}
             onSubmit={handleSubmit}
           />
         )}

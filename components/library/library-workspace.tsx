@@ -22,7 +22,9 @@ import {
 import {
   countByCategoryTree,
   categoryLabel,
+  inferredDifficulty,
   sortLibraryQuestions,
+  type InferredDifficulty,
   type LibrarySort,
 } from "@/lib/question-library/display"
 import { fetchLibraryQuestions, useStore } from "@/lib/store"
@@ -46,7 +48,7 @@ export function LibraryWorkspace({
 }: {
   mode?: "page" | "builder"
   testId?: string
-  onAdd?: (question: Question) => void
+  onAdd?: (questions: Question[]) => void
 }) {
   const org = useStore((db) => db.organization)
   const tier = (org?.plan_tier ?? "free") as PlanTier
@@ -59,6 +61,9 @@ export function LibraryWorkspace({
   const [category, setCategory] = useState<string | "">("")
   const [search, setSearch] = useState("")
   const [resistance, setResistance] = useState<AiResistance | "">("")
+  const [difficultyFilter, setDifficultyFilter] = useState<InferredDifficulty | "">(
+    "",
+  )
   const [typeFilter, setTypeFilter] = useState<QuestionType | "">("")
   const [sort, setSort] = useState<LibrarySort>("recommended")
 
@@ -106,8 +111,11 @@ export function LibraryWorkspace({
   const displayed = useMemo(() => {
     let list = items
     if (typeFilter) list = list.filter((q) => q.type === typeFilter)
+    if (difficultyFilter) {
+      list = list.filter((q) => inferredDifficulty(q) === difficultyFilter)
+    }
     return sortLibraryQuestions(list, sort)
-  }, [items, sort, typeFilter])
+  }, [items, sort, typeFilter, difficultyFilter])
 
   const visibleBundles = useMemo(
     () =>
@@ -126,19 +134,8 @@ export function LibraryWorkspace({
         toast.error("Coding library questions require a Growth plan.")
         return
       }
-      for (const q of eligible) {
-        onAdd(libraryCopy(q, testId, 0))
-      }
-      const skipped = questions.length - eligible.length
-      if (skipped > 0) {
-        toast.success(
-          `Added ${eligible.length} questions (${skipped} coding skipped)`,
-        )
-      } else {
-        toast.success(
-          `Added ${eligible.length} question${eligible.length === 1 ? "" : "s"} to your test`,
-        )
-      }
+      const copies = eligible.map((q) => libraryCopy(q, testId, 0))
+      onAdd(copies)
       return
     }
     setPendingAdd(questions)
@@ -158,6 +155,7 @@ export function LibraryWorkspace({
   const activeFilters =
     (category ? 1 : 0) +
     (resistance ? 1 : 0) +
+    (difficultyFilter ? 1 : 0) +
     (typeFilter ? 1 : 0) +
     (search.trim() ? 1 : 0)
 
@@ -192,8 +190,10 @@ export function LibraryWorkspace({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="recommended">Recommended</SelectItem>
-              <SelectItem value="quickest">Quickest first</SelectItem>
-              <SelectItem value="hardest">Hardest first</SelectItem>
+              <SelectItem value="quickest">Shorter duration</SelectItem>
+              <SelectItem value="longest">Longer duration</SelectItem>
+              <SelectItem value="easier">Easier difficulty</SelectItem>
+              <SelectItem value="harder">Harder difficulty</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -220,6 +220,24 @@ export function LibraryWorkspace({
               <SelectItem value="high">High</SelectItem>
               <SelectItem value="medium">Medium</SelectItem>
               <SelectItem value="low">Low</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select
+            value={difficultyFilter || "all"}
+            onValueChange={(v) =>
+              setDifficultyFilter(
+                v === "all" ? "" : (v as InferredDifficulty),
+              )
+            }
+          >
+            <SelectTrigger className="h-7 w-auto min-w-[7rem] border-dashed text-xs">
+              <SelectValue placeholder="Difficulty" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All difficulty</SelectItem>
+              <SelectItem value="Easy">Easy</SelectItem>
+              <SelectItem value="Medium">Medium</SelectItem>
+              <SelectItem value="Hard">Hard</SelectItem>
             </SelectContent>
           </Select>
           <Select

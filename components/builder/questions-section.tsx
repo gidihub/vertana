@@ -90,14 +90,12 @@ export function QuestionsSection({
     return list
   }, [questions, filterResistance, sortMode])
 
-  function handleLibraryAdd(question: Question) {
-    onInsert([{ ...question, position: questions.length }])
+  function handleLibraryAdd(added: Question[]) {
+    onInsert(added)
   }
 
   function handleAccept(accepted: Question[]) {
-    onInsert(
-      accepted.map((q, i) => ({ ...q, position: questions.length + i })),
-    )
+    onInsert(accepted)
     setTab("manual")
   }
 

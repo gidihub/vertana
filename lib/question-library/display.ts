@@ -5,7 +5,20 @@ import {
 } from "@/lib/question-library/categories"
 import type { AiResistance, Question, QuestionSource, QuestionType } from "@/lib/types"
 
-export type LibrarySort = "recommended" | "quickest" | "hardest"
+export type LibrarySort =
+  | "recommended"
+  | "quickest"
+  | "longest"
+  | "easier"
+  | "harder"
+
+export type InferredDifficulty = "Easy" | "Medium" | "Hard"
+
+export const TYPE_SHORT_LABELS: Record<QuestionType, string> = {
+  multiple_choice: "MCQ",
+  short_answer: "Short answer",
+  coding: "Coding",
+}
 
 export const TYPE_LABELS: Record<QuestionType, string> = {
   multiple_choice: "Multiple choice",
@@ -76,7 +89,7 @@ export function librarySummary(prompt: string): string {
 
 export function inferredDifficulty(
   q: Pick<Question, "estimated_minutes" | "ai_resistance" | "type">,
-): "Easy" | "Medium" | "Hard" {
+): InferredDifficulty {
   const minutes = q.estimated_minutes ?? 5
   if (q.type === "coding" && minutes >= 12) return "Hard"
   if (q.ai_resistance === "high" || minutes >= 10) return "Hard"
@@ -141,16 +154,35 @@ export function sortLibraryQuestions(
   sort: LibrarySort,
 ): Question[] {
   const copy = [...items]
+  const difficultyRank: Record<InferredDifficulty, number> = {
+    Easy: 0,
+    Medium: 1,
+    Hard: 2,
+  }
+
   if (sort === "quickest") {
     return copy.sort(
       (a, b) => (a.estimated_minutes ?? 99) - (b.estimated_minutes ?? 99),
     )
   }
-  if (sort === "hardest") {
+  if (sort === "longest") {
+    return copy.sort(
+      (a, b) => (b.estimated_minutes ?? 0) - (a.estimated_minutes ?? 0),
+    )
+  }
+  if (sort === "easier") {
+    return copy.sort(
+      (a, b) =>
+        difficultyRank[inferredDifficulty(a)] -
+          difficultyRank[inferredDifficulty(b)] ||
+        (a.estimated_minutes ?? 99) - (b.estimated_minutes ?? 99),
+    )
+  }
+  if (sort === "harder") {
     return copy.sort((a, b) => {
-      const rank = { Easy: 0, Medium: 1, Hard: 2 }
       return (
-        rank[inferredDifficulty(b)] - rank[inferredDifficulty(a)] ||
+        difficultyRank[inferredDifficulty(b)] -
+          difficultyRank[inferredDifficulty(a)] ||
         (b.estimated_minutes ?? 0) - (a.estimated_minutes ?? 0)
       )
     })

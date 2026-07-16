@@ -1,7 +1,14 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { Check, Loader2, Plug } from "lucide-react"
+import {
+  AlertTriangle,
+  Check,
+  CircleAlert,
+  Loader2,
+  Plug,
+  Send,
+} from "lucide-react"
 import { toast } from "sonner"
 
 import { RecruiterShell } from "@/components/recruiter-shell"
@@ -57,13 +64,24 @@ function IntegrationLogo({ provider }: { provider: IntegrationProvider }) {
   )
 }
 
+function formatWhen(iso: string | null | undefined): string | null {
+  if (!iso) return null
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return null
+  return d.toLocaleString()
+}
+
 export function IntegrationsSettings() {
   const [statuses, setStatuses] = useState<Record<string, IntegrationStatus>>({})
+  const [atsEntitled, setAtsEntitled] = useState(true)
   const [loading, setLoading] = useState(true)
   const [active, setActive] = useState<IntegrationProvider | null>(null)
   const [form, setForm] = useState<Record<string, string>>({})
   const [saving, setSaving] = useState(false)
   const [disconnecting, setDisconnecting] = useState<string | null>(null)
+  const [testing, setTesting] = useState<string | null>(null)
+  // One-time signing secrets, shown until the page is reloaded.
+  const [secrets, setSecrets] = useState<Record<string, string>>({})
 
   async function load() {
     try {
@@ -75,6 +93,7 @@ export function IntegrationsSettings() {
         map[s.provider] = s
       }
       setStatuses(map)
+      setAtsEntitled(data.atsEntitled !== false)
     } catch {
       // ignore
     } finally {
@@ -111,6 +130,9 @@ export function IntegrationsSettings() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Failed to connect")
+      if (typeof data.secret === "string" && data.secret) {
+        setSecrets((prev) => ({ ...prev, [active.id]: data.secret as string }))
+      }
       toast.success(`${active.name} connected`)
       setActive(null)
       await load()
@@ -118,6 +140,26 @@ export function IntegrationsSettings() {
       toast.error((err as Error).message)
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function sendTest(provider: IntegrationProvider) {
+    setTesting(provider.id)
+    try {
+      const res = await fetch("/api/integrations/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ provider: provider.id }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Failed to send test event")
+      toast.success(`Test event queued for ${provider.name}`)
+      // Delivery is async; refresh shortly to reflect the outcome.
+      setTimeout(() => void load(), 4000)
+    } catch (err) {
+      toast.error((err as Error).message)
+    } finally {
+      setTesting(null)
     }
   }
 
@@ -155,7 +197,12 @@ export function IntegrationsSettings() {
         </CardHeader>
         <CardContent className="grid gap-3 sm:grid-cols-2">
           {providers.map((provider) => {
-            const connected = statuses[provider.id]?.status === "connected"
+            const status = statuses[provider.id]
+            const connected = status?.status === "connected"
+            const lastSynced = formatWhen(status?.lastSyncedAt)
+            const secret = secrets[provider.id]
+            const canTest =
+              connected && provider.supportsOutbound && atsEntitled
             return (
               <div
                 key={provider.id}
@@ -176,7 +223,66 @@ export function IntegrationsSettings() {
                     {provider.description}
                   </p>
                 </div>
-                <div className="mt-auto">
+
+                {connected && provider.supportsOutbound ? (
+                  <div className="rounded-md bg-paper/60 px-2.5 py-2 text-xs">
+                    {status?.syncStatus === "error" ? (
+                      <p className="flex items-start gap-1.5 text-destructive">
+                        <CircleAlert className="mt-0.5 size-3.5 shrink-0" />
+                        <span className="min-w-0">
+                          Last delivery failed
+                          {status.lastError ? `: ${status.lastError}` : ""}
+                        </span>
+                      </p>
+                    ) : status?.syncStatus === "ok" ? (
+                      <p className="flex items-center gap-1.5 text-pine">
+                        <span className="size-2 rounded-full bg-pine" />
+                        Delivering{lastSynced ? ` · last ${lastSynced}` : ""}
+                      </p>
+                    ) : (
+                      <p className="flex items-center gap-1.5 text-ink-muted">
+                        <span className="size-2 rounded-full bg-ink-muted/40" />
+                        No events delivered yet
+                      </p>
+                    )}
+                  </div>
+                ) : null}
+
+                {secret ? (
+                  <div className="rounded-md border border-sage-line/70 bg-paper/60 p-2.5 text-xs">
+                    <p className="font-medium text-ink">
+                      Signing secret (shown once)
+                    </p>
+                    <p className="mt-1 break-all font-mono text-[11px] text-ink-muted">
+                      {secret}
+                    </p>
+                    <p className="mt-1 text-[11px] text-ink-muted">
+                      Verify the <code>X-Vertana-Signature</code> header
+                      (HMAC-SHA256 of the raw body).
+                    </p>
+                  </div>
+                ) : null}
+
+                <div className="mt-auto flex flex-col gap-2">
+                  {canTest ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="w-full"
+                      disabled={testing === provider.id}
+                      onClick={() => void sendTest(provider)}
+                    >
+                      {testing === provider.id ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <>
+                          <Send className="size-3.5" />
+                          Send test event
+                        </>
+                      )}
+                    </Button>
+                  ) : null}
                   {connected ? (
                     <Button
                       type="button"
@@ -222,6 +328,17 @@ export function IntegrationsSettings() {
             </div>
           ) : (
             <>
+              {!atsEntitled &&
+              Object.values(statuses).some((s) => s.status === "connected") ? (
+                <div className="flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-ink">
+                  <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-600" />
+                  <p>
+                    Outbound sync is paused. ATS integrations require the Growth
+                    plan or higher — your connections are saved and will resume
+                    once you upgrade.
+                  </p>
+                </div>
+              ) : null}
               {renderGroup("ats")}
               {renderGroup("automation")}
             </>
@@ -285,6 +402,13 @@ export function IntegrationsSettings() {
                 <p className="text-center text-[11px] text-ink-muted">
                   Credentials are stored securely and never shown again.
                 </p>
+                {active.supportsOutbound ? (
+                  <p className="text-center text-[11px] text-ink-muted">
+                    Each event is POSTed as JSON and signed with HMAC-SHA256 in
+                    the <code>X-Vertana-Signature</code> header. We&apos;ll show
+                    your signing secret once after connecting.
+                  </p>
+                ) : null}
               </div>
             </>
           ) : null}

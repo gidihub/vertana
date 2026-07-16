@@ -1,3 +1,5 @@
+import { cache } from "react"
+
 import { createAdminClient } from "@/lib/supabase/admin"
 import { createClient } from "@/lib/supabase/server"
 import { creditsForTier, type PlanTier } from "@/lib/plans"
@@ -11,15 +13,30 @@ export class AuthError extends Error {
   }
 }
 
-export async function requireRecruiter() {
+/**
+ * Resolves the current recruiter (auth user + org membership). Wrapped in React
+ * `cache()` so the Supabase `auth.getUser()` validation and the `team_members`
+ * lookup happen at most once per request, even though many query helpers call
+ * this (directly or via `getOrgId`/`getOrganization`) dozens of times.
+ */
+export const requireRecruiter = cache(async () => {
   const supabase = await createClient()
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser()
 
-  if (error || !user) {
+  // `getClaims()` verifies the access-token JWT locally via the project's
+  // (cached) signing keys instead of a network round-trip to the Auth server
+  // like `getUser()`. It falls back to a network verification only when local
+  // verification isn't possible, so it's never slower and removes ~hundreds of
+  // ms of latency from every recruiter request. The middleware still gates
+  // access on every protected route.
+  const { data, error } = await supabase.auth.getClaims()
+  const claims = data?.claims
+  if (error || !claims?.sub) {
     throw new AuthError("Unauthorized")
+  }
+
+  const user = {
+    id: claims.sub,
+    email: (claims.email as string | undefined) ?? null,
   }
 
   const { data: member, error: memberError } = await supabase
@@ -38,7 +55,7 @@ export async function requireRecruiter() {
     orgId: member.org_id as string,
     role: member.role as string,
   }
-}
+})
 
 export async function setupOrganizationForUser(input: {
   userId: string

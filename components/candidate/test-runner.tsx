@@ -7,6 +7,7 @@ import type { Question, Test } from "@/lib/types"
 import {
   autosaveAnswer,
   reportTabSwitch,
+  reportProctoringSignal,
   type ProctoringPolicyView,
 } from "@/lib/store"
 import {
@@ -19,6 +20,7 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { CodeEditorPanel } from "@/components/candidate/code-editor-panel"
 import { ProctoringMonitor } from "@/components/candidate/proctoring-monitor"
+import { ScreenMonitor } from "@/components/candidate/screen-monitor"
 import { isCameraProctoringEnabledClient } from "@/lib/proctoring/config"
 import { codingResponseIsEmpty } from "@/lib/coding/response"
 import { Badge } from "@/components/ui/badge"
@@ -60,6 +62,7 @@ export function TestRunner({
   initialAnswers = {},
   initialTabSwitches = 0,
   proctoringPolicy,
+  screenStream = null,
   onSubmit,
 }: {
   test: Test
@@ -69,6 +72,7 @@ export function TestRunner({
   initialAnswers?: Record<string, string>
   initialTabSwitches?: number
   proctoringPolicy?: ProctoringPolicyView | null
+  screenStream?: MediaStream | null
   onSubmit: (result: {
     answers: Record<string, string>
     tabSwitchCount: number
@@ -152,6 +156,92 @@ export function TestRunner({
     }
   }, [test.requires_proctoring, token, attemptId])
 
+  // Integrity signals: device/browser, dual-screen, full-screen exits,
+  // mouse-out count, and time spent outside the assessment window. All
+  // best-effort and fire-and-forget — never blocks or disrupts the candidate.
+  useEffect(() => {
+    if (!test.requires_proctoring) return
+
+    // Device + dual-screen (recorded once, server-side dedupes).
+    const scr = screen as Screen & { isExtended?: boolean }
+    reportProctoringSignal(token, {
+      attemptId,
+      userAgent: navigator.userAgent,
+      dualScreen: typeof scr.isExtended === "boolean" ? scr.isExtended : undefined,
+    })
+
+    // Full-screen: request it now, and again on the first interaction if the
+    // initial (non-gesture) request was rejected. Count every exit.
+    const requestFs = () => {
+      document.documentElement.requestFullscreen?.().catch(() => {})
+    }
+    requestFs()
+    const onFirstGesture = () => {
+      if (!document.fullscreenElement) requestFs()
+    }
+    window.addEventListener("pointerdown", onFirstGesture, { once: true })
+
+    let wasFullscreen = !!document.fullscreenElement
+    const onFsChange = () => {
+      const isFs = !!document.fullscreenElement
+      if (wasFullscreen && !isFs) {
+        reportProctoringSignal(token, { attemptId, fullscreenExit: true })
+      }
+      wasFullscreen = isFs
+    }
+    document.addEventListener("fullscreenchange", onFsChange)
+
+    // Mouse leaving the viewport (throttled so a jittery pointer isn't spammy).
+    let lastMouseOut = 0
+    const onMouseOut = (e: MouseEvent) => {
+      if (e.relatedTarget === null) {
+        const now = Date.now()
+        if (now - lastMouseOut > 800) {
+          lastMouseOut = now
+          reportProctoringSignal(token, { attemptId, mouseOut: true })
+        }
+      }
+    }
+    document.addEventListener("mouseout", onMouseOut)
+
+    // Time spent with the window hidden/blurred.
+    let hiddenAt: number | null = null
+    const markHidden = () => {
+      if (hiddenAt === null) hiddenAt = Date.now()
+    }
+    const flushOutside = () => {
+      if (hiddenAt !== null) {
+        const delta = Date.now() - hiddenAt
+        hiddenAt = null
+        if (delta > 0) reportProctoringSignal(token, { attemptId, outsideMs: delta })
+      }
+    }
+    const onVis = () => {
+      if (document.hidden) markHidden()
+      else flushOutside()
+    }
+    const onWinBlur = () => markHidden()
+    const onWinFocus = () => flushOutside()
+    document.addEventListener("visibilitychange", onVis)
+    window.addEventListener("blur", onWinBlur)
+    window.addEventListener("focus", onWinFocus)
+    window.addEventListener("pagehide", flushOutside)
+
+    return () => {
+      flushOutside()
+      window.removeEventListener("pointerdown", onFirstGesture)
+      document.removeEventListener("fullscreenchange", onFsChange)
+      document.removeEventListener("mouseout", onMouseOut)
+      document.removeEventListener("visibilitychange", onVis)
+      window.removeEventListener("blur", onWinBlur)
+      window.removeEventListener("focus", onWinFocus)
+      window.removeEventListener("pagehide", flushOutside)
+      if (document.fullscreenElement) {
+        document.exitFullscreen?.().catch(() => {})
+      }
+    }
+  }, [test.requires_proctoring, token, attemptId])
+
   const q = questions[current]
   const answered = questions.filter((item) => {
     const a = answers[item.id]
@@ -179,11 +269,26 @@ export function TestRunner({
     <div className="flex flex-col gap-4">
       {test.requires_proctoring &&
         isCameraProctoringEnabledClient() &&
-        (proctoringPolicy?.maxSnapshots ?? 0) > 0 && (
+        (proctoringPolicy?.maxSnapshots ?? 0) > 0 &&
+        q && (
           <ProctoringMonitor
             token={token}
             attemptId={attemptId}
-            intervalMs={proctoringPolicy?.intervalMs}
+            questionId={q.id}
+            questionIndex={current}
+            maxSnapshots={proctoringPolicy?.maxSnapshots}
+          />
+        )}
+      {test.requires_proctoring &&
+        isCameraProctoringEnabledClient() &&
+        screenStream &&
+        q && (
+          <ScreenMonitor
+            token={token}
+            attemptId={attemptId}
+            questionId={q.id}
+            questionIndex={current}
+            stream={screenStream}
             maxSnapshots={proctoringPolicy?.maxSnapshots}
           />
         )}

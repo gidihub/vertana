@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { Camera, Loader2, ShieldCheck } from "lucide-react"
+import { Camera, Loader2, Monitor, ShieldCheck } from "lucide-react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
@@ -17,12 +17,15 @@ import {
 export function ProctoringSetupStep({
   token,
   attemptId,
+  screenRecording = false,
   onComplete,
   onSkip,
 }: {
   token: string
   attemptId: string
-  onComplete: () => void
+  /** When true, require the candidate to share their screen before starting. */
+  screenRecording?: boolean
+  onComplete: (screenStream?: MediaStream | null) => void
   onSkip: () => void
 }) {
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -30,6 +33,8 @@ export function ProctoringSetupStep({
   const [ready, setReady] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [stage, setStage] = useState<"identity" | "screen">("identity")
+  const [sharing, setSharing] = useState(false)
 
   const stopStream = useCallback(() => {
     streamRef.current?.getTracks().forEach((track) => track.stop())
@@ -37,6 +42,7 @@ export function ProctoringSetupStep({
   }, [])
 
   useEffect(() => {
+    if (stage !== "identity") return
     let cancelled = false
 
     async function initCamera() {
@@ -69,7 +75,7 @@ export function ProctoringSetupStep({
       cancelled = true
       stopStream()
     }
-  }, [stopStream])
+  }, [stopStream, stage])
 
   async function captureAndUpload() {
     const video = videoRef.current
@@ -112,11 +118,35 @@ export function ProctoringSetupStep({
       if (!res.ok) throw new Error(data.error || "Upload failed")
 
       stopStream()
-      onComplete()
+      if (screenRecording) {
+        setReady(false)
+        setStage("screen")
+      } else {
+        onComplete()
+      }
     } catch (err) {
       toast.error((err as Error).message)
     } finally {
       setUploading(false)
+    }
+  }
+
+  async function shareScreenAndStart() {
+    if (sharing) return
+    setSharing(true)
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: { frameRate: { ideal: 5 } },
+        audio: false,
+      })
+      // Hand the live display stream to the test runner (do NOT stop it here).
+      onComplete(stream)
+    } catch {
+      toast.error(
+        "Screen sharing is required for this assessment. Please share your entire screen to continue.",
+      )
+    } finally {
+      setSharing(false)
     }
   }
 
@@ -136,6 +166,45 @@ export function ProctoringSetupStep({
     )
   }
 
+  if (stage === "screen") {
+    return (
+      <Card>
+        <CardHeader>
+          <div className="mb-2 flex size-11 items-center justify-center rounded-full bg-accent text-accent-foreground">
+            <Monitor className="size-5" />
+          </div>
+          <CardTitle>Share your screen</CardTitle>
+          <CardDescription>
+            This assessment records your screen for integrity. Choose{" "}
+            <strong>your entire screen</strong> when prompted. Screen sharing
+            stops automatically when you submit.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col items-center gap-3 text-center text-sm text-muted-foreground">
+          <Monitor className="size-10 text-muted-foreground" />
+          <p>Periodic screenshots are captured while you take the test.</p>
+        </CardContent>
+        <CardFooter className="flex-col gap-2 sm:flex-row sm:justify-between">
+          <Button type="button" variant="ghost" onClick={onSkip}>
+            Go back
+          </Button>
+          <Button
+            type="button"
+            disabled={sharing}
+            onClick={() => void shareScreenAndStart()}
+          >
+            {sharing ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Monitor className="size-4" />
+            )}
+            Share screen and start
+          </Button>
+        </CardFooter>
+      </Card>
+    )
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -144,9 +213,9 @@ export function ProctoringSetupStep({
         </div>
         <CardTitle>Identity verification</CardTitle>
         <CardDescription>
-          Take a one-time camera snapshot before the test starts. Video is not
-          recorded during the assessment — only this still image and tab-focus
-          events.
+          Take a one-time camera snapshot before the test starts. Periodic
+          camera snapshots{screenRecording ? " and screen recording are" : " are"}{" "}
+          captured during the assessment.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-4">

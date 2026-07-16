@@ -133,6 +133,14 @@ export interface AttemptRow {
   tab_switch_count: number
   flagged: boolean
   disposition: CandidateDisposition
+  user_agent: string | null
+  fullscreen_exits: number | null
+  mouse_out_count: number | null
+  time_outside_ms: number | null
+  resume_count: number | null
+  dual_screen: boolean | null
+  /** Durable marker that proctoring media was captured (survives retention purge). */
+  proctoring_media_captured?: boolean
 }
 
 export interface AnswerRow {
@@ -146,6 +154,9 @@ export interface AnswerRow {
   execution_status: string | null
   test_cases_passed: number | null
   test_cases_total: number | null
+  ai_suggested_points: number | null
+  ai_suggested_rationale: string | null
+  ai_suggested_at: string | null
 }
 
 export interface ConsentRow {
@@ -270,6 +281,12 @@ export function rowToCandidate(
     started_at: row.started_at,
     submitted_at: row.submitted_at,
     disposition: row.disposition ?? "under_review",
+    user_agent: row.user_agent ?? null,
+    fullscreen_exits: row.fullscreen_exits ?? 0,
+    mouse_out_count: row.mouse_out_count ?? 0,
+    time_outside_ms: row.time_outside_ms ?? 0,
+    resume_count: row.resume_count ?? 0,
+    dual_screen: row.dual_screen ?? null,
   }
 }
 

@@ -12,12 +12,14 @@ import {
 import type { Test } from "@/lib/types"
 
 export async function GET() {
-  return handleApiAuth(async () => {
-    const [tests, candidates, needs_scoring, invite_counts] = await Promise.all([
-      loadTestsForOrg(),
-      loadAllCandidates(),
-      countNeedsScoringByTest(),
-      countInvitesByTest(),
+  return handleApiAuth(async (ctx) => {
+    // Resolve the org's tests once and reuse them across the three aggregate
+    // helpers, instead of each helper independently re-loading them.
+    const tests = await loadTestsForOrg(ctx.orgId)
+    const [candidates, needs_scoring, invite_counts] = await Promise.all([
+      loadAllCandidates(tests),
+      countNeedsScoringByTest(tests),
+      countInvitesByTest(tests),
     ])
     return NextResponse.json({ tests, candidates, needs_scoring, invite_counts })
   })
