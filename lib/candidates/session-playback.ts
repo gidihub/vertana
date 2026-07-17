@@ -169,9 +169,10 @@ export function resolveFrameWindow(
 /**
  * Picks the timing-log window for a specific question at time `t`: the visit
  * whose `[entered_at, left_at]` contains `t` (latest wins on overlap), falling
- * back to that question's most recent visit. Used when a frame carries a
- * persisted `question_id` so the frame binds to the right question even if its
- * capture time lands in a gap between that question's visits.
+ * back to that question's most recent visit that had already been entered at or
+ * before `t`. Used when a frame carries a persisted `question_id` so a frame in
+ * a gap between two visits binds to the prior visit. A frame captured before the
+ * question's first visit has no earlier window, so this returns null.
  */
 function resolveWindowForQuestion(
   windows: QuestionViewWindow[],
@@ -180,8 +181,8 @@ function resolveWindowForQuestion(
 ): QuestionViewWindow | null {
   let containing: QuestionViewWindow | null = null
   let containingEnter = -Infinity
-  let latest: QuestionViewWindow | null = null
-  let latestEnter = -Infinity
+  let priorLatest: QuestionViewWindow | null = null
+  let priorLatestEnter = -Infinity
   for (const w of windows) {
     if (w.question_id !== questionId) continue
     const enter = toMs(w.entered_at)
@@ -190,12 +191,14 @@ function resolveWindowForQuestion(
       containing = w
       containingEnter = enter
     }
-    if (enter >= latestEnter) {
-      latest = w
-      latestEnter = enter
+    // Fallback only considers visits already entered at/before `t` — never a
+    // future visit.
+    if (enter <= t && enter >= priorLatestEnter) {
+      priorLatest = w
+      priorLatestEnter = enter
     }
   }
-  return containing ?? latest
+  return containing ?? priorLatest
 }
 
 /**
@@ -209,9 +212,14 @@ function displayAnswerSnapshot(
 ): string | null {
   if (raw == null) return null
   if (answer?.type === "multiple_choice") {
-    const idx = Number(raw)
-    if (Number.isInteger(idx) && idx >= 0 && idx < answer.options.length) {
-      return answer.options[idx]
+    const trimmed = raw.trim()
+    // Only a non-empty, all-digits string is an option index. Empty/whitespace
+    // means "unanswered" and must not resolve to options[0] (Number("") === 0).
+    if (/^\d+$/.test(trimmed)) {
+      const idx = Number(trimmed)
+      if (idx >= 0 && idx < answer.options.length) {
+        return answer.options[idx]
+      }
     }
   }
   return raw
@@ -312,17 +320,18 @@ export type SessionPlaybackState = "player" | "purged" | "none"
 
 /**
  * Decides what the Session playback card should render:
- * - `none`     → no timing log (old/in-flight session) OR no camera frames; the
- *                card is not shown and the legacy camera slider covers evidence.
  * - `purged`   → media deleted by the retention job; show the deleted-state note.
- * - `player`   → timing log + available camera frames; show the dual-panel player.
+ * - `player`   → available camera frames; show the scrubber. A missing timing
+ *                log does NOT hide the card — frame-only (legacy/in-flight)
+ *                attempts stay scrubbable, with the question panel showing a
+ *                "no question timing" state.
+ * - `none`     → no camera frames were captured; the card is not shown.
  */
 export function sessionPlaybackState(input: {
   availability: MediaAvailability
   hasTimeline: boolean
   hasCameraFrames: boolean
 }): SessionPlaybackState {
-  if (!input.hasTimeline) return "none"
   if (input.availability === "purged") return "purged"
   if (input.availability === "available" && input.hasCameraFrames) return "player"
   return "none"

@@ -10,10 +10,21 @@ import {
   isCameraProctoringEnabledClient,
 } from "@/lib/proctoring/config"
 
-export const CONSENT_VERSION_TAB = "v3"
-export const CONSENT_VERSION_CAMERA = "v5"
-/** Legacy camera consent (single start snapshot) kept for auditing old records. */
+// Active versions. Bumped from v3/v5 when the retention wording changed to a
+// fixed 60 days, so acceptance records under the old 90-day / per-plan terms
+// stay distinguishable from consent to the new terms.
+export const CONSENT_VERSION_TAB = "v6"
+export const CONSENT_VERSION_CAMERA = "v7"
+/**
+ * Retained legacy versions (never shown to new candidates; kept only so stored
+ * records still resolve for auditing):
+ *  - v3 — tab consent with the previous 90-day retention wording
+ *  - v4 — camera consent with a single start snapshot
+ *  - v5 — camera consent with per-plan retention wording
+ */
+export const CONSENT_VERSION_TAB_LEGACY = "v3"
 export const CONSENT_VERSION_CAMERA_LEGACY = "v4"
+export const CONSENT_VERSION_CAMERA_LEGACY_V5 = "v5"
 
 export type ConsentCopy = {
   version: string
@@ -114,6 +125,34 @@ const CONSENT_COPY_CAMERA_LEGACY: ConsentCopy = {
     "I have read the above and I consent to the camera snapshot and integrity monitoring described.",
 }
 
+// Legacy tab copy (v3): previous 90-day retention wording. Retained for audit.
+const CONSENT_COPY_TAB_LEGACY_V3: ConsentCopy = {
+  ...CONSENT_COPY_TAB,
+  version: CONSENT_VERSION_TAB_LEGACY,
+  points: CONSENT_COPY_TAB.points.map((p) =>
+    p.heading === "How long we keep it"
+      ? {
+          ...p,
+          body: "Focus events are retained for 90 days with your submission, then permanently deleted.",
+        }
+      : p,
+  ),
+}
+
+// Legacy camera copy (v5): per-plan retention wording. Retained for audit.
+const CONSENT_COPY_CAMERA_LEGACY_V5: ConsentCopy = {
+  ...CONSENT_COPY_CAMERA,
+  version: CONSENT_VERSION_CAMERA_LEGACY_V5,
+  points: CONSENT_COPY_CAMERA.points.map((p) =>
+    p.heading === "How long we keep it"
+      ? {
+          ...p,
+          body: "Snapshots and focus events are retained with your submission for the retention period configured by the hiring organization's plan, then permanently deleted.",
+        }
+      : p,
+  ),
+}
+
 /** @deprecated Use getConsentCopy() */
 export const CONSENT_COPY = CONSENT_COPY_TAB
 
@@ -133,7 +172,10 @@ export function activeConsentVersion(): string {
 export function consentCopyForVersion(version: string): ConsentCopy {
   if (version === CONSENT_VERSION_TAB) return CONSENT_COPY_TAB
   if (version === CONSENT_VERSION_CAMERA) return CONSENT_COPY_CAMERA
+  if (version === CONSENT_VERSION_TAB_LEGACY) return CONSENT_COPY_TAB_LEGACY_V3
   if (version === CONSENT_VERSION_CAMERA_LEGACY) return CONSENT_COPY_CAMERA_LEGACY
+  if (version === CONSENT_VERSION_CAMERA_LEGACY_V5)
+    return CONSENT_COPY_CAMERA_LEGACY_V5
   throw new Error("Unsupported consent version")
 }
 

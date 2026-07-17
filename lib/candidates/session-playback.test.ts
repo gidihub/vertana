@@ -137,19 +137,35 @@ describe("buildPlaybackModel answer + question resolution", () => {
     assert.equal(model.frames[0].answerAtExit, "Blue")
   })
 
-  it("prefers a frame's persisted question_id over timestamp inference", () => {
+  it("keeps the persisted question_id but no answer when the frame predates every q4 window", () => {
     const windows: QuestionViewWindow[] = [
       { question_id: "q1", entered_at: at(0), left_at: at(60), answer_at_exit: { response: "a" }, answer_change_count: 0 },
       { question_id: "q4", entered_at: at(120), left_at: at(300), answer_at_exit: { response: "b" }, answer_change_count: 0 },
     ]
-    // Frame captured during q1's window by timestamp, but persisted to q4.
+    // Persisted to q4 but captured at t=30 — before q4 was ever entered (t=120),
+    // so there is no earlier q4 visit to source an exit answer from.
     const frames: PlaybackCameraFrame[] = [
       { id: "f1", created_at: at(30), url: "u1", question_id: "q4" },
     ]
 
     const model = buildPlaybackModel({ frames, windows, answers, order })
     assert.equal(model.frames[0].questionId, "q4")
-    assert.equal(model.frames[0].answerAtExit, "b")
+    assert.equal(model.frames[0].answerAtExit, null)
+  })
+
+  it("falls back to the prior q4 visit for a frame captured in a revisit gap", () => {
+    const windows: QuestionViewWindow[] = [
+      { question_id: "q4", entered_at: at(0), left_at: at(60), answer_at_exit: { response: "first" }, answer_change_count: 0 },
+      { question_id: "q4", entered_at: at(240), left_at: at(300), answer_at_exit: { response: "second" }, answer_change_count: 0 },
+    ]
+    // Captured at t=120: after the first q4 visit closed, before the revisit.
+    const frames: PlaybackCameraFrame[] = [
+      { id: "f1", created_at: at(120), url: "u1", question_id: "q4" },
+    ]
+
+    const model = buildPlaybackModel({ frames, windows, answers, order })
+    assert.equal(model.frames[0].questionId, "q4")
+    assert.equal(model.frames[0].answerAtExit, "first")
   })
 })
 
@@ -228,9 +244,16 @@ describe("sessionPlaybackState", () => {
     )
   })
 
-  it("hides the card (legacy slider fallback) when there is no timing log", () => {
+  it("still plays a frame-only attempt that has no timing log", () => {
     assert.equal(
       sessionPlaybackState({ availability: "available", hasTimeline: false, hasCameraFrames: true }),
+      "player",
+    )
+  })
+
+  it("hides the card when no camera frames were captured", () => {
+    assert.equal(
+      sessionPlaybackState({ availability: "available", hasTimeline: true, hasCameraFrames: false }),
       "none",
     )
   })

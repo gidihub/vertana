@@ -86,7 +86,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
         bullets: [
           "Direct interactions — when you register an account, create tests, invite candidates, contact support, or otherwise correspond with us.",
           "Candidate assessments — when a candidate follows an assessment link and provides an email address, answers, and (where enabled and consented) proctoring media. Candidates access assessments by token link and are not required to create an account.",
-          "Camera and screen captures from proctored tests — where camera proctoring is enabled and the candidate consents, periodic webcam snapshots and, on eligible plans, screen recordings are captured for integrity review. This media is automatically deleted after the retention window configured by the hiring organization (90 days by default).",
+          "Camera and screen captures from proctored tests — where camera proctoring is enabled and the candidate consents, periodic webcam snapshots and, on eligible plans, screen recordings are captured for integrity review. This media is automatically deleted 60 days after the assessment.",
           "Automated technologies — as you use the Site and Services we collect technical and usage data using cookies, server logs, and email tracking pixels. See the cookies section below.",
           "Third-party sign-in — where you choose to sign in with Google, we receive basic profile information from that provider to authenticate you.",
         ],
@@ -176,7 +176,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
         heading: "Data retention",
         paragraphs: [
           "We retain personal data for as long as reasonably necessary to fulfil the purposes for which it was collected, including to satisfy legal, tax, accounting, or reporting requirements, and to resolve disputes or enforce our agreements.",
-          "Proctoring media is retained for the window configured by the hiring organization (90 days by default) and is then automatically deleted. Assessment data is retained while the associated account remains active or as needed to provide reporting; hiring teams can delete tests and results, and candidates can request removal of their submissions and self-remove any public certificate. We may keep anonymized information indefinitely for research and statistical purposes.",
+          "Proctoring media is retained for a fixed 60 days after the assessment and is then automatically deleted. Assessment data is retained while the associated account remains active or as needed to provide reporting; hiring teams can delete tests and results, and candidates can request removal of their submissions and self-remove any public certificate. We may keep anonymized information indefinitely for research and statistical purposes.",
         ],
       },
       {
