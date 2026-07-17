@@ -41,10 +41,13 @@ export function funnelForTest(
 export function orgFunnel(
   candidates: Candidate[],
   inviteCounts: Record<string, number>,
+  emailStats?: { opened: number; clicked: number },
 ): TestFunnelStats {
   const invited = Object.values(inviteCounts).reduce((sum, n) => sum + n, 0)
   return {
     invited,
+    opened: emailStats?.opened,
+    clicked: emailStats?.clicked,
     started: candidates.filter((c) => c.started_at != null).length,
     completed: candidates.filter((c) => c.status === "submitted").length,
     ...dispositionCounts(candidates),

@@ -2146,6 +2146,56 @@ export async function loadInviteFunnelStats(
   }
 }
 
+/**
+ * Org-wide email invite funnel (sent → opened → clicked), aggregated across all
+ * of the org's tests. Mirrors {@link loadInviteFunnelStats} but for the whole
+ * org so the Analytics page funnel can show Opened/Clicked stages.
+ */
+export async function countOrgInviteFunnel(
+  tests?: Test[],
+): Promise<{ invited: number; opened: number; clicked: number }> {
+  const resolvedTests = tests ?? (await loadTestsForOrg())
+  const testIds = resolvedTests.map((t) => t.id)
+  if (!testIds.length) return { invited: 0, opened: 0, clicked: 0 }
+
+  const supabase = createAdminClient()
+
+  // Aggregate counts in the database (head-only, no rows transferred) instead of
+  // pulling every invite row and filtering in JS. testIds are chunked so the
+  // `in(...)` filter stays within URL limits for large orgs; counts are summed.
+  const CHUNK = 300
+  let invited = 0
+  let opened = 0
+  let clicked = 0
+
+  for (let i = 0; i < testIds.length; i += CHUNK) {
+    const chunk = testIds.slice(i, i + CHUNK)
+    const sentFilter = () =>
+      supabase
+        .from("test_invites")
+        .select("*", { count: "exact", head: true })
+        .in("test_id", chunk)
+        .eq("is_share_link", false)
+        .not("email_sent_at", "is", null)
+
+    const [invitedRes, openedRes, clickedRes] = await Promise.all([
+      sentFilter(),
+      sentFilter().not("email_opened_at", "is", null),
+      sentFilter().not("email_clicked_at", "is", null),
+    ])
+
+    if (invitedRes.error) throw new Error(invitedRes.error.message)
+    if (openedRes.error) throw new Error(openedRes.error.message)
+    if (clickedRes.error) throw new Error(clickedRes.error.message)
+
+    invited += invitedRes.count ?? 0
+    opened += openedRes.count ?? 0
+    clicked += clickedRes.count ?? 0
+  }
+
+  return { invited, opened, clicked }
+}
+
 async function deliverCandidateInviteEmail(input: {
   inviteId: string
   to: string

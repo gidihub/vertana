@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo } from "react"
+import { BarChart3 } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
 import { scoreDistribution } from "@/lib/dashboard/stats"
@@ -40,7 +41,10 @@ export function ScoreDistributionChart({
   return (
     <Card>
       <CardHeader className={compact ? "pb-2" : undefined}>
-        <CardTitle className="text-base">Score distribution</CardTitle>
+        <CardTitle className="flex items-center gap-2 text-base">
+          <BarChart3 className="size-4 text-muted-foreground" aria-hidden />
+          Score distribution
+        </CardTitle>
         <CardDescription>
           Bucketed scores for completed candidates (0–100%).
         </CardDescription>

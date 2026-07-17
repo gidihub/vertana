@@ -5,6 +5,7 @@ import { auditRecruiterAction } from "@/lib/audit/events"
 import {
   countInvitesByTest,
   countNeedsScoringByTest,
+  countOrgInviteFunnel,
   loadAllCandidates,
   loadTestsForOrg,
   saveTestRecord,
@@ -16,12 +17,20 @@ export async function GET() {
     // Resolve the org's tests once and reuse them across the three aggregate
     // helpers, instead of each helper independently re-loading them.
     const tests = await loadTestsForOrg(ctx.orgId)
-    const [candidates, needs_scoring, invite_counts] = await Promise.all([
-      loadAllCandidates(tests),
-      countNeedsScoringByTest(tests),
-      countInvitesByTest(tests),
-    ])
-    return NextResponse.json({ tests, candidates, needs_scoring, invite_counts })
+    const [candidates, needs_scoring, invite_counts, email_funnel] =
+      await Promise.all([
+        loadAllCandidates(tests),
+        countNeedsScoringByTest(tests),
+        countInvitesByTest(tests),
+        countOrgInviteFunnel(tests),
+      ])
+    return NextResponse.json({
+      tests,
+      candidates,
+      needs_scoring,
+      invite_counts,
+      email_funnel,
+    })
   })
 }
 

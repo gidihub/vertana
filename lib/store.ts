@@ -23,6 +23,7 @@ interface DB {
   candidates: Candidate[]
   inviteCounts: Record<string, number>
   needsScoring: Record<string, number>
+  emailFunnel: { invited: number; opened: number; clicked: number }
   consents: Record<string, ConsentRecord>
   organization: Organization | null
   loading: boolean
@@ -34,6 +35,7 @@ const emptyDb: DB = {
   candidates: [],
   inviteCounts: {},
   needsScoring: {},
+  emailFunnel: { invited: 0, opened: 0, clicked: 0 },
   consents: {},
   organization: null,
   loading: true,
@@ -92,6 +94,7 @@ export async function refreshStore(): Promise<void> {
           candidates: Candidate[]
           needs_scoring: Record<string, number>
           invite_counts: Record<string, number>
+          email_funnel?: { invited: number; opened: number; clicked: number }
         }>("/api/tests"),
         api<{ organization: Organization }>("/api/org"),
       ])
@@ -101,6 +104,11 @@ export async function refreshStore(): Promise<void> {
         candidates: dashboard.candidates,
         inviteCounts: dashboard.invite_counts ?? {},
         needsScoring: dashboard.needs_scoring ?? {},
+        emailFunnel: dashboard.email_funnel ?? {
+          invited: 0,
+          opened: 0,
+          clicked: 0,
+        },
         consents: {},
         organization: orgRes.organization,
         loading: false,

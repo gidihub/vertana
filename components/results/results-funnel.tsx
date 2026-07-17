@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo } from "react"
+import { Funnel } from "lucide-react"
 
 import type { TestFunnelStats } from "@/lib/dashboard/stats"
 import {
@@ -91,7 +92,10 @@ export function ResultsFunnel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Candidate funnel</CardTitle>
+        <CardTitle className="flex items-center gap-2 text-base">
+          <Funnel className="size-4 text-muted-foreground" aria-hidden />
+          Candidate funnel
+        </CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
