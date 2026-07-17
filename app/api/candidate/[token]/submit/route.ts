@@ -1,12 +1,7 @@
 import { NextResponse } from "next/server"
 
 import { submitAttemptRecord } from "@/lib/db/queries"
-
-function clientIp(req: Request): string | null {
-  const forwarded = req.headers.get("x-forwarded-for")
-  if (forwarded) return forwarded.split(",")[0]?.trim() ?? null
-  return req.headers.get("x-real-ip")
-}
+import { clientIpFromHeaders } from "@/lib/http/origin"
 
 export async function POST(
   req: Request,
@@ -27,7 +22,7 @@ export async function POST(
       answers: body.answers,
       tabSwitchCount: body.tabSwitchCount,
       consent: body.consent,
-      ipAddress: clientIp(req),
+      ipAddress: clientIpFromHeaders(req.headers),
     })
 
     return NextResponse.json(result)

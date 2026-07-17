@@ -95,7 +95,13 @@ end;
 $$;
 
 -- Security-definer function: only reachable through the token-validated route
--- (via the service-role client), never by direct client callers.
+-- (via the service-role client), never by direct client callers. Revoke the
+-- default PUBLIC grant, then grant EXECUTE back to service_role only so
+-- createAdminClient().rpc(...) can invoke it while anon/authenticated cannot.
 revoke execute on function public.record_attempt_question_view(
   uuid, uuid, uuid, timestamptz, timestamptz, jsonb, int
 ) from public;
+
+grant execute on function public.record_attempt_question_view(
+  uuid, uuid, uuid, timestamptz, timestamptz, jsonb, int
+) to service_role;

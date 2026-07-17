@@ -3,6 +3,7 @@ import {
   type AnswerBucket,
   type MediaAvailability,
 } from "@/lib/candidates/report"
+import type { QuestionType } from "@/lib/types"
 
 /**
  * "Session playback" pairs proctoring camera frames with the question the
@@ -24,6 +25,12 @@ export interface PlaybackCameraFrame {
   created_at: string
   /** Short-lived signed URL, or null when the object could not be signed. */
   url: string | null
+  /**
+   * Persisted `proctoring_media.question_id` — the question on screen when the
+   * frame was captured. Null for identity/legacy rows; those fall back to
+   * timestamp inference against the timing log.
+   */
+  question_id: string | null
 }
 
 /** One `attempt_question_views` row: a single visit to a question. */
@@ -41,6 +48,10 @@ export interface QuestionViewWindow {
 export interface PlaybackAnswer {
   question_id: string
   prompt: string
+  /** Question type, so multiple-choice answers can be shown as labels not indexes. */
+  type: QuestionType
+  /** Option labels for multiple-choice questions (empty for other types). */
+  options: string[]
   response: string
   is_correct: boolean | null
   points_awarded: number | null
@@ -84,6 +95,29 @@ export interface SessionPlaybackSegment {
 export interface SessionPlaybackModel {
   frames: SessionPlaybackFrame[]
   segments: SessionPlaybackSegment[]
+  /**
+   * Whether a per-question timing log existed for this attempt. False for
+   * legacy/in-flight sessions that have camera frames but no timeline — the
+   * player still scrubs the frames, but the question panel shows a
+   * "no question timing" state instead of per-question detail.
+   */
+  hasTimeline: boolean
+}
+
+export type PlaybackQuestionPanelState = "question" | "between" | "no_timing"
+
+/**
+ * What the playback question panel should show for the current frame:
+ * - `no_timing` → attempt has no per-question timing log at all.
+ * - `between`   → a timing log exists but this frame falls between questions.
+ * - `question`  → this frame maps to a question the candidate was viewing.
+ */
+export function playbackQuestionPanelState(input: {
+  hasTimeline: boolean
+  hasActiveSegment: boolean
+}): PlaybackQuestionPanelState {
+  if (!input.hasTimeline) return "no_timing"
+  return input.hasActiveSegment ? "question" : "between"
 }
 
 // ---------------------------------------------------------------------------
@@ -132,6 +166,57 @@ export function resolveFrameWindow(
   return chosen
 }
 
+/**
+ * Picks the timing-log window for a specific question at time `t`: the visit
+ * whose `[entered_at, left_at]` contains `t` (latest wins on overlap), falling
+ * back to that question's most recent visit. Used when a frame carries a
+ * persisted `question_id` so the frame binds to the right question even if its
+ * capture time lands in a gap between that question's visits.
+ */
+function resolveWindowForQuestion(
+  windows: QuestionViewWindow[],
+  questionId: string,
+  t: number,
+): QuestionViewWindow | null {
+  let containing: QuestionViewWindow | null = null
+  let containingEnter = -Infinity
+  let latest: QuestionViewWindow | null = null
+  let latestEnter = -Infinity
+  for (const w of windows) {
+    if (w.question_id !== questionId) continue
+    const enter = toMs(w.entered_at)
+    const leave = w.left_at == null ? Infinity : toMs(w.left_at)
+    if (t >= enter && t <= leave && enter >= containingEnter) {
+      containing = w
+      containingEnter = enter
+    }
+    if (enter >= latestEnter) {
+      latest = w
+      latestEnter = enter
+    }
+  }
+  return containing ?? latest
+}
+
+/**
+ * Presents the exit-answer snapshot: for multiple-choice questions the stored
+ * value is an option index, so resolve it to the option label. Non-MCQ answers
+ * (and unresolvable indexes) render raw; a null snapshot stays null.
+ */
+function displayAnswerSnapshot(
+  raw: string | null,
+  answer: PlaybackAnswer | undefined,
+): string | null {
+  if (raw == null) return null
+  if (answer?.type === "multiple_choice") {
+    const idx = Number(raw)
+    if (Number.isInteger(idx) && idx >= 0 && idx < answer.options.length) {
+      return answer.options[idx]
+    }
+  }
+  return raw
+}
+
 function windowDurationMs(w: QuestionViewWindow): number {
   if (w.left_at == null) return 0
   const ms = toMs(w.left_at) - toMs(w.entered_at)
@@ -152,22 +237,37 @@ export function buildPlaybackModel(input: {
 }): SessionPlaybackModel {
   const { frames: rawFrames, windows, answers, order } = input
 
+  const answerByQuestion = new Map(answers.map((a) => [a.question_id, a]))
+  const indexByQuestion = new Map(order.map((o) => [o.question_id, o.index]))
+
   const frames: SessionPlaybackFrame[] = rawFrames
     .slice()
     .sort((a, b) => a.created_at.localeCompare(b.created_at))
     .map((f) => {
-      const w = resolveFrameWindow(windows, toMs(f.created_at))
+      const t = toMs(f.created_at)
+      // Persisted question_id is authoritative; timestamp inference is the
+      // legacy fallback for older frames that lack it.
+      let questionId: string | null
+      let w: QuestionViewWindow | null
+      if (f.question_id) {
+        questionId = f.question_id
+        w = resolveWindowForQuestion(windows, f.question_id, t)
+      } else {
+        w = resolveFrameWindow(windows, t)
+        questionId = w?.question_id ?? null
+      }
+      const rawAnswer = w ? readAnswerSnapshot(w.answer_at_exit) : null
       return {
         id: f.id,
         created_at: f.created_at,
         url: f.url,
-        questionId: w?.question_id ?? null,
-        answerAtExit: w ? readAnswerSnapshot(w.answer_at_exit) : null,
+        questionId,
+        answerAtExit: displayAnswerSnapshot(
+          rawAnswer,
+          questionId ? answerByQuestion.get(questionId) : undefined,
+        ),
       }
     })
-
-  const answerByQuestion = new Map(answers.map((a) => [a.question_id, a]))
-  const indexByQuestion = new Map(order.map((o) => [o.question_id, o.index]))
 
   // Accumulate per-question time + edits across all visits.
   const totals = new Map<string, { totalMs: number; changes: number }>()
@@ -201,7 +301,7 @@ export function buildPlaybackModel(input: {
     })
     .sort((a, b) => a.questionIndex - b.questionIndex)
 
-  return { frames, segments }
+  return { frames, segments, hasTimeline: windows.length > 0 }
 }
 
 // ---------------------------------------------------------------------------

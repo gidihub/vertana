@@ -45,7 +45,7 @@ const CONSENT_COPY_TAB: ConsentCopy = {
     },
     {
       heading: "How long we keep it",
-      body: "Focus events are retained for 90 days with your submission, then permanently deleted.",
+      body: "Focus events are retained for 60 days with your submission, then permanently deleted.",
     },
   ],
   acceptLabel: "I consent and want to continue",
@@ -74,7 +74,7 @@ const CONSENT_COPY_CAMERA: ConsentCopy = {
     },
     {
       heading: "How long we keep it",
-      body: "Snapshots and focus events are retained with your submission for the retention period configured by the hiring organization's plan, then permanently deleted.",
+      body: "Snapshots and focus events are retained for 60 days with your submission, then permanently deleted.",
     },
   ],
   acceptLabel: "I consent and want to continue",

@@ -1,6 +1,9 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
-const RETENTION_DAYS = 90
+// Keep in sync with PROCTORING_RETENTION_DAYS in lib/proctoring/config.ts. This
+// is reported in the response for observability; the actual deletion is driven
+// by each row's `expires_at` (set to capture time + retention at upload).
+const RETENTION_DAYS = 60
 const PURGE_BATCH_SIZE = 500
 
 // A storage error only justifies deleting the DB row when the object is
@@ -32,8 +35,6 @@ Deno.serve(async () => {
   }
 
   const admin = createClient(url, key)
-  const cutoff = new Date()
-  cutoff.setDate(cutoff.getDate() - RETENTION_DAYS)
 
   const { data: expired, error } = await admin
     .from("proctoring_media")

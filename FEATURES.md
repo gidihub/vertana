@@ -95,7 +95,7 @@ are configured but not yet fully wired end-to-end are called out in
 - **Tab / focus monitoring** (when proctoring is on): visibility and blur detection with a warning on leaving the tab.
 - **Tab-switch counter** persisted per attempt; attempts are flagged and surfaced with an integrity badge once they exceed the org threshold.
 - **Camera proctoring** (feature-flagged): identity snapshot at start plus periodic snapshots, with cadence and caps that scale by plan.
-- Proctoring media stored in Supabase storage with per-tier **retention windows**.
+- Proctoring media stored in Supabase storage with a fixed **60-day retention window**, enforced by per-capture expiry and a purge job.
 - **Recruiter review**: per-attempt media gallery (signed URLs) on both the results dashboard and candidate profile.
 - Proctoring is a paid-plan capability.
 

@@ -232,7 +232,13 @@ export function buildActivityTrend(
     return { points: [], bucket: "day" }
   }
 
-  const spanDays = Math.max(1, Math.ceil((end - start) / DAY_MS))
+  // Count calendar days between the day-starts (rounding absorbs the ±1h DST
+  // skew) rather than raw elapsed ms, so the day/week threshold isn't thrown off
+  // by a DST transition inside the range.
+  const spanDays = Math.max(
+    1,
+    Math.round((startOfDay(end) - startOfDay(start)) / DAY_MS),
+  )
   const bucket: "day" | "week" = spanDays > 45 ? "week" : "day"
   const stepDays = bucket === "week" ? 7 : 1
 

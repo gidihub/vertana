@@ -529,7 +529,7 @@ export async function loadSessionPlayback(
 ): Promise<SessionPlaybackModel> {
   // Enforces org ownership of the test; empty model otherwise.
   const test = await loadTestById(testId)
-  if (!test) return { frames: [], segments: [] }
+  if (!test) return { frames: [], segments: [], hasTimeline: false }
 
   const supabase = createAdminClient()
 
@@ -539,15 +539,18 @@ export async function loadSessionPlayback(
     .select("id")
     .eq("test_id", testId)
   const inviteIds = (invites ?? []).map((i) => i.id)
-  if (!inviteIds.length) return { frames: [], segments: [] }
+  if (!inviteIds.length) return { frames: [], segments: [], hasTimeline: false }
 
+  // Only submitted attempts get playback; an active/unsubmitted attempt has an
+  // incomplete (in-flight) timing log, so fall back to the empty model.
   const { data: attempt } = await supabase
     .from("attempts")
-    .select("id")
+    .select("id, submitted_at")
     .eq("id", attemptId)
     .in("test_invite_id", inviteIds)
     .maybeSingle()
-  if (!attempt) return { frames: [], segments: [] }
+  if (!attempt || !attempt.submitted_at)
+    return { frames: [], segments: [], hasTimeline: false }
 
   const [media, viewRows, answers] = await Promise.all([
     signAttemptMedia(supabase, attemptId),
@@ -563,9 +566,18 @@ export async function loadSessionPlayback(
 
   const cameraFrames = media
     .filter((m) => m.kind === "camera")
-    .map((m) => ({ id: m.id, created_at: m.created_at, url: m.url }))
+    .map((m) => ({
+      id: m.id,
+      created_at: m.created_at,
+      url: m.url,
+      question_id: m.question_id,
+    }))
 
   const windows = (viewRows.data ?? []) as QuestionViewWindow[]
+
+  // Option labels per question, so multiple-choice exit answers resolve from a
+  // stored index to the option text in the playback model.
+  const optionsByQuestion = new Map(test.questions.map((q) => [q.id, q.options]))
 
   // Preserve the candidate's actual (possibly randomized) question sequence
   // rather than the test's canonical position order. Randomization happens
@@ -586,6 +598,8 @@ export async function loadSessionPlayback(
     answers: answers.map((a) => ({
       question_id: a.question_id,
       prompt: a.prompt,
+      type: a.type,
+      options: optionsByQuestion.get(a.question_id) ?? [],
       response: a.response,
       is_correct: a.is_correct,
       points_awarded: a.points_awarded,

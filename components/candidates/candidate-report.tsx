@@ -184,8 +184,7 @@ function AttemptReportCard({
   retentionDays: number
   tabSwitchThreshold: number
 }) {
-  const { candidate, test, answers, consent, mediaSummary, hasQuestionTimeline } =
-    attempt
+  const { candidate, test, answers, consent, mediaSummary } = attempt
   const passingScore = test.passing_score ?? 70
   const pass = evaluatePass(candidate.score, passingScore)
   const expectedMinutes = effectiveTimeLimitMinutes(test)
@@ -412,12 +411,13 @@ function AttemptReportCard({
           />
         )}
 
-        {/* Session playback — camera frames paired with the question on screen.
-            Only shown when a per-question timing log exists; older attempts fall
-            back to the plain camera slider in the panel above. */}
+        {/* Session playback — the single session scrubber: each camera frame
+            paired with the question on screen. Renders whenever camera frames
+            exist (or were captured and later purged). Attempts with frames but
+            no per-question timing log still scrub here, with the question panel
+            showing a "no question timing" state. */}
         {test.requires_proctoring &&
-          hasQuestionTimeline &&
-          mediaSummary.kinds.includes("camera") && (
+          (mediaSummary.kinds.includes("camera") || availability === "purged") && (
           <SessionPlayback
             testId={test.id}
             attemptId={candidate.id}

@@ -1,3 +1,5 @@
+import { clientIpFromHeaders } from "@/lib/http/origin"
+
 type Bucket = { count: number; resetAt: number }
 
 const stores = new Map<string, Map<string, Bucket>>()
@@ -71,9 +73,7 @@ export function checkRateLimit(input: {
 }
 
 export function clientIpFromRequest(req: Request): string {
-  const forwarded = req.headers.get("x-forwarded-for")
-  if (forwarded) return forwarded.split(",")[0]?.trim() ?? "unknown"
-  return req.headers.get("x-real-ip") ?? "unknown"
+  return clientIpFromHeaders(req.headers) ?? "unknown"
 }
 
 /** @internal Test helpers — not for production use. */

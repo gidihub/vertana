@@ -16,6 +16,7 @@ import { loadSessionPlayback, type SessionPlaybackModel } from "@/lib/store"
 import { ANSWER_BUCKET_LABELS, type AnswerBucket } from "@/lib/candidates/report"
 import {
   formatDurationMs,
+  playbackQuestionPanelState,
   playbackSummaryCaption,
   segmentTone,
 } from "@/lib/candidates/session-playback"
@@ -151,6 +152,10 @@ function PlaybackPlayer({ model }: { model: SessionPlaybackModel }) {
   const activeSegment = frame.questionId
     ? (segByQuestion.get(frame.questionId) ?? null)
     : null
+  const panelState = playbackQuestionPanelState({
+    hasTimeline: model.hasTimeline,
+    hasActiveSegment: activeSegment !== null,
+  })
 
   return (
     <div className="flex flex-col gap-4">
@@ -185,7 +190,7 @@ function PlaybackPlayer({ model }: { model: SessionPlaybackModel }) {
             Question on screen
           </span>
           <div className="flex min-h-[240px] flex-1 flex-col gap-3 rounded-lg border border-border bg-card p-3">
-            {activeSegment ? (
+            {panelState === "question" && activeSegment ? (
               <>
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-xs font-medium text-muted-foreground">
@@ -226,6 +231,10 @@ function PlaybackPlayer({ model }: { model: SessionPlaybackModel }) {
                   </span>
                 </div>
               </>
+            ) : panelState === "no_timing" ? (
+              <div className="flex flex-1 items-center justify-center px-4 py-8 text-center text-sm text-muted-foreground">
+                No question timing recorded for this session.
+              </div>
             ) : (
               <div className="flex flex-1 items-center justify-center py-8 text-center text-sm text-muted-foreground">
                 Navigating between questions

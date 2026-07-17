@@ -10,13 +10,14 @@ export function isCameraProctoringEnabledClient(): boolean {
   return process.env.NEXT_PUBLIC_PROCTORING_CAMERA_ENABLED === "true"
 }
 
-export const PROCTORING_RETENTION_DAYS = 90
+export const PROCTORING_RETENTION_DAYS = 60
 
 /**
- * Per-plan proctoring policy. Higher tiers capture more densely and retain
- * longer — so infra cost (snapshot volume × retention) scales with what the
- * customer pays. `intervalMs`/`maxSnapshots` drive candidate-side capture;
- * `defaultRetentionDays`/`maxRetentionDays` bound how long media is kept.
+ * Per-plan proctoring policy. Higher tiers capture more densely — so infra cost
+ * scales with what the customer pays. `intervalMs`/`maxSnapshots` drive
+ * candidate-side capture. Retention is a single fixed window across all plans
+ * (see PROCTORING_RETENTION_DAYS) so the consent copy, purge job, and reviewer
+ * UI can state one honest number.
  */
 export interface ProctoringPolicy {
   intervalMs: number
@@ -32,29 +33,29 @@ const PROCTORING_POLICIES: Record<PlanTier, ProctoringPolicy> = {
   free: {
     intervalMs: 120_000,
     maxSnapshots: 0,
-    defaultRetentionDays: 90,
-    maxRetentionDays: 90,
+    defaultRetentionDays: PROCTORING_RETENTION_DAYS,
+    maxRetentionDays: PROCTORING_RETENTION_DAYS,
     screenRecording: false,
   },
   starter: {
     intervalMs: 90_000,
     maxSnapshots: 20,
-    defaultRetentionDays: 90,
-    maxRetentionDays: 90,
+    defaultRetentionDays: PROCTORING_RETENTION_DAYS,
+    maxRetentionDays: PROCTORING_RETENTION_DAYS,
     screenRecording: false,
   },
   growth: {
     intervalMs: 60_000,
     maxSnapshots: 30,
-    defaultRetentionDays: 180,
-    maxRetentionDays: 365,
+    defaultRetentionDays: PROCTORING_RETENTION_DAYS,
+    maxRetentionDays: PROCTORING_RETENTION_DAYS,
     screenRecording: true,
   },
   custom: {
     intervalMs: 45_000,
     maxSnapshots: 40,
-    defaultRetentionDays: 365,
-    maxRetentionDays: 3650,
+    defaultRetentionDays: PROCTORING_RETENTION_DAYS,
+    maxRetentionDays: PROCTORING_RETENTION_DAYS,
     screenRecording: true,
   },
 }

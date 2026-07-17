@@ -5,6 +5,7 @@ import {
   buildPlaybackModel,
   createQuestionViewTracker,
   formatDurationMs,
+  playbackQuestionPanelState,
   playbackSummaryCaption,
   resolveFrameWindow,
   sessionPlaybackState,
@@ -26,8 +27,8 @@ const order: PlaybackQuestionOrder[] = [
 ]
 
 const answers: PlaybackAnswer[] = [
-  { question_id: "q1", prompt: "Q1", response: "a", is_correct: true, points_awarded: 1, max_points: 1 },
-  { question_id: "q4", prompt: "Q4", response: "b", is_correct: false, points_awarded: 0, max_points: 1 },
+  { question_id: "q1", prompt: "Q1", type: "short_answer", options: [], response: "a", is_correct: true, points_awarded: 1, max_points: 1 },
+  { question_id: "q4", prompt: "Q4", type: "short_answer", options: [], response: "b", is_correct: false, points_awarded: 0, max_points: 1 },
 ]
 
 describe("resolveFrameWindow", () => {
@@ -63,9 +64,9 @@ describe("buildPlaybackModel", () => {
       { question_id: "q4", entered_at: at(120), left_at: at(300), answer_at_exit: { response: "b" }, answer_change_count: 3 },
     ]
     const frames: PlaybackCameraFrame[] = [
-      { id: "f1", created_at: at(30), url: "u1" },
-      { id: "f2", created_at: at(90), url: "u2" }, // between q1 and q4
-      { id: "f3", created_at: at(180), url: "u3" },
+      { id: "f1", created_at: at(30), url: "u1", question_id: null },
+      { id: "f2", created_at: at(90), url: "u2", question_id: null }, // between q1 and q4
+      { id: "f3", created_at: at(180), url: "u3", question_id: null },
     ]
 
     const model = buildPlaybackModel({ frames, windows, answers, order })
@@ -86,8 +87,8 @@ describe("buildPlaybackModel", () => {
       { question_id: "q4", entered_at: at(400), left_at: at(460), answer_at_exit: null, answer_change_count: 2 },
     ]
     const frames: PlaybackCameraFrame[] = [
-      { id: "f1", created_at: at(30), url: "u1" },
-      { id: "f2", created_at: at(150), url: "u2" },
+      { id: "f1", created_at: at(30), url: "u1", question_id: null },
+      { id: "f2", created_at: at(150), url: "u2", question_id: null },
     ]
 
     const model = buildPlaybackModel({ frames, windows, answers, order })
@@ -107,6 +108,108 @@ describe("buildPlaybackModel", () => {
     // firstFrameIndex points at the first frame resolved to that question.
     assert.equal(q1?.firstFrameIndex, 0)
     assert.equal(q4?.firstFrameIndex, 1)
+  })
+})
+
+describe("buildPlaybackModel answer + question resolution", () => {
+  it("resolves a multiple-choice exit index to its option label", () => {
+    const mcqAnswers: PlaybackAnswer[] = [
+      {
+        question_id: "q1",
+        prompt: "Pick one",
+        type: "multiple_choice",
+        options: ["Red", "Green", "Blue"],
+        response: "2",
+        is_correct: true,
+        points_awarded: 1,
+        max_points: 1,
+      },
+    ]
+    const windows: QuestionViewWindow[] = [
+      { question_id: "q1", entered_at: at(0), left_at: at(60), answer_at_exit: { response: "2" }, answer_change_count: 0 },
+    ]
+    const frames: PlaybackCameraFrame[] = [
+      { id: "f1", created_at: at(30), url: "u1", question_id: null },
+    ]
+
+    const model = buildPlaybackModel({ frames, windows, answers: mcqAnswers, order })
+    // Stored index "2" surfaces as the option label, not the raw index.
+    assert.equal(model.frames[0].answerAtExit, "Blue")
+  })
+
+  it("prefers a frame's persisted question_id over timestamp inference", () => {
+    const windows: QuestionViewWindow[] = [
+      { question_id: "q1", entered_at: at(0), left_at: at(60), answer_at_exit: { response: "a" }, answer_change_count: 0 },
+      { question_id: "q4", entered_at: at(120), left_at: at(300), answer_at_exit: { response: "b" }, answer_change_count: 0 },
+    ]
+    // Frame captured during q1's window by timestamp, but persisted to q4.
+    const frames: PlaybackCameraFrame[] = [
+      { id: "f1", created_at: at(30), url: "u1", question_id: "q4" },
+    ]
+
+    const model = buildPlaybackModel({ frames, windows, answers, order })
+    assert.equal(model.frames[0].questionId, "q4")
+    assert.equal(model.frames[0].answerAtExit, "b")
+  })
+})
+
+describe("timeline presence + question panel state", () => {
+  it("marks hasTimeline true when a per-question log exists", () => {
+    const windows: QuestionViewWindow[] = [
+      { question_id: "q1", entered_at: at(0), left_at: at(60), answer_at_exit: null, answer_change_count: 0 },
+    ]
+    const frames: PlaybackCameraFrame[] = [
+      { id: "f1", created_at: at(30), url: "u1", question_id: null },
+    ]
+    const model = buildPlaybackModel({ frames, windows, answers, order })
+    assert.equal(model.hasTimeline, true)
+  })
+
+  it("keeps camera frames but marks hasTimeline false when there is no log", () => {
+    // Legacy/in-flight session: frames exist, no timing windows. Every frame
+    // must still be present (nothing silently disappears now the standalone
+    // slider is gone).
+    const frames: PlaybackCameraFrame[] = [
+      { id: "f1", created_at: at(30), url: "u1", question_id: null },
+      { id: "f2", created_at: at(90), url: "u2", question_id: null },
+    ]
+    const model = buildPlaybackModel({ frames, windows: [], answers, order })
+    assert.equal(model.hasTimeline, false)
+    assert.equal(model.frames.length, 2)
+    assert.equal(model.segments.length, 0)
+    assert.ok(model.frames.every((f) => f.questionId === null))
+  })
+
+  it("a between-questions frame is still present in the model", () => {
+    const windows: QuestionViewWindow[] = [
+      { question_id: "q1", entered_at: at(0), left_at: at(60), answer_at_exit: null, answer_change_count: 0 },
+      { question_id: "q4", entered_at: at(120), left_at: at(300), answer_at_exit: null, answer_change_count: 0 },
+    ]
+    const frames: PlaybackCameraFrame[] = [
+      { id: "gap", created_at: at(90), url: "u", question_id: null }, // between q1 and q4
+    ]
+    const model = buildPlaybackModel({ frames, windows, answers, order })
+    assert.equal(model.frames.length, 1)
+    assert.equal(model.frames[0].questionId, null)
+    assert.equal(model.hasTimeline, true)
+  })
+
+  it("resolves the right question panel state for each case", () => {
+    // No log at all → dedicated "no timing" state, not "between questions".
+    assert.equal(
+      playbackQuestionPanelState({ hasTimeline: false, hasActiveSegment: false }),
+      "no_timing",
+    )
+    // Log exists, frame maps to a question.
+    assert.equal(
+      playbackQuestionPanelState({ hasTimeline: true, hasActiveSegment: true }),
+      "question",
+    )
+    // Log exists, frame falls between questions.
+    assert.equal(
+      playbackQuestionPanelState({ hasTimeline: true, hasActiveSegment: false }),
+      "between",
+    )
   })
 })
 
