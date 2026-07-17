@@ -37,17 +37,20 @@ export function funnelForTest(
   }
 }
 
-/** Aggregate funnel across every assessment in the org. */
+/**
+ * Aggregate funnel across every assessment in the org. Invited/opened/clicked
+ * all come from the same email-funnel aggregate so sent → opened → clicked stays
+ * internally consistent (opened/clicked are hidden when no email invites exist).
+ */
 export function orgFunnel(
   candidates: Candidate[],
-  inviteCounts: Record<string, number>,
-  emailStats?: { opened: number; clicked: number },
+  emailFunnel: { invited: number; opened: number; clicked: number },
 ): TestFunnelStats {
-  const invited = Object.values(inviteCounts).reduce((sum, n) => sum + n, 0)
+  const hasEmailActivity = emailFunnel.invited > 0
   return {
-    invited,
-    opened: emailStats?.opened,
-    clicked: emailStats?.clicked,
+    invited: emailFunnel.invited,
+    opened: hasEmailActivity ? emailFunnel.opened : undefined,
+    clicked: hasEmailActivity ? emailFunnel.clicked : undefined,
     started: candidates.filter((c) => c.started_at != null).length,
     completed: candidates.filter((c) => c.status === "submitted").length,
     ...dispositionCounts(candidates),

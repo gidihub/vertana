@@ -127,6 +127,7 @@ export function ProctoringMonitor({
     // Retry briefly so the first capture waits for the stream to warm up, and so
     // a question whose turn coincides with an in-flight upload is retried once
     // that upload finishes rather than being silently dropped.
+    let retry: ReturnType<typeof setTimeout> | null = null
     const dwell = setTimeout(function attempt() {
       if (cancelled) return
       if (capturedRef.current.has(questionId)) return
@@ -141,7 +142,6 @@ export function ProctoringMonitor({
       }
       void capture()
     }, DWELL_MS)
-    let retry: ReturnType<typeof setTimeout> | null = null
 
     return () => {
       cancelled = true

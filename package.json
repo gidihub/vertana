@@ -29,6 +29,7 @@
     "validate:library:full": "node scripts/validate-library.mjs --mcq-audit",
     "test:rate-limit": "node --experimental-strip-types --test lib/rate-limit.test.ts",
     "test:report": "node --experimental-strip-types --import ./scripts/resolve-ts-alias.mjs --test lib/candidates/report.test.ts",
+    "test:session-playback": "node --experimental-strip-types --import ./scripts/resolve-ts-alias.mjs --test lib/candidates/session-playback.test.ts",
     "test:proctoring": "node --experimental-strip-types --import ./scripts/resolve-ts-alias.mjs --test lib/proctoring/user-agent.test.ts",
     "test:coding-limits": "node --experimental-strip-types --import ./scripts/resolve-ts-alias.mjs --test lib/coding/limits.test.ts",
     "test:integrations": "node --experimental-strip-types --import ./scripts/resolve-ts-alias.mjs --test lib/integrations/ssrf.test.ts lib/integrations/dispatch-core.test.ts lib/integrations/adapters/webhook.test.ts",

@@ -13,11 +13,11 @@ import { Button } from "@/components/ui/button"
 export function OrgAnalyticsCharts() {
   const tests = useStore((db) => db.tests)
   const candidates = useStore((db) => db.candidates)
-  const inviteCounts = useStore((db) => db.inviteCounts)
+  const emailFunnel = useStore((db) => db.emailFunnel)
 
   const funnel = useMemo(
-    () => orgFunnel(candidates, inviteCounts),
-    [candidates, inviteCounts],
+    () => orgFunnel(candidates, emailFunnel),
+    [candidates, emailFunnel],
   )
 
   const hasActiveShareLink = tests.some((t) => t.status === "active")

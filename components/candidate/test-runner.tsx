@@ -8,8 +8,13 @@ import {
   autosaveAnswer,
   reportTabSwitch,
   reportProctoringSignal,
+  reportQuestionView,
   type ProctoringPolicyView,
 } from "@/lib/store"
+import {
+  createQuestionViewTracker,
+  type QuestionViewTracker,
+} from "@/lib/candidates/session-playback"
 import {
   computeRemainingSeconds,
   effectiveTimeLimitMinutes,
@@ -100,10 +105,54 @@ export function TestRunner({
   const submittedRef = useRef(false)
   const saveTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({})
 
+  // Latest answers/current-question, read from fire-and-forget callbacks (timer,
+  // effect cleanup) that would otherwise close over stale render values.
+  const answersRef = useRef(answers)
+  useEffect(() => {
+    answersRef.current = answers
+  }, [answers])
+  const currentRef = useRef(current)
+  useEffect(() => {
+    currentRef.current = current
+  }, [current])
+  const tabSwitchesRef = useRef(tabSwitches)
+  useEffect(() => {
+    tabSwitchesRef.current = tabSwitches
+  }, [tabSwitches])
+
+  // Per-question timing log (best-effort telemetry) powering the recruiter's
+  // "Session playback" view. Only for proctored tests, where camera frames
+  // exist to pair with. Failures never surface — the tracker swallows them.
+  const viewTrackerRef = useRef<QuestionViewTracker | null>(null)
+  if (test.requires_proctoring && viewTrackerRef.current === null) {
+    viewTrackerRef.current = createQuestionViewTracker((record) => {
+      reportQuestionView(token, {
+        attemptId,
+        questionId: record.questionId,
+        enteredAt: record.enteredAt,
+        leftAt: record.leftAt,
+        answer: record.answer,
+        answerChangeCount: record.answerChangeCount,
+      })
+    })
+  }
+
   const finish = () => {
     if (submittedRef.current) return
     submittedRef.current = true
-    onSubmit({ answers, tabSwitchCount: tabSwitches })
+    // Close the active question's view window before submitting so the last
+    // question is represented in the timeline. Best-effort; never blocks submit.
+    const qid = questions[currentRef.current]?.id
+    viewTrackerRef.current?.leaveCurrent(
+      qid ? (answersRef.current[qid] ?? null) : null,
+    )
+    // Read latest values via refs: the mount-only expiration timer captures the
+    // first render's `finish`, whose closures would otherwise submit stale
+    // answers/tab-switch counts.
+    onSubmit({
+      answers: answersRef.current,
+      tabSwitchCount: tabSwitchesRef.current,
+    })
   }
 
   useEffect(() => {
@@ -242,6 +291,19 @@ export function TestRunner({
     }
   }, [test.requires_proctoring, token, attemptId])
 
+  // Open a timing window when a question becomes active; close it (emitting the
+  // completed view) when the candidate navigates away or the runner unmounts.
+  useEffect(() => {
+    const tracker = viewTrackerRef.current
+    if (!tracker) return
+    const qid = questions[current]?.id
+    if (!qid) return
+    tracker.enter(qid)
+    return () => {
+      tracker.leaveCurrent(answersRef.current[qid] ?? null)
+    }
+  }, [current, questions])
+
   const q = questions[current]
   const answered = questions.filter((item) => {
     const a = answers[item.id]
@@ -253,6 +315,7 @@ export function TestRunner({
 
   function setAnswer(value: string) {
     setAnswers((prev) => ({ ...prev, [q.id]: value }))
+    viewTrackerRef.current?.recordAnswerChange(q.id)
 
     clearTimeout(saveTimers.current[q.id])
     saveTimers.current[q.id] = setTimeout(() => {

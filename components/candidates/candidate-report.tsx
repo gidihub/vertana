@@ -35,6 +35,7 @@ import {
 } from "@/components/candidates/report-toolbar"
 import { AiGradeAssist } from "@/components/candidates/ai-grade-assist"
 import { EvidencePanel } from "@/components/candidates/evidence-panel"
+import { SessionPlayback } from "@/components/candidates/session-playback"
 
 const TYPE_LABELS: Record<Question["type"], string> = {
   multiple_choice: "multiple choice",
@@ -183,7 +184,8 @@ function AttemptReportCard({
   retentionDays: number
   tabSwitchThreshold: number
 }) {
-  const { candidate, test, answers, consent, mediaSummary } = attempt
+  const { candidate, test, answers, consent, mediaSummary, hasQuestionTimeline } =
+    attempt
   const passingScore = test.passing_score ?? 70
   const pass = evaluatePass(candidate.score, passingScore)
   const expectedMinutes = effectiveTimeLimitMinutes(test)
@@ -407,6 +409,22 @@ function AttemptReportCard({
                 : `Retention ${retentionDays} days`
             }
             facts={integrityFacts}
+          />
+        )}
+
+        {/* Session playback — camera frames paired with the question on screen.
+            Only shown when a per-question timing log exists; older attempts fall
+            back to the plain camera slider in the panel above. */}
+        {test.requires_proctoring &&
+          hasQuestionTimeline &&
+          mediaSummary.kinds.includes("camera") && (
+          <SessionPlayback
+            testId={test.id}
+            attemptId={candidate.id}
+            availability={availability}
+            purgeDateLabel={
+              purgeDate ? formatDateTime(purgeDate.toISOString()) : null
+            }
           />
         )}
       </CardContent>

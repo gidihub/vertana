@@ -13,6 +13,9 @@ import type {
   Test,
   TestStatus,
 } from "@/lib/types"
+import type { SessionPlaybackModel } from "@/lib/candidates/session-playback"
+
+export type { SessionPlaybackModel } from "@/lib/candidates/session-playback"
 
 export function uid(): string {
   return crypto.randomUUID()
@@ -244,6 +247,21 @@ export async function loadProctoringMedia(
   return data.media
 }
 
+/**
+ * Loads the "Session playback" model (camera frames joined to the per-question
+ * timing log) for an attempt. Signed camera URLs are built server-side, so this
+ * is only called when the recruiter expands the playback card.
+ */
+export async function loadSessionPlayback(
+  testId: string,
+  attemptId: string,
+): Promise<SessionPlaybackModel> {
+  const data = await api<{ playback: SessionPlaybackModel }>(
+    `/api/tests/${testId}/results/${attemptId}/session-playback`,
+  )
+  return data.playback
+}
+
 export interface AttemptMediaSummary {
   total: number
   kinds: ProctoringMediaView["kind"][]
@@ -259,6 +277,8 @@ export interface CandidateAttemptDetail {
   answers: AttemptAnswerView[]
   consent: ConsentRecord | null
   mediaSummary: AttemptMediaSummary
+  /** Whether a per-question timing log exists (gates the Session playback card). */
+  hasQuestionTimeline: boolean
 }
 
 export interface CandidateProfileData {
@@ -417,6 +437,37 @@ export function reportProctoringSignal(
     // Attach a catch so a rejected fetch (network drop, unload) never surfaces
     // as an unhandled promise rejection; tracking must stay invisible.
     void fetch(`/api/candidate/${token}/signals`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      keepalive: true,
+    }).catch(() => {})
+  } catch {
+    // best-effort
+  }
+}
+
+export interface QuestionViewInput {
+  attemptId: string
+  questionId: string
+  enteredAt: string
+  leftAt?: string | null
+  answer?: string | null
+  answerChangeCount?: number
+}
+
+/**
+ * Fire-and-forget per-question timing event for the Session playback log. Same
+ * best-effort contract as {@link reportProctoringSignal}: uses keepalive so it
+ * flushes during navigation/unload, and swallows failures so a telemetry write
+ * can never block the candidate's answer submission.
+ */
+export function reportQuestionView(
+  token: string,
+  payload: QuestionViewInput,
+): void {
+  try {
+    void fetch(`/api/candidate/${token}/question-views`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),

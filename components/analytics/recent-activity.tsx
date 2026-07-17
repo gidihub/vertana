@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Activity } from "lucide-react"
 
 import { candidateActivityMs } from "@/lib/dashboard/filters"
@@ -64,6 +64,14 @@ export function RecentActivity({
 }) {
   const [status, setStatus] = useState<string>("all")
   const [assessment, setAssessment] = useState<string>("all")
+
+  // Refresh once a minute so relative labels ("5m ago") stay current while the
+  // page stays open, without depending on unrelated re-renders.
+  const [now, setNow] = useState(() => Date.now())
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 60_000)
+    return () => clearInterval(id)
+  }, [])
 
   const rows = useMemo(() => {
     return candidates
@@ -149,7 +157,7 @@ export function RecentActivity({
                     {candidateDisplayName(c.email)}
                   </p>
                   <p className="truncate text-xs text-muted-foreground">
-                    {testTitles[c.test_id] ?? "Assessment"} · {relativeTime(ms)}
+                    {testTitles[c.test_id] ?? "Assessment"} · {relativeTime(ms, now)}
                   </p>
                 </div>
                 <div className="flex shrink-0 items-center gap-3">

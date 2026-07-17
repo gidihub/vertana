@@ -45,7 +45,6 @@ function countConcern(candidates: Candidate[], threshold: number): number {
 export default function AnalyticsPage() {
   const tests = useStore((db) => db.tests)
   const candidates = useStore((db) => db.candidates)
-  const inviteCounts = useStore((db) => db.inviteCounts)
   const emailFunnel = useStore((db) => db.emailFunnel)
   const needsScoring = useNeedsScoring()
   const loading = useStore((db) => db.loading)
@@ -82,14 +81,8 @@ export default function AnalyticsPage() {
   // would misrepresent the top of the funnel.
   const lifetimeFunnel = useMemo(
     () =>
-      orgFunnel(
-        candidates,
-        inviteCounts,
-        emailFunnel.invited > 0
-          ? { opened: emailFunnel.opened, clicked: emailFunnel.clicked }
-          : undefined,
-      ),
-    [candidates, inviteCounts, emailFunnel],
+      orgFunnel(candidates, emailFunnel),
+    [candidates, emailFunnel],
   )
   const hasActiveShareLink = tests.some((t) => t.status === "active")
 
@@ -148,7 +141,7 @@ export default function AnalyticsPage() {
               label="In progress"
               value={inProgressCur}
               icon={Clock}
-              caption="Currently taking an assessment"
+              caption="Currently taking an assessment (selected range)"
             />
             <KpiCard
               label="Integrity flags"

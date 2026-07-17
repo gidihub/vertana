@@ -19,6 +19,11 @@ import {
 import { gradeCodingAnswer } from "@/lib/execution/grade-coding"
 import { duplicateQuestionsError } from "@/lib/questions/duplicates"
 import {
+  buildPlaybackModel,
+  type QuestionViewWindow,
+  type SessionPlaybackModel,
+} from "@/lib/candidates/session-playback"
+import {
   consumeCredits,
   InsufficientCreditsError,
 } from "@/lib/credits/ledger"
@@ -511,6 +516,86 @@ async function signAttemptMedia(
 }
 
 /**
+ * Builds the recruiter "Session playback" model for an attempt: camera frames
+ * (signed lazily on expand) joined to the per-question timing log, plus a
+ * per-question summary for the segmented timeline. Scoped to the caller's org
+ * via the test id, mirroring {@link loadProctoringMedia}. Returns an empty model
+ * when the attempt isn't found or has no timing log — the report then falls back
+ * to the plain camera slider.
+ */
+export async function loadSessionPlayback(
+  testId: string,
+  attemptId: string,
+): Promise<SessionPlaybackModel> {
+  // Enforces org ownership of the test; empty model otherwise.
+  const test = await loadTestById(testId)
+  if (!test) return { frames: [], segments: [] }
+
+  const supabase = createAdminClient()
+
+  // Confirm the attempt actually belongs to this test before returning media.
+  const { data: invites } = await supabase
+    .from("test_invites")
+    .select("id")
+    .eq("test_id", testId)
+  const inviteIds = (invites ?? []).map((i) => i.id)
+  if (!inviteIds.length) return { frames: [], segments: [] }
+
+  const { data: attempt } = await supabase
+    .from("attempts")
+    .select("id")
+    .eq("id", attemptId)
+    .in("test_invite_id", inviteIds)
+    .maybeSingle()
+  if (!attempt) return { frames: [], segments: [] }
+
+  const [media, viewRows, answers] = await Promise.all([
+    signAttemptMedia(supabase, attemptId),
+    supabase
+      .from("attempt_question_views")
+      .select(
+        "question_id, entered_at, left_at, answer_at_exit, answer_change_count",
+      )
+      .eq("attempt_id", attemptId)
+      .order("entered_at", { ascending: true }),
+    loadAttemptAnswers(testId, attemptId),
+  ])
+
+  const cameraFrames = media
+    .filter((m) => m.kind === "camera")
+    .map((m) => ({ id: m.id, created_at: m.created_at, url: m.url }))
+
+  const windows = (viewRows.data ?? []) as QuestionViewWindow[]
+
+  // Preserve the candidate's actual (possibly randomized) question sequence
+  // rather than the test's canonical position order. Randomization happens
+  // client-side and isn't persisted, so the only record of what the candidate
+  // saw is the first-visit order in the timing log (windows are entered_at asc).
+  const order: { question_id: string; index: number }[] = []
+  const seenInOrder = new Set<string>()
+  for (const w of windows) {
+    if (!seenInOrder.has(w.question_id)) {
+      seenInOrder.add(w.question_id)
+      order.push({ question_id: w.question_id, index: order.length })
+    }
+  }
+
+  return buildPlaybackModel({
+    frames: cameraFrames,
+    windows,
+    answers: answers.map((a) => ({
+      question_id: a.question_id,
+      prompt: a.prompt,
+      response: a.response,
+      is_correct: a.is_correct,
+      points_awarded: a.points_awarded,
+      max_points: a.max_points,
+    })),
+    order,
+  })
+}
+
+/**
  * Runs an `.in(column, ids)` fetch in parallel chunks and flattens the result.
  * Keeps individual PostgREST requests small enough to avoid URL-length limits
  * on large orgs, while still issuing the chunks concurrently.
@@ -609,6 +694,13 @@ export interface CandidateAttemptDetail {
   answers: AttemptAnswerView[]
   consent: ConsentRecord | null
   mediaSummary: AttemptMediaSummary
+  /**
+   * Whether a per-question timing log exists for this attempt. Gates the
+   * "Session playback" card: old/in-flight attempts without a log fall back to
+   * the plain camera slider. Computed from lightweight counts on load (no
+   * signed URLs), like {@link AttemptMediaSummary}.
+   */
+  hasQuestionTimeline: boolean
 }
 
 async function loadAttemptMediaSummary(
@@ -706,6 +798,16 @@ export async function loadCandidateProfile(
     consentByAttempt.set(c.attempt_id as string, c.id as string)
   }
 
+  // Which attempts have a per-question timing log (gates Session playback).
+  // Lightweight: distinct attempt_ids only, no windows/URLs signed here.
+  const { data: timelineRows } = await supabase
+    .from("attempt_question_views")
+    .select("attempt_id")
+    .in("attempt_id", attemptIds)
+  const attemptsWithTimeline = new Set(
+    (timelineRows ?? []).map((r) => r.attempt_id as string),
+  )
+
   const attempts = await Promise.all(
     (attemptRows as AttemptRow[]).map(async (row) => {
       const testId = testIdByInvite.get(row.test_invite_id) ?? ""
@@ -748,6 +850,7 @@ export async function loadCandidateProfile(
         answers,
         consent,
         mediaSummary,
+        hasQuestionTimeline: attemptsWithTimeline.has(candidate.id),
       } satisfies CandidateAttemptDetail
     }),
   )
@@ -1133,6 +1236,41 @@ export async function recordAttemptSignals(input: {
     p_outside_ms:
       typeof input.outsideMs === "number" && input.outsideMs > 0
         ? Math.round(input.outsideMs)
+        : 0,
+  })
+  if (error) throw new Error(error.message)
+}
+
+/**
+ * Appends one completed per-question view window to the timing log. Best-effort
+ * telemetry from the candidate side (called from a token-gated route); the
+ * ownership check lives in the RPC's WHERE clause. Deliberately not gated on
+ * submitted_at — the final "leave on submit" event can arrive after submission.
+ */
+export async function recordAttemptQuestionView(input: {
+  token: string
+  attemptId: string
+  questionId: string
+  enteredAt: string
+  leftAt?: string | null
+  answer?: string | null
+  answerChangeCount?: number
+}): Promise<void> {
+  const loaded = await loadTestByToken(input.token)
+  if (!loaded) throw new Error("Invalid test link")
+
+  const supabase = createAdminClient()
+  const { error } = await supabase.rpc("record_attempt_question_view", {
+    p_attempt_id: input.attemptId,
+    p_invite_id: loaded.invite.id,
+    p_question_id: input.questionId,
+    p_entered_at: input.enteredAt,
+    p_left_at: input.leftAt ?? null,
+    p_answer_at_exit:
+      input.answer == null ? null : { response: input.answer.slice(0, 20000) },
+    p_answer_change_count:
+      typeof input.answerChangeCount === "number" && input.answerChangeCount > 0
+        ? Math.round(input.answerChangeCount)
         : 0,
   })
   if (error) throw new Error(error.message)

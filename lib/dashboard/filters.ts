@@ -205,10 +205,19 @@ export function buildActivityTrend(
   window: DateWindow | null,
   now: number = Date.now(),
 ): { points: TrendPoint[]; bucket: "day" | "week" } {
+  // For the all-time lower bound, consider both event timestamps per candidate:
+  // `candidateActivityMs` prefers `submitted_at`, but a candidate's `started_at`
+  // can be earlier, so the earliest bucket must reach back to it.
   const times: number[] = []
   for (const c of candidates) {
-    const ms = candidateActivityMs(c)
-    if (ms !== null) times.push(ms)
+    if (c.started_at) {
+      const ms = new Date(c.started_at).getTime()
+      if (Number.isFinite(ms)) times.push(ms)
+    }
+    if (c.submitted_at) {
+      const ms = new Date(c.submitted_at).getTime()
+      if (Number.isFinite(ms)) times.push(ms)
+    }
   }
 
   let start: number
@@ -225,14 +234,19 @@ export function buildActivityTrend(
 
   const spanDays = Math.max(1, Math.ceil((end - start) / DAY_MS))
   const bucket: "day" | "week" = spanDays > 45 ? "week" : "day"
-  const bucketMs = bucket === "week" ? 7 * DAY_MS : DAY_MS
+  const stepDays = bucket === "week" ? 7 : 1
 
   const gridStart = startOfDay(start)
   const buckets = new Map<number, TrendPoint>()
+  // Step by calendar days (via `calendarDayStart`) so bucket boundaries stay on
+  // local midnight across DST transitions; a fixed `bucketMs` stride would drift
+  // by an hour on the switch day and misalign the grid.
   // `t < end` (not `<=`) keeps the window half-open: a bucket whose start lands
   // exactly on `end` (e.g. today's midnight for the "yesterday" range) is not
   // created.
-  for (let t = gridStart; t < end; t += bucketMs) {
+  for (let offset = 0; ; offset += stepDays) {
+    const t = calendarDayStart(gridStart, offset)
+    if (t >= end) break
     buckets.set(t, {
       ms: t,
       label: new Date(t).toLocaleDateString(undefined, {
@@ -245,8 +259,11 @@ export function buildActivityTrend(
   }
 
   const keyFor = (ms: number): number => {
-    const offset = Math.floor((startOfDay(ms) - gridStart) / bucketMs)
-    return gridStart + offset * bucketMs
+    // Calendar-day ordinal from the grid origin (rounded to absorb the ±1h DST
+    // skew between two local midnights), snapped to the bucket's day stride.
+    const dayOrdinal = Math.round((startOfDay(ms) - gridStart) / DAY_MS)
+    const bucketOffset = Math.floor(dayOrdinal / stepDays) * stepDays
+    return calendarDayStart(gridStart, bucketOffset)
   }
 
   // Attribute each event by its own timestamp, honoring the exact half-open
