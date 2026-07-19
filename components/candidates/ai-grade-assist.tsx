@@ -22,6 +22,7 @@ export function AiGradeAssist({
   attemptId,
   questionId,
   maxPoints,
+  gradingGuidance,
   initialScore,
   initialRationale,
 }: {
@@ -29,12 +30,19 @@ export function AiGradeAssist({
   attemptId: string
   questionId: string
   maxPoints: number
+  /** When false, AI assist refuses to grade (no rubric / key / model answer). */
+  gradingGuidance: boolean
   initialScore: number | null
   initialRationale: string | null
 }) {
   const router = useRouter()
   const [score, setScore] = useState<number | null>(initialScore)
   const [rationale, setRationale] = useState<string | null>(initialRationale)
+  const [unavailable, setUnavailable] = useState(
+    !gradingGuidance &&
+      initialScore == null &&
+      initialRationale === "No rubric available; manual review recommended.",
+  )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -42,10 +50,21 @@ export function AiGradeAssist({
   const [overrideValue, setOverrideValue] = useState(String(initialScore ?? 0))
 
   async function generateSuggestion() {
+    if (!gradingGuidance) {
+      setUnavailable(true)
+      setRationale("No rubric available; manual review recommended.")
+      return
+    }
     setLoading(true)
     setError(null)
     try {
       const res = await fetchGradeSuggestion({ testId, attemptId, questionId })
+      if (res.unavailable || res.suggestedScore == null) {
+        setUnavailable(true)
+        setRationale(res.rationale)
+        setScore(null)
+        return
+      }
       setScore(res.suggestedScore)
       setRationale(res.rationale)
       setOverrideValue(String(res.suggestedScore))
@@ -108,6 +127,10 @@ export function AiGradeAssist({
             Try again
           </Button>
         </div>
+      ) : unavailable || !gradingGuidance ? (
+        <p className="mt-2 text-sm text-muted-foreground">
+          No rubric available; manual review recommended.
+        </p>
       ) : score !== null ? (
         <>
           <p className="mt-2 text-sm">

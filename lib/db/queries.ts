@@ -1988,8 +1988,10 @@ export async function updateAttemptGrades(input: {
 export interface GradeSuggestionContext {
   prompt: string
   type: QuestionRow["type"]
-  /** Expected/reference answer if the question has one, else null. */
+  /** Exact-match auto-grade key if set. */
   expected: string | null
+  rubric: string | null
+  modelAnswer: string | null
   response: string
   maxPoints: number
   /** Cached suggestion, present once the model has been run for this answer. */
@@ -2051,6 +2053,8 @@ export async function loadGradeSuggestionContext(input: {
     prompt: question.prompt,
     type: question.type,
     expected: question.correct_answer_exact ?? null,
+    rubric: question.rubric ?? null,
+    modelAnswer: question.model_answer ?? null,
     response: String(answer.response ?? ""),
     maxPoints: row.points,
     cached,

@@ -528,10 +528,11 @@ export async function gradeAttempt(input: {
 }
 
 export interface GradeSuggestion {
-  suggestedScore: number
+  suggestedScore: number | null
   rationale: string
   maxPoints: number
   cached: boolean
+  unavailable?: boolean
 }
 
 export async function fetchGradeSuggestion(input: {

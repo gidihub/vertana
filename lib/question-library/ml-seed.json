@@ -11,7 +11,8 @@
     ],
     "correct_option_index": 1,
     "ai_resistance": "high",
-    "estimated_minutes": 5
+    "estimated_minutes": 5,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -20,7 +21,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 7
+    "estimated_minutes": 7,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -34,7 +36,8 @@
     ],
     "correct_option_index": 1,
     "ai_resistance": "high",
-    "estimated_minutes": 4
+    "estimated_minutes": 4,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -48,7 +51,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -57,7 +61,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 8
+    "estimated_minutes": 8,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -71,7 +76,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "low",
-    "estimated_minutes": 2
+    "estimated_minutes": 2,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -85,7 +91,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -94,7 +101,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 7
+    "estimated_minutes": 7,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -104,7 +112,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 14,
-    "points": 3
+    "points": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -118,7 +127,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -127,7 +137,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "medium",
-    "estimated_minutes": 6
+    "estimated_minutes": 6,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -141,7 +152,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 4
+    "estimated_minutes": 4,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -151,7 +163,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 10,
-    "points": 3
+    "points": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -160,7 +173,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "medium",
-    "estimated_minutes": 6
+    "estimated_minutes": 6,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -174,7 +188,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -188,7 +203,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "high",
-    "estimated_minutes": 4
+    "estimated_minutes": 4,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -197,7 +213,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 8
+    "estimated_minutes": 8,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -211,7 +228,8 @@
     ],
     "correct_option_index": 1,
     "ai_resistance": "high",
-    "estimated_minutes": 4
+    "estimated_minutes": 4,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -220,7 +238,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 7
+    "estimated_minutes": 7,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -230,7 +249,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 14,
-    "points": 3
+    "points": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -244,7 +264,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "low",
-    "estimated_minutes": 2
+    "estimated_minutes": 2,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -258,7 +279,8 @@
     ],
     "correct_option_index": 1,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -267,7 +289,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "medium",
-    "estimated_minutes": 6
+    "estimated_minutes": 6,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -277,7 +300,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 12,
-    "points": 3
+    "points": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -291,7 +315,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "high",
-    "estimated_minutes": 4
+    "estimated_minutes": 4,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -300,7 +325,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "medium",
-    "estimated_minutes": 6
+    "estimated_minutes": 6,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -314,7 +340,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -323,7 +350,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 7
+    "estimated_minutes": 7,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -333,7 +361,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 10,
-    "points": 3
+    "points": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -347,7 +376,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -361,7 +391,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "high",
-    "estimated_minutes": 4
+    "estimated_minutes": 4,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -370,7 +401,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 8
+    "estimated_minutes": 8,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -384,7 +416,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 4
+    "estimated_minutes": 4,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -393,7 +426,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 7
+    "estimated_minutes": 7,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -407,7 +441,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -416,7 +451,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "medium",
-    "estimated_minutes": 6
+    "estimated_minutes": 6,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -426,7 +462,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 12,
-    "points": 3
+    "points": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -440,7 +477,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -449,7 +487,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 7
+    "estimated_minutes": 7,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -463,7 +502,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -473,7 +513,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 13,
-    "points": 3
+    "points": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -482,7 +523,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "medium",
-    "estimated_minutes": 5
+    "estimated_minutes": 5,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -496,7 +538,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -505,7 +548,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 7
+    "estimated_minutes": 7,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -519,7 +563,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -533,7 +578,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "high",
-    "estimated_minutes": 4
+    "estimated_minutes": 4,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -542,7 +588,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 8
+    "estimated_minutes": 8,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -556,7 +603,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 4
+    "estimated_minutes": 4,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -565,7 +613,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 7
+    "estimated_minutes": 7,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -575,7 +624,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 12,
-    "points": 3
+    "points": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -589,7 +639,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -598,7 +649,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 7
+    "estimated_minutes": 7,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -608,7 +660,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 10,
-    "points": 3
+    "points": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -622,7 +675,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -631,7 +685,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 8
+    "estimated_minutes": 8,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -645,7 +700,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -655,7 +711,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 12,
-    "points": 3
+    "points": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -664,7 +721,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "medium",
-    "estimated_minutes": 6
+    "estimated_minutes": 6,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -678,7 +736,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -692,7 +751,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -701,7 +761,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 7
+    "estimated_minutes": 7,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -711,7 +772,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 12,
-    "points": 3
+    "points": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -720,7 +782,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 8
+    "estimated_minutes": 8,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -734,7 +797,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "high",
-    "estimated_minutes": 4
+    "estimated_minutes": 4,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -743,7 +807,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "medium",
-    "estimated_minutes": 6
+    "estimated_minutes": 6,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -757,7 +822,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "high",
-    "estimated_minutes": 4
+    "estimated_minutes": 4,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -767,7 +833,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 11,
-    "points": 3
+    "points": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -781,7 +848,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -790,7 +858,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 8
+    "estimated_minutes": 8,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -804,7 +873,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -813,7 +883,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "medium",
-    "estimated_minutes": 6
+    "estimated_minutes": 6,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -823,7 +894,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 13,
-    "points": 3
+    "points": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -837,7 +909,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -846,7 +919,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 8
+    "estimated_minutes": 8,
+    "seniority": "senior"
   },
   {
     "category": "machine-learning",
@@ -860,7 +934,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "senior"
   },
   {
     "category": "machine-learning",
@@ -869,7 +944,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 8
+    "estimated_minutes": 8,
+    "seniority": "senior"
   },
   {
     "category": "machine-learning",
@@ -883,7 +959,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "high",
-    "estimated_minutes": 4
+    "estimated_minutes": 4,
+    "seniority": "senior"
   },
   {
     "category": "machine-learning",
@@ -892,7 +969,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 7
+    "estimated_minutes": 7,
+    "seniority": "senior"
   },
   {
     "category": "machine-learning",
@@ -906,7 +984,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "senior"
   },
   {
     "category": "machine-learning",
@@ -915,7 +994,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 7
+    "estimated_minutes": 7,
+    "seniority": "senior"
   },
   {
     "category": "machine-learning",
@@ -925,7 +1005,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 10,
-    "points": 3
+    "points": 3,
+    "seniority": "senior"
   },
   {
     "category": "machine-learning",
@@ -934,7 +1015,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "medium",
-    "estimated_minutes": 6
+    "estimated_minutes": 6,
+    "seniority": "senior"
   },
   {
     "category": "machine-learning",
@@ -948,7 +1030,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "low",
-    "estimated_minutes": 2
+    "estimated_minutes": 2,
+    "seniority": "senior"
   },
   {
     "category": "machine-learning",
@@ -962,7 +1045,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "high",
-    "estimated_minutes": 4
+    "estimated_minutes": 4,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -971,7 +1055,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 7
+    "estimated_minutes": 7,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -981,7 +1066,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 12,
-    "points": 3
+    "points": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -995,7 +1081,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -1004,7 +1091,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "medium",
-    "estimated_minutes": 6
+    "estimated_minutes": 6,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -1018,7 +1106,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -1028,7 +1117,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 12,
-    "points": 3
+    "points": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -1037,7 +1127,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 8
+    "estimated_minutes": 8,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -1051,7 +1142,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -1060,7 +1152,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "medium",
-    "estimated_minutes": 6
+    "estimated_minutes": 6,
+    "seniority": "mid"
   },
   {
     "category": "machine-learning",
@@ -1074,7 +1167,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "junior"
   },
   {
     "category": "machine-learning",
@@ -1083,7 +1177,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "medium",
-    "estimated_minutes": 6
+    "estimated_minutes": 6,
+    "seniority": "junior"
   },
   {
     "category": "machine-learning",
@@ -1093,7 +1188,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 12,
-    "points": 3
+    "points": 3,
+    "seniority": "junior"
   },
   {
     "category": "machine-learning",
@@ -1107,7 +1203,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "junior"
   },
   {
     "category": "machine-learning",
@@ -1116,7 +1213,8 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 7
+    "estimated_minutes": 7,
+    "seniority": "junior"
   },
   {
     "category": "machine-learning",
@@ -1130,7 +1228,8 @@
     ],
     "correct_option_index": 0,
     "ai_resistance": "medium",
-    "estimated_minutes": 3
+    "estimated_minutes": 3,
+    "seniority": "senior"
   },
   {
     "category": "machine-learning",
@@ -1139,6 +1238,7 @@
     "options": [],
     "correct_option_index": null,
     "ai_resistance": "high",
-    "estimated_minutes": 7
+    "estimated_minutes": 7,
+    "seniority": "senior"
   }
 ]

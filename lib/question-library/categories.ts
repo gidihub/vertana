@@ -169,6 +169,64 @@ export const LIBRARY_CATEGORIES: LibraryCategoryRecord[] = [
     sort_order: 1,
     priority_tier: 2,
   },
+
+  // ── Applied Aptitude (general screening) ──
+  {
+    id: "applied-aptitude",
+    name: "Applied Aptitude",
+    parent_id: null,
+    sort_order: 6,
+    priority_tier: 2,
+  },
+  {
+    id: "reading-comprehension",
+    name: "Reading Comprehension",
+    parent_id: "applied-aptitude",
+    sort_order: 1,
+    priority_tier: 2,
+  },
+  {
+    id: "attention-to-detail",
+    name: "Attention to Detail",
+    parent_id: "applied-aptitude",
+    sort_order: 2,
+    priority_tier: 2,
+  },
+  {
+    id: "following-instructions",
+    name: "Following Instructions",
+    parent_id: "applied-aptitude",
+    sort_order: 3,
+    priority_tier: 2,
+  },
+  {
+    id: "applied-numeracy",
+    name: "Applied Numeracy",
+    parent_id: "applied-aptitude",
+    sort_order: 4,
+    priority_tier: 2,
+  },
+  {
+    id: "numerical-reasoning",
+    name: "Numerical Reasoning",
+    parent_id: "applied-aptitude",
+    sort_order: 5,
+    priority_tier: 2,
+  },
+  {
+    id: "critical-thinking",
+    name: "Critical Thinking",
+    parent_id: "applied-aptitude",
+    sort_order: 6,
+    priority_tier: 2,
+  },
+  {
+    id: "problem-solving",
+    name: "Problem Solving",
+    parent_id: "applied-aptitude",
+    sort_order: 7,
+    priority_tier: 2,
+  },
 ]
 
 const byId = new Map(LIBRARY_CATEGORIES.map((c) => [c.id, c]))

@@ -13,6 +13,10 @@ import {
 } from "@/lib/questions/duplicates"
 import { suggestedTimeLimit } from "@/lib/questions/time-estimate"
 import { proctoringEnabledForTier, type PlanTier } from "@/lib/plans"
+import {
+  APPLIED_APTITUDE_BUILDER_GUIDANCE,
+  isAppliedAptitudeCategory,
+} from "@/lib/question-library/applied-aptitude"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -105,6 +109,14 @@ export function TestBuilder({ existing }: { existing?: Test }) {
 
   const canSuggestDetails = useMemo(
     () => questions.some((q) => q.prompt.trim()),
+    [questions],
+  )
+
+  const hasAppliedAptitude = useMemo(
+    () =>
+      questions.some((q) =>
+        isAppliedAptitudeCategory(q.category_id ?? q.library_category ?? ""),
+      ),
     [questions],
   )
 
@@ -437,6 +449,11 @@ export function TestBuilder({ existing }: { existing?: Test }) {
               onCheckedChange={setProctoring}
             />
           </Field>
+          {hasAppliedAptitude && canProctor && !proctoring ? (
+            <p className="rounded-md border border-sage-line/70 bg-muted/40 px-3 py-2 text-sm leading-relaxed text-muted-foreground">
+              {APPLIED_APTITUDE_BUILDER_GUIDANCE}
+            </p>
+          ) : null}
           <Separator />
           <Field orientation="horizontal">
             <FieldLabel htmlFor="certificate" className="flex-1">

@@ -12,7 +12,8 @@
     "correct_option_index": 1,
     "ai_resistance": "medium",
     "estimated_minutes": 3,
-    "points": 5
+    "points": 5,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -22,7 +23,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 8
+    "points": 8,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -37,7 +39,8 @@
     "correct_option_index": 0,
     "ai_resistance": "low",
     "estimated_minutes": 2,
-    "points": 3
+    "points": 3,
+    "seniority": "junior"
   },
   {
     "category": "project-program-associate",
@@ -47,7 +50,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 8
+    "points": 8,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -62,7 +66,8 @@
     "correct_option_index": 1,
     "ai_resistance": "medium",
     "estimated_minutes": 3,
-    "points": 5
+    "points": 5,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -72,7 +77,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 7,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -87,7 +93,8 @@
     "correct_option_index": 0,
     "ai_resistance": "high",
     "estimated_minutes": 4,
-    "points": 7
+    "points": 7,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -97,7 +104,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 14,
-    "points": 10
+    "points": 10,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -112,7 +120,8 @@
     "correct_option_index": 2,
     "ai_resistance": "low",
     "estimated_minutes": 2,
-    "points": 3
+    "points": 3,
+    "seniority": "junior"
   },
   {
     "category": "project-program-associate",
@@ -122,7 +131,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 7,
-    "points": 7
+    "points": 7,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -137,7 +147,8 @@
     "correct_option_index": 1,
     "ai_resistance": "medium",
     "estimated_minutes": 3,
-    "points": 5
+    "points": 5,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -147,7 +158,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 8
+    "points": 8,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -162,7 +174,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 2,
-    "points": 3
+    "points": 3,
+    "seniority": "junior"
   },
   {
     "category": "project-program-associate",
@@ -172,7 +185,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 7,
-    "points": 5
+    "points": 5,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -187,7 +201,8 @@
     "correct_option_index": 1,
     "ai_resistance": "high",
     "estimated_minutes": 4,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -197,7 +212,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 8
+    "points": 8,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -207,7 +223,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 7,
-    "points": 8
+    "points": 8,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -217,7 +234,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 7,
-    "points": 8
+    "points": 8,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -232,7 +250,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 2,
-    "points": 3
+    "points": 3,
+    "seniority": "junior"
   },
   {
     "category": "project-program-associate",
@@ -242,7 +261,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 8
+    "points": 8,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -252,7 +272,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 7,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -267,7 +288,8 @@
     "correct_option_index": 1,
     "ai_resistance": "medium",
     "estimated_minutes": 3,
-    "points": 5
+    "points": 5,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -277,7 +299,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 7
+    "points": 7,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -287,7 +310,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 7,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -302,7 +326,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 2,
-    "points": 3
+    "points": 3,
+    "seniority": "junior"
   },
   {
     "category": "project-program-associate",
@@ -312,7 +337,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 8
+    "points": 8,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -327,7 +353,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 2,
-    "points": 3
+    "points": 3,
+    "seniority": "junior"
   },
   {
     "category": "project-program-associate",
@@ -342,7 +369,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 3,
-    "points": 5
+    "points": 5,
+    "seniority": "junior"
   },
   {
     "category": "project-program-associate",
@@ -352,7 +380,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 7,
-    "points": 5
+    "points": 5,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -367,7 +396,8 @@
     "correct_option_index": 2,
     "ai_resistance": "medium",
     "estimated_minutes": 4,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -377,7 +407,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 7,
-    "points": 5
+    "points": 5,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -392,7 +423,8 @@
     "correct_option_index": 0,
     "ai_resistance": "low",
     "estimated_minutes": 2,
-    "points": 4
+    "points": 4,
+    "seniority": "junior"
   },
   {
     "category": "project-program-associate",
@@ -402,7 +434,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 9,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -417,7 +450,8 @@
     "correct_option_index": 2,
     "ai_resistance": "low",
     "estimated_minutes": 3,
-    "points": 5
+    "points": 5,
+    "seniority": "junior"
   },
   {
     "category": "project-program-associate",
@@ -427,7 +461,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 9,
-    "points": 7
+    "points": 7,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -442,7 +477,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 2,
-    "points": 4
+    "points": 4,
+    "seniority": "junior"
   },
   {
     "category": "project-program-associate",
@@ -452,7 +488,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 7,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -467,7 +504,8 @@
     "correct_option_index": 2,
     "ai_resistance": "medium",
     "estimated_minutes": 4,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -477,7 +515,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 9,
-    "points": 5
+    "points": 5,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -492,7 +531,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 3,
-    "points": 5
+    "points": 5,
+    "seniority": "junior"
   },
   {
     "category": "project-program-associate",
@@ -502,7 +542,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 9,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -512,7 +553,8 @@
     "correct_option_index": null,
     "ai_resistance": "low",
     "estimated_minutes": 5,
-    "points": 3
+    "points": 3,
+    "seniority": "junior"
   },
   {
     "category": "project-program-associate",
@@ -522,7 +564,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 7,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -537,7 +580,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 2,
-    "points": 3
+    "points": 3,
+    "seniority": "junior"
   },
   {
     "category": "project-program-associate",
@@ -547,7 +591,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 9,
-    "points": 7
+    "points": 7,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -562,7 +607,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 3,
-    "points": 4
+    "points": 4,
+    "seniority": "junior"
   },
   {
     "category": "project-program-associate",
@@ -572,7 +618,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 8
+    "points": 8,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -587,7 +634,8 @@
     "correct_option_index": 2,
     "ai_resistance": "low",
     "estimated_minutes": 3,
-    "points": 4
+    "points": 4,
+    "seniority": "junior"
   },
   {
     "category": "project-program-associate",
@@ -597,7 +645,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 7,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -612,7 +661,8 @@
     "correct_option_index": 1,
     "ai_resistance": "medium",
     "estimated_minutes": 4,
-    "points": 5
+    "points": 5,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -622,7 +672,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 7
+    "points": 7,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -637,7 +688,8 @@
     "correct_option_index": 0,
     "ai_resistance": "low",
     "estimated_minutes": 2,
-    "points": 3
+    "points": 3,
+    "seniority": "junior"
   },
   {
     "category": "project-program-associate",
@@ -647,7 +699,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 7,
-    "points": 5
+    "points": 5,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -662,7 +715,8 @@
     "correct_option_index": 1,
     "ai_resistance": "medium",
     "estimated_minutes": 4,
-    "points": 5
+    "points": 5,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -672,7 +726,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 7
+    "points": 7,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -687,7 +742,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 3,
-    "points": 4
+    "points": 4,
+    "seniority": "junior"
   },
   {
     "category": "project-program-associate",
@@ -697,7 +753,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 7,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -712,7 +769,8 @@
     "correct_option_index": 0,
     "ai_resistance": "medium",
     "estimated_minutes": 4,
-    "points": 5
+    "points": 5,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -722,7 +780,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 7
+    "points": 7,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -737,7 +796,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 2,
-    "points": 3
+    "points": 3,
+    "seniority": "junior"
   },
   {
     "category": "project-program-associate",
@@ -747,7 +807,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 9,
-    "points": 7
+    "points": 7,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -762,7 +823,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 3,
-    "points": 5
+    "points": 5,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -772,7 +834,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 7
+    "points": 7,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -787,7 +850,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 2,
-    "points": 4
+    "points": 4,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -797,7 +861,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 7,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -812,7 +877,8 @@
     "correct_option_index": 1,
     "ai_resistance": "medium",
     "estimated_minutes": 4,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -822,7 +888,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 8
+    "points": 8,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -837,7 +904,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 3,
-    "points": 5
+    "points": 5,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -847,7 +915,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 7,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -862,7 +931,8 @@
     "correct_option_index": 1,
     "ai_resistance": "medium",
     "estimated_minutes": 4,
-    "points": 5
+    "points": 5,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -872,7 +942,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 7
+    "points": 7,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -887,7 +958,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 2,
-    "points": 4
+    "points": 4,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -897,7 +969,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 7,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -912,7 +985,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 3,
-    "points": 4
+    "points": 4,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -922,7 +996,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 7
+    "points": 7,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -937,7 +1012,8 @@
     "correct_option_index": 1,
     "ai_resistance": "medium",
     "estimated_minutes": 4,
-    "points": 5
+    "points": 5,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -952,7 +1028,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 3,
-    "points": 6
+    "points": 6,
+    "seniority": "senior"
   },
   {
     "category": "project-program-associate",
@@ -962,7 +1039,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 7
+    "points": 7,
+    "seniority": "senior"
   },
   {
     "category": "project-program-associate",
@@ -977,7 +1055,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 2,
-    "points": 5
+    "points": 5,
+    "seniority": "senior"
   },
   {
     "category": "project-program-associate",
@@ -987,7 +1066,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 7,
-    "points": 6
+    "points": 6,
+    "seniority": "senior"
   },
   {
     "category": "project-program-associate",
@@ -1002,7 +1082,8 @@
     "correct_option_index": 2,
     "ai_resistance": "low",
     "estimated_minutes": 3,
-    "points": 5
+    "points": 5,
+    "seniority": "senior"
   },
   {
     "category": "project-program-associate",
@@ -1012,7 +1093,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 7
+    "points": 7,
+    "seniority": "senior"
   },
   {
     "category": "project-program-associate",
@@ -1027,7 +1109,8 @@
     "correct_option_index": 1,
     "ai_resistance": "medium",
     "estimated_minutes": 4,
-    "points": 6
+    "points": 6,
+    "seniority": "senior"
   },
   {
     "category": "project-program-associate",
@@ -1037,7 +1120,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 7,
-    "points": 6
+    "points": 6,
+    "seniority": "senior"
   },
   {
     "category": "project-program-associate",
@@ -1052,7 +1136,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 2,
-    "points": 4
+    "points": 4,
+    "seniority": "senior"
   },
   {
     "category": "project-program-associate",
@@ -1062,7 +1147,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 7
+    "points": 7,
+    "seniority": "senior"
   },
   {
     "category": "project-program-associate",
@@ -1072,7 +1158,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 7,
-    "points": 7
+    "points": 7,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -1082,7 +1169,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -1097,7 +1185,8 @@
     "correct_option_index": 0,
     "ai_resistance": "low",
     "estimated_minutes": 2,
-    "points": 4
+    "points": 4,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -1107,7 +1196,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 7,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -1117,7 +1207,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -1132,7 +1223,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 3,
-    "points": 4
+    "points": 4,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -1142,7 +1234,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 7
+    "points": 7,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -1152,7 +1245,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 7,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -1167,7 +1261,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 2,
-    "points": 3
+    "points": 3,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -1177,7 +1272,8 @@
     "correct_option_index": null,
     "ai_resistance": "high",
     "estimated_minutes": 9,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -1192,7 +1288,8 @@
     "correct_option_index": 1,
     "ai_resistance": "medium",
     "estimated_minutes": 3,
-    "points": 5
+    "points": 5,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -1207,7 +1304,8 @@
     "correct_option_index": 1,
     "ai_resistance": "low",
     "estimated_minutes": 2,
-    "points": 4
+    "points": 4,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -1217,7 +1315,8 @@
     "correct_option_index": null,
     "ai_resistance": "medium",
     "estimated_minutes": 9,
-    "points": 6
+    "points": 6,
+    "seniority": "mid"
   },
   {
     "category": "project-program-associate",
@@ -1232,6 +1331,7 @@
     "correct_option_index": 1,
     "ai_resistance": "medium",
     "estimated_minutes": 3,
-    "points": 4
+    "points": 4,
+    "seniority": "mid"
   }
 ]

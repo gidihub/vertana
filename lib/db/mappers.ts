@@ -75,6 +75,9 @@ export interface QuestionRow {
   category_id: string | null
   estimated_minutes: number | null
   test_cases: TestCase[]
+  rubric: string | null
+  model_answer: string | null
+  seniority: "junior" | "mid" | "senior" | null
   created_at?: string
 }
 
@@ -197,6 +200,9 @@ export function rowToQuestion(row: QuestionRow): Question {
     category_id: row.category_id,
     estimated_minutes: row.estimated_minutes,
     test_cases: Array.isArray(row.test_cases) ? row.test_cases : [],
+    rubric: row.rubric ?? null,
+    model_answer: row.model_answer ?? null,
+    seniority: row.seniority ?? null,
     created_at: row.created_at,
   }
 }
@@ -225,6 +231,9 @@ export function questionToRow(q: Question, testId: string): QuestionRow {
     category_id: q.category_id ?? null,
     estimated_minutes: q.estimated_minutes ?? null,
     test_cases: q.test_cases ?? [],
+    rubric: q.rubric?.trim() ? q.rubric.trim() : null,
+    model_answer: q.model_answer?.trim() ? q.model_answer.trim() : null,
+    seniority: q.seniority ?? null,
   }
 }
 

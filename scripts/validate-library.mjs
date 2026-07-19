@@ -13,7 +13,7 @@ import { generateObject } from "ai"
 import { z } from "zod"
 import { createClient } from "@supabase/supabase-js"
 
-import { LEGACY_SLUG_BY_CATEGORY, loadEnv } from "./library-seed-utils.mjs"
+import { LEGACY_SLUG_BY_CATEGORY, loadEnv, normalizePrompt } from "./library-seed-utils.mjs"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = join(__dirname, "..")
@@ -35,6 +35,14 @@ const LEAF_CATEGORIES = [
   "hr-people-management",
   "ai-governance",
   "remote-collaboration",
+  "ai-assisted-work-sample",
+  "reading-comprehension",
+  "attention-to-detail",
+  "following-instructions",
+  "applied-numeracy",
+  "numerical-reasoning",
+  "critical-thinking",
+  "problem-solving",
 ]
 
 const LEGACY_SLUG_TO_ID = Object.fromEntries(
@@ -121,8 +129,9 @@ function loadAllJsonQuestions() {
   return questions
 }
 
-function normalizePrompt(p) {
-  return p.toLowerCase().replace(/\s+/g, " ").trim().slice(0, 100)
+function isLegacyGeneratedOverlap(a, b) {
+  const sources = new Set([a.source, b.source])
+  return sources.has("legacy-seed") && sources.has("generated")
 }
 
 function validateQuestion(q, index, ctx) {
@@ -350,7 +359,8 @@ async function main() {
 
   const expectedByCategory = {}
   const staticIssues = []
-  const promptHashes = new Map()
+  const promptHashesByCategory = new Map()
+  let legacyGeneratedDupes = 0
 
   for (const q of all) {
     const cat = q.category_id
@@ -363,16 +373,38 @@ async function main() {
       ...validateQuestion(q, i, { category_id: q.category_id, source: q.source }),
     )
     const hash = normalizePrompt(q.prompt)
-    if (promptHashes.has(hash)) {
-      staticIssues.push({
-        severity: "warn",
-        id: `${q.category_id}#${i}`,
-        msg: `near-duplicate prompt vs ${promptHashes.get(hash)}`,
-      })
+    const catKey = q.category_id ?? "unknown"
+    if (!promptHashesByCategory.has(catKey)) {
+      promptHashesByCategory.set(catKey, new Map())
+    }
+    const catHashes = promptHashesByCategory.get(catKey)
+    if (catHashes.has(hash)) {
+      const prev = catHashes.get(hash)
+      if (isLegacyGeneratedOverlap(prev, q)) {
+        legacyGeneratedDupes++
+      } else {
+        staticIssues.push({
+          severity: "error",
+          id: `${q.category_id}#${i}`,
+          msg: `duplicate prompt in ${q.category_id} vs ${prev.id}`,
+        })
+      }
     } else {
-      promptHashes.set(hash, `${q.category_id}#${i}`)
+      catHashes.set(hash, { id: `${q.category_id}#${i}`, source: q.source })
     }
   }
+
+  if (legacyGeneratedDupes > 0) {
+    console.log(
+      `\nNote: ${legacyGeneratedDupes} legacy/generated prompt overlap(s) excluded from duplicate errors (apply script dedupes these).`,
+    )
+  }
+
+  const effectiveTotal = [...promptHashesByCategory.values()].reduce(
+    (n, m) => n + m.size,
+    0,
+  )
+  console.log(`Effective unique prompts (post-dedupe): ${effectiveTotal}`)
 
   const staticErrors = printReport("Static validation", staticIssues)
 

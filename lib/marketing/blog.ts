@@ -29,13 +29,15 @@ export interface BlogPost {
   intent: string
   excerpt: string
   author: string
-  role: string
+  role?: string
   date: string // ISO date
   readMinutes: number
   featured?: boolean
   blocks: BlogBlock[]
   related: BlogRelatedLink[]
 }
+
+export const BLOG_AUTHOR = "Vertana team"
 
 export const BLOG_POSTS: BlogPost[] = [
   {
@@ -45,8 +47,7 @@ export const BLOG_POSTS: BlogPost[] = [
     intent: "how to test frontend developer skills",
     excerpt:
       "A repeatable framework for evaluating real frontend ability — from fundamentals to production judgment — without leaning on trivia or whiteboard puzzles.",
-    author: "Dana Whitfield",
-    role: "Head of Talent Science",
+    author: BLOG_AUTHOR,
     date: "2026-06-24",
     readMinutes: 8,
     featured: false,
@@ -128,8 +129,7 @@ export const BLOG_POSTS: BlogPost[] = [
     intent: "how to stop cheating in online coding tests",
     excerpt:
       "Remote assessments open the door to shared answers and AI assistance. Here's how to design for integrity without treating every candidate like a suspect.",
-    author: "Marcus Reyes",
-    role: "Product Lead, Integrity",
+    author: BLOG_AUTHOR,
     date: "2026-06-17",
     readMinutes: 7,
     blocks: [
@@ -193,8 +193,7 @@ export const BLOG_POSTS: BlogPost[] = [
     intent: "take home assignment vs live coding interview",
     excerpt:
       "Both formats have real trade-offs in signal, candidate experience, and cheating risk. Here's a clear framework for choosing — and how to get the best of both.",
-    author: "Dana Whitfield",
-    role: "Head of Talent Science",
+    author: BLOG_AUTHOR,
     date: "2026-06-10",
     readMinutes: 6,
     blocks: [
@@ -265,8 +264,7 @@ export const BLOG_POSTS: BlogPost[] = [
     intent: "how to reduce bias in technical hiring",
     excerpt:
       "Unstructured interviews are among the weakest predictors of performance and among the easiest to bias. Structured, scored assessments are the fix.",
-    author: "Priya Nair",
-    role: "People Analytics",
+    author: BLOG_AUTHOR,
     date: "2026-06-03",
     readMinutes: 7,
     blocks: [
@@ -326,8 +324,7 @@ export const BLOG_POSTS: BlogPost[] = [
     intent: "AI cheating in hiring assessments",
     excerpt:
       "Candidates can paste prompts into ChatGPT faster than you can schedule interviews. Here's how to design assessments that still produce defensible signal.",
-    author: "Dana Whitfield",
-    role: "Head of Talent Science",
+    author: BLOG_AUTHOR,
     date: "2026-07-10",
     readMinutes: 9,
     featured: true,
@@ -372,8 +369,7 @@ export const BLOG_POSTS: BlogPost[] = [
     intent: "AI-proof interview questions",
     excerpt:
       "Not every hard question resists AI. Learn the design patterns that force original reasoning instead of polished generic answers.",
-    author: "Dana Whitfield",
-    role: "Head of Talent Science",
+    author: BLOG_AUTHOR,
     date: "2026-07-08",
     readMinutes: 7,
     blocks: [
@@ -412,8 +408,7 @@ export const BLOG_POSTS: BlogPost[] = [
     intent: "structured hiring reduce bias",
     excerpt:
       "Structure isn't bureaucracy — it's how you make comparable decisions at speed.",
-    author: "Dana Whitfield",
-    role: "Head of Talent Science",
+    author: BLOG_AUTHOR,
     date: "2026-06-18",
     readMinutes: 6,
     blocks: [

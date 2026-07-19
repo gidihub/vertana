@@ -1,12 +1,7 @@
 /**
  * Append AI-generated library questions from lib/question-library/generated/.
- * Idempotent: skips rows already present based on current DB count vs legacy+generated total.
- *
- * Usage:
- *   node scripts/apply-generated-library.mjs frontend-engineering
- *   node scripts/apply-generated-library.mjs --tier1
- *   node scripts/apply-generated-library.mjs --tier2
- *   node scripts/apply-generated-library.mjs --tier3
+ * Skips generated rows whose normalized prompt already exists in the category
+ * (legacy seed retained; generated duplicate dropped).
  */
 import path from "node:path"
 import { fileURLToPath } from "node:url"
@@ -20,6 +15,7 @@ import {
   legacySeedCount,
   loadEnv,
   loadGeneratedCategory,
+  normalizePrompt,
   questionToRow,
 } from "./library-seed-utils.mjs"
 
@@ -47,7 +43,27 @@ const TIER3_EXPANDED = [
   "hr-people-management",
   "ai-governance",
   "remote-collaboration",
+  "ai-assisted-work-sample",
+  "reading-comprehension",
+  "attention-to-detail",
+  "following-instructions",
+  "applied-numeracy",
+  "numerical-reasoning",
+  "critical-thinking",
+  "problem-solving",
 ]
+
+async function existingPromptKeys(supabase, categoryId) {
+  const { data, error } = await supabase
+    .from("questions")
+    .select("prompt")
+    .eq("is_library_item", true)
+    .or(
+      `category_id.eq.${categoryId},library_category.eq.${categoryId}`,
+    )
+  if (error) throw new Error(error.message)
+  return new Set((data ?? []).map((r) => normalizePrompt(r.prompt ?? "")))
+}
 
 async function applyCategory(supabase, categoryId) {
   const generated = loadGeneratedCategory(categoryId)
@@ -56,8 +72,28 @@ async function applyCategory(supabase, categoryId) {
     return
   }
 
+  const seen = await existingPromptKeys(supabase, categoryId)
+  const uniqueGenerated = []
+  let skipped = 0
+  for (const q of generated) {
+    const key = normalizePrompt(q.prompt ?? "")
+    if (seen.has(key)) {
+      skipped++
+      console.log(
+        `  skip duplicate: ${(q.prompt ?? "").slice(0, 72).trim()}…`,
+      )
+      continue
+    }
+    seen.add(key)
+    uniqueGenerated.push(q)
+  }
+
+  if (skipped) {
+    console.log(`${categoryId}: skipped ${skipped} generated duplicate(s)`)
+  }
+
   const legacy = legacySeedCount(categoryId)
-  const targetTotal = legacy + generated.length
+  const targetTotal = legacy + uniqueGenerated.length
   const current = (await countLibraryCategory(supabase, categoryId)) ?? 0
 
   if (current >= targetTotal) {
@@ -68,7 +104,7 @@ async function applyCategory(supabase, categoryId) {
   }
 
   const alreadyAppended = Math.max(0, current - legacy)
-  const toAppend = generated.slice(alreadyAppended)
+  const toAppend = uniqueGenerated.slice(alreadyAppended)
   if (!toAppend.length) {
     console.log(`${categoryId}: ${current} rows, legacy=${legacy}, nothing new`)
     return

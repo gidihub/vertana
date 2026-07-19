@@ -15,6 +15,8 @@ export type QuestionSource = "library" | "custom" | "ai_generated"
 
 export type QuestionDifficulty = "easy" | "medium" | "hard"
 
+export type QuestionSeniority = "junior" | "mid" | "senior"
+
 export interface TestCase {
   input: string
   expected_output: string
@@ -129,6 +131,11 @@ export interface Question {
   category_id?: string | null
   estimated_minutes?: number | null
   difficulty?: QuestionDifficulty | null
+  /** What a strong answer should cover — used by graders and AI grading assist. */
+  rubric?: string | null
+  /** Optional exemplar answer for graders / AI assist (not shown to candidates). */
+  model_answer?: string | null
+  seniority?: QuestionSeniority | null
   test_cases?: TestCase[]
   created_at?: string
 }

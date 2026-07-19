@@ -35,6 +35,15 @@ export function loadEnv(filePath) {
   return out
 }
 
+export function normalizePrompt(p) {
+  return p
+    .toLowerCase()
+    .replace(/^\[[^\]]+\]\s*/, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/[.,;:!?]+$/g, "")
+}
+
 export function questionToRow(q, categoryId, orderIndex) {
   let correct_answer = null
   if (q.type === "multiple_choice" && q.correct_option_index != null) {
@@ -58,6 +67,9 @@ export function questionToRow(q, categoryId, orderIndex) {
     category_id: categoryId,
     estimated_minutes: q.estimated_minutes ?? null,
     test_cases: q.type === "coding" ? (q.test_cases ?? []) : [],
+    rubric: q.rubric?.trim() ? q.rubric.trim() : null,
+    model_answer: q.model_answer?.trim() ? q.model_answer.trim() : null,
+    seniority: q.seniority ?? null,
   }
 }
 

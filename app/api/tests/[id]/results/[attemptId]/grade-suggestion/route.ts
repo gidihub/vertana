@@ -4,7 +4,7 @@ import { z } from "zod"
 
 import { handleApiAuth } from "@/lib/auth/api"
 import { getOpenAiModel, requireOpenAiApiKey } from "@/lib/ai/model"
-import { buildGradingPrompt } from "@/lib/ai/grade-prompt"
+import { buildGradingPrompt, hasGradingGuidance } from "@/lib/ai/grade-prompt"
 import {
   loadGradeSuggestionContext,
   saveGradeSuggestion,
@@ -48,6 +48,18 @@ export async function POST(
         rationale: ctx.cached.rationale,
         maxPoints: ctx.maxPoints,
         cached: true,
+        unavailable: false,
+      })
+    }
+
+    if (!hasGradingGuidance(ctx)) {
+      const rationale = "No rubric available; manual review recommended."
+      return NextResponse.json({
+        suggestedScore: null,
+        rationale,
+        maxPoints: ctx.maxPoints,
+        cached: false,
+        unavailable: true,
       })
     }
 
@@ -64,6 +76,7 @@ export async function POST(
         rationale,
         maxPoints: ctx.maxPoints,
         cached: false,
+        unavailable: false,
       })
     }
 
@@ -75,6 +88,8 @@ export async function POST(
         maxPoints: ctx.maxPoints,
         prompt: ctx.prompt,
         expected: ctx.expected,
+        rubric: ctx.rubric,
+        modelAnswer: ctx.modelAnswer,
         response: ctx.response,
       }),
     })
@@ -96,6 +111,7 @@ export async function POST(
       rationale,
       maxPoints: ctx.maxPoints,
       cached: false,
+      unavailable: false,
     })
   })
 }

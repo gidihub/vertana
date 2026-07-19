@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { Trash2, GripVertical, ChevronUp, ChevronDown, Check, Plus, Lock } from "lucide-react"
 
-import type { AiResistance, Question, QuestionType, TestCase } from "@/lib/types"
+import type { AiResistance, Question, QuestionSeniority, QuestionType, TestCase } from "@/lib/types"
 import { MAX_CODING_TEST_CASES, type CodingBlockReason } from "@/lib/coding/limits"
 import { AiResistanceBadge } from "@/components/builder/ai-resistance-badge"
 import { cn } from "@/lib/utils"
@@ -185,8 +185,8 @@ export function QuestionEditor({
           </p>
         )}
 
-        <div className="grid gap-4 sm:grid-cols-[1fr_160px_120px_100px]">
-          <Field>
+        <div className="grid gap-4 lg:grid-cols-6">
+          <Field className="lg:col-span-2">
             <FieldLabel htmlFor={`prompt-${question.id}`}>Prompt</FieldLabel>
             <Textarea
               id={`prompt-${question.id}`}
@@ -269,6 +269,29 @@ export function QuestionEditor({
               disabled={readOnly}
             />
           </Field>
+          <Field>
+            <FieldLabel>Seniority</FieldLabel>
+            <Select
+              value={question.seniority ?? "unspecified"}
+              onValueChange={(v) =>
+                update({
+                  seniority:
+                    v === "unspecified" ? null : (v as QuestionSeniority),
+                })
+              }
+              disabled={readOnly}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="unspecified">Unspecified</SelectItem>
+                <SelectItem value="junior">Junior</SelectItem>
+                <SelectItem value="mid">Mid</SelectItem>
+                <SelectItem value="senior">Senior</SelectItem>
+              </SelectContent>
+            </Select>
+          </Field>
         </div>
 
         {question.type === "multiple_choice" && (
@@ -343,12 +366,29 @@ export function QuestionEditor({
                 }
               />
             </Field>
+            <GradingGuidanceFields
+              question={question}
+              update={update}
+              readOnly={readOnly}
+            />
             <p className="rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground">
-              Leave blank to grade manually from results. Set an exact answer to
-              auto-score on submit.
+              Leave the exact answer blank to grade manually. Add a rubric so
+              recruiters (and AI grading assist) know what a strong answer
+              contains.
             </p>
           </div>
         )}
+
+        {question.type === "coding" &&
+          !(question.test_cases ?? []).some((tc) =>
+            tc.expected_output?.trim(),
+          ) && (
+            <GradingGuidanceFields
+              question={question}
+              update={update}
+              readOnly={readOnly}
+            />
+          )}
 
         {question.type === "coding" && (
           <div className="flex flex-col gap-3">
@@ -433,6 +473,46 @@ export function QuestionEditor({
           </div>
         )}
       </div>
+    </div>
+  )
+}
+
+function GradingGuidanceFields({
+  question,
+  update,
+  readOnly = false,
+}: {
+  question: Question
+  update: (patch: Partial<Question>) => void
+  readOnly?: boolean
+}) {
+  return (
+    <div className="flex flex-col gap-3 rounded-lg border border-border bg-muted/20 p-3">
+      <span className="text-sm font-medium">Grading guidance</span>
+      <Field>
+        <FieldLabel htmlFor={`rubric-${question.id}`}>Rubric (optional)</FieldLabel>
+        <Textarea
+          id={`rubric-${question.id}`}
+          placeholder="What should a strong answer cover? Used by graders and AI assist."
+          value={question.rubric ?? ""}
+          onChange={(e) => update({ rubric: e.target.value || null })}
+          rows={3}
+          disabled={readOnly}
+        />
+      </Field>
+      <Field>
+        <FieldLabel htmlFor={`model-${question.id}`}>
+          Model answer (optional)
+        </FieldLabel>
+        <Textarea
+          id={`model-${question.id}`}
+          placeholder="An exemplar strong answer — not shown to candidates."
+          value={question.model_answer ?? ""}
+          onChange={(e) => update({ model_answer: e.target.value || null })}
+          rows={3}
+          disabled={readOnly}
+        />
+      </Field>
     </div>
   )
 }

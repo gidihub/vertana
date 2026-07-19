@@ -15,10 +15,17 @@ import { LibraryPreviewDialog } from "@/components/library/library-preview-dialo
 import { AddToTestDialog } from "@/components/library/add-to-test-dialog"
 import { libraryCopy } from "@/lib/question-library/copy"
 import {
-  LIBRARY_BUNDLES,
+  bundlesForCategory,
   questionsForBundle,
   type LibraryBundle,
 } from "@/lib/question-library/bundles"
+import {
+  APPLIED_APTITUDE_BUILDER_GUIDANCE,
+  APPLIED_APTITUDE_LEAF_DESCRIPTIONS,
+  APPLIED_APTITUDE_PARENT_DESCRIPTION,
+  APPLIED_APTITUDE_PARENT_ID,
+  isAppliedAptitudeCategory,
+} from "@/lib/question-library/applied-aptitude"
 import {
   countByCategoryTree,
   categoryLabel,
@@ -28,7 +35,7 @@ import {
   type LibrarySort,
 } from "@/lib/question-library/display"
 import { fetchLibraryQuestions, useStore } from "@/lib/store"
-import type { AiResistance, Question, QuestionType } from "@/lib/types"
+import type { AiResistance, Question, QuestionSeniority, QuestionType } from "@/lib/types"
 import { codingStatusForOrg } from "@/lib/coding/limits"
 import { type PlanTier } from "@/lib/plans"
 import { Input } from "@/components/ui/input"
@@ -65,6 +72,7 @@ export function LibraryWorkspace({
     "",
   )
   const [typeFilter, setTypeFilter] = useState<QuestionType | "">("")
+  const [seniorityFilter, setSeniorityFilter] = useState<QuestionSeniority | "unspecified" | "">("")
   const [sort, setSort] = useState<LibrarySort>("recommended")
 
   const [preview, setPreview] = useState<Question | null>(null)
@@ -114,16 +122,31 @@ export function LibraryWorkspace({
     if (difficultyFilter) {
       list = list.filter((q) => inferredDifficulty(q) === difficultyFilter)
     }
+    if (seniorityFilter === "unspecified") {
+      list = list.filter((q) => !q.seniority)
+    } else if (seniorityFilter) {
+      list = list.filter((q) => q.seniority === seniorityFilter)
+    }
     return sortLibraryQuestions(list, sort)
-  }, [items, sort, typeFilter, difficultyFilter])
+  }, [items, sort, typeFilter, difficultyFilter, seniorityFilter])
 
   const visibleBundles = useMemo(
-    () =>
-      category
-        ? LIBRARY_BUNDLES.filter((b) => b.category === category)
-        : LIBRARY_BUNDLES,
+    () => (category ? bundlesForCategory(category) : bundlesForCategory("")),
     [category],
   )
+
+  const categoryDescription = useMemo(() => {
+    if (!category) return null
+    if (category === APPLIED_APTITUDE_PARENT_ID) {
+      return APPLIED_APTITUDE_PARENT_DESCRIPTION
+    }
+    if (category in APPLIED_APTITUDE_LEAF_DESCRIPTIONS) {
+      return APPLIED_APTITUDE_LEAF_DESCRIPTIONS[
+        category as keyof typeof APPLIED_APTITUDE_LEAF_DESCRIPTIONS
+      ]
+    }
+    return null
+  }, [category])
 
   function openAddFlow(questions: Question[]) {
     if (mode === "builder" && testId && onAdd) {
@@ -157,6 +180,7 @@ export function LibraryWorkspace({
     (resistance ? 1 : 0) +
     (difficultyFilter ? 1 : 0) +
     (typeFilter ? 1 : 0) +
+    (seniorityFilter ? 1 : 0) +
     (search.trim() ? 1 : 0)
 
   return (
@@ -256,13 +280,40 @@ export function LibraryWorkspace({
               <SelectItem value="coding">Coding</SelectItem>
             </SelectContent>
           </Select>
+          <Select
+            value={seniorityFilter || "all"}
+            onValueChange={(v) =>
+              setSeniorityFilter(
+                v === "all"
+                  ? ""
+                  : (v as QuestionSeniority | "unspecified"),
+              )
+            }
+          >
+            <SelectTrigger className="h-7 w-auto min-w-[7rem] border-dashed text-xs">
+              <SelectValue placeholder="Seniority" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All seniority</SelectItem>
+              <SelectItem value="unspecified">Unspecified</SelectItem>
+              <SelectItem value="junior">Junior</SelectItem>
+              <SelectItem value="mid">Mid</SelectItem>
+              <SelectItem value="senior">Senior</SelectItem>
+            </SelectContent>
+          </Select>
           <span className="text-xs text-muted-foreground tabular-nums">
             {displayed.length} question{displayed.length === 1 ? "" : "s"}
             {activeFilters > 0 ? ` · ${activeFilters} filter${activeFilters === 1 ? "" : "s"}` : ""}
           </span>
         </div>
 
-        {mode === "page" ? (
+        {categoryDescription ? (
+          <p className="rounded-lg border border-sage-line/70 bg-muted/30 px-4 py-3 text-sm leading-relaxed text-muted-foreground">
+            {categoryDescription}
+          </p>
+        ) : null}
+
+        {visibleBundles.length > 0 ? (
           <LibraryBundlesRow
             bundles={visibleBundles}
             onUseBundle={handleUseBundle}
@@ -313,7 +364,10 @@ export function LibraryWorkspace({
             <Link href="/tests/new" className="font-medium text-pine underline">
               Create a test
             </Link>{" "}
-            to start adding from the library.
+            ·{" "}
+            <Link href="/library/admin" className="font-medium text-pine underline">
+              Library admin
+            </Link>
           </p>
         ) : null}
       </div>

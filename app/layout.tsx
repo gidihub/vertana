@@ -1,6 +1,6 @@
-import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Inter, Geist_Mono } from 'next/font/google'
+import { CookieConsentRoot } from '@/components/marketing/cookie-consent'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
@@ -40,7 +40,7 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         {children}
         <Toaster />
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        <CookieConsentRoot />
       </body>
     </html>
   )

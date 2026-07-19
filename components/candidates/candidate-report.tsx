@@ -2,6 +2,7 @@ import Link from "next/link"
 import { ArrowLeft, ShieldCheck } from "lucide-react"
 
 import type { CandidateAttemptDetail, CandidateProfileData } from "@/lib/db/queries"
+import { hasGradingGuidance } from "@/lib/ai/grade-prompt"
 import type { Question } from "@/lib/types"
 import { candidateDisplayName, candidateInitials } from "@/lib/candidate-name"
 import { evaluatePass } from "@/lib/passing"
@@ -472,6 +473,11 @@ function AnswerCard({
   const aiResistant = question?.ai_resistance === "high"
   const coding = a.type === "coding" ? parseCodingResponse(a.response) : null
   const showAssist = a.type === "short_answer" && bucket === "needs_review"
+  const gradingGuidance = hasGradingGuidance({
+    expected: question?.correct_answer_exact,
+    rubric: question?.rubric,
+    modelAnswer: question?.model_answer,
+  })
 
   return (
     <div className="rounded-lg border border-border p-3">
@@ -533,6 +539,7 @@ function AnswerCard({
               attemptId={attemptId}
               questionId={a.question_id}
               maxPoints={a.max_points}
+              gradingGuidance={gradingGuidance}
               initialScore={a.ai_suggested_points}
               initialRationale={a.ai_suggested_rationale}
             />

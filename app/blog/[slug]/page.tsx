@@ -71,8 +71,12 @@ export default async function BlogArticlePage({
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-muted">
             <span className="font-medium text-ink">{post.author}</span>
-            <span className="text-ink-muted">{post.role}</span>
-            <span aria-hidden>·</span>
+            {post.role ? (
+              <>
+                <span className="text-ink-muted">{post.role}</span>
+                <span aria-hidden>·</span>
+              </>
+            ) : null}
             <time dateTime={post.date}>{formatBlogDate(post.date)}</time>
             <span aria-hidden>·</span>
             <span className="inline-flex items-center gap-1">

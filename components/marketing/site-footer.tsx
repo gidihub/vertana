@@ -1,6 +1,8 @@
 import Link from "next/link"
 import Image from "next/image"
+import type { ReactNode } from "react"
 import { ArrowRight } from "lucide-react"
+import { CookiePreferencesLink } from "@/components/marketing/cookie-preferences-link"
 import { Logo } from "@/components/logo"
 
 const PRODUCT_LINKS = [
@@ -74,7 +76,11 @@ export function SiteFooter() {
           <FooterColumn title="Use cases" links={USE_CASE_LINKS} />
           <FooterColumn title="Compare" links={COMPARE_LINKS} />
           <FooterColumn title="Resources" links={RESOURCE_LINKS} />
-          <FooterColumn title="Legal" links={LEGAL_LINKS} />
+          <FooterColumn title="Legal" links={LEGAL_LINKS}>
+            <li>
+              <CookiePreferencesLink className="rounded text-sm text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pine focus-visible:ring-offset-2 focus-visible:ring-offset-paper" />
+            </li>
+          </FooterColumn>
 
           {/* Contact */}
           <div className="flex flex-col gap-3">
@@ -139,9 +145,11 @@ export function SiteFooter() {
 function FooterColumn({
   title,
   links,
+  children,
 }: {
   title: string
   links: { label: string; href: string }[]
+  children?: ReactNode
 }) {
   return (
     <div className="flex flex-col gap-3">
@@ -157,6 +165,7 @@ function FooterColumn({
             </Link>
           </li>
         ))}
+        {children}
       </ul>
     </div>
   )
