@@ -2,14 +2,36 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 
 import { cmsAdmin, cmsForbidden, withStaff } from "@/app/api/cms/_lib"
-import { isHttpsUrl, type CmsAnnouncementRow } from "@/lib/cms/types"
+import {
+  isValidAnnouncementLink,
+  normalizeAnnouncementLink,
+} from "@/lib/cms/announcements"
+import type { CmsAnnouncementRow } from "@/lib/cms/types"
+
+const linkSchema = z
+  .string()
+  .max(500)
+  .nullable()
+  .optional()
+  .refine((v) => isValidAnnouncementLink(v), {
+    message: "link_url must be a relative path or HTTPS URL",
+  })
 
 const createSchema = z.object({
-  title: z.string().min(1).max(300),
-  body: z.string().max(10000).optional(),
-  link_url: z.string().url().nullable().optional(),
+  body: z.string().min(1).max(500),
+  title: z.string().max(100).optional(),
+  link_url: linkSchema,
   published: z.boolean().optional(),
 })
+
+async function unpublishOtherAnnouncements(exceptId?: string) {
+  let q = cmsAdmin()
+    .from("cms_announcements")
+    .update({ published: false, published_at: null })
+    .eq("published", true)
+  if (exceptId) q = q.neq("id", exceptId)
+  await q
+}
 
 export async function GET() {
   const staff = await import("@/lib/cms-auth").then((m) => m.assertStaff())
@@ -30,19 +52,14 @@ export async function POST(req: Request) {
   return withStaff(async () => {
     const body = createSchema.parse(await req.json())
 
-    if (body.link_url && !isHttpsUrl(body.link_url)) {
-      return NextResponse.json(
-        { error: "link_url must be HTTPS" },
-        { status: 400 },
-      )
-    }
-
     const published = body.published ?? false
+    if (published) await unpublishOtherAnnouncements()
+
     const now = new Date().toISOString()
     const row = {
-      title: body.title.trim(),
-      body: body.body?.trim() ?? "",
-      link_url: body.link_url ?? null,
+      title: body.title?.trim() ?? "",
+      body: body.body.trim(),
+      link_url: normalizeAnnouncementLink(body.link_url),
       published,
       published_at: published ? now : null,
     }

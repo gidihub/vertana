@@ -1,36 +1,87 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Loader2 } from "lucide-react"
+import { Loader2, Megaphone, Plus, Trash2 } from "lucide-react"
 import { toast } from "sonner"
 
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+import { Switch } from "@/components/ui/switch"
+import { announcementMessage } from "@/lib/cms/announcements"
 import type { CmsAnnouncementRow } from "@/lib/cms/types"
-import { formatDateTime } from "@/lib/format"
+
+function AnnouncementCard({
+  item,
+  toggling,
+  deleting,
+  onToggle,
+  onDelete,
+}: {
+  item: CmsAnnouncementRow
+  toggling: boolean
+  deleting: boolean
+  onToggle: (next: boolean) => void
+  onDelete: () => void
+}) {
+  const live = item.published
+
+  return (
+    <div
+      className={
+        live
+          ? "flex items-center justify-between gap-4 rounded-xl border border-pine/25 bg-pine/5 px-5 py-4"
+          : "flex items-center justify-between gap-4 rounded-xl border border-sage-line/70 bg-card px-5 py-4"
+      }
+    >
+      <p className="min-w-0 flex-1 text-sm leading-relaxed text-ink">
+        {announcementMessage(item)}
+      </p>
+      <div className="flex shrink-0 items-center gap-3">
+        <span className="text-sm text-ink-muted">{live ? "Live" : "Off"}</span>
+        <Switch
+          checked={live}
+          disabled={toggling || deleting}
+          onCheckedChange={onToggle}
+          aria-label={live ? "Turn off announcement" : "Turn on announcement"}
+        />
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          disabled={toggling || deleting}
+          className="text-ink-muted hover:text-destructive"
+          onClick={onDelete}
+          aria-label="Delete announcement"
+        >
+          {deleting ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <Trash2 className="size-4" />
+          )}
+        </Button>
+      </div>
+    </div>
+  )
+}
 
 export default function CmsAnnouncementsPage() {
   const [loading, setLoading] = useState(true)
   const [creating, setCreating] = useState(false)
+  const [dialogOpen, setDialogOpen] = useState(false)
   const [items, setItems] = useState<CmsAnnouncementRow[]>([])
-  const [title, setTitle] = useState("")
-  const [body, setBody] = useState("")
-  const [editingId, setEditingId] = useState<string | null>(null)
-  const [editTitle, setEditTitle] = useState("")
-  const [editBody, setEditBody] = useState("")
-  const [savingId, setSavingId] = useState<string | null>(null)
+  const [message, setMessage] = useState("")
+  const [ctaLabel, setCtaLabel] = useState("")
+  const [ctaUrl, setCtaUrl] = useState("")
   const [togglingId, setTogglingId] = useState<string | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   function loadAnnouncements() {
     setLoading(true)
@@ -54,100 +105,31 @@ export default function CmsAnnouncementsPage() {
     loadAnnouncements()
   }, [])
 
-  async function handleUpdate(id: string) {
-    if (!editTitle.trim()) return
-    setSavingId(id)
-    try {
-      const res = await fetch(`/api/cms/announcements/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: editTitle.trim(),
-          body: editBody.trim(),
-        }),
-      })
-      const data = (await res.json()) as {
-        announcement?: CmsAnnouncementRow
-        error?: string
-      }
-      if (!res.ok) throw new Error(data.error ?? "Update failed")
-      if (data.announcement) {
-        setItems((prev) =>
-          prev.map((item) => (item.id === id ? data.announcement! : item)),
-        )
-      } else {
-        loadAnnouncements()
-      }
-      setEditingId(null)
-      toast.success("Announcement updated")
-    } catch (err) {
-      toast.error((err as Error).message)
-    } finally {
-      setSavingId(null)
-    }
+  function resetForm() {
+    setMessage("")
+    setCtaLabel("")
+    setCtaUrl("")
   }
 
-  async function handleTogglePublished(item: CmsAnnouncementRow) {
-    setTogglingId(item.id)
-    try {
-      const res = await fetch(`/api/cms/announcements/${item.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ published: !item.published }),
-      })
-      const data = (await res.json()) as {
-        announcement?: CmsAnnouncementRow
-        error?: string
-      }
-      if (!res.ok) throw new Error(data.error ?? "Update failed")
-      if (data.announcement) {
-        setItems((prev) =>
-          prev.map((row) => (row.id === item.id ? data.announcement! : row)),
-        )
-      } else {
-        loadAnnouncements()
-      }
-      toast.success(
-        data.announcement?.published ? "Published" : "Unpublished",
-      )
-    } catch (err) {
-      toast.error((err as Error).message)
-    } finally {
-      setTogglingId(null)
-    }
-  }
-
-  function startEditing(item: CmsAnnouncementRow) {
-    setEditingId(item.id)
-    setEditTitle(item.title)
-    setEditBody(item.body ?? "")
-  }
-
-  function cancelEditing() {
-    setEditingId(null)
-    setEditTitle("")
-    setEditBody("")
-  }
-
-  async function handleCreate(e: React.FormEvent) {
-    e.preventDefault()
-    if (!title.trim()) return
+  async function handleCreate() {
+    if (!message.trim()) return
     setCreating(true)
     try {
       const res = await fetch("/api/cms/announcements", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: title.trim(),
-          body: body.trim(),
+          body: message.trim(),
+          title: ctaLabel.trim() || undefined,
+          link_url: ctaUrl.trim() || null,
           published: false,
         }),
       })
       const data = (await res.json()) as { error?: string }
       if (!res.ok) throw new Error(data.error ?? "Create failed")
       toast.success("Announcement created")
-      setTitle("")
-      setBody("")
+      resetForm()
+      setDialogOpen(false)
       loadAnnouncements()
     } catch (err) {
       toast.error((err as Error).message)
@@ -156,164 +138,187 @@ export default function CmsAnnouncementsPage() {
     }
   }
 
-  return (
-    <div className="mx-auto max-w-5xl px-6 py-10">
-      <div className="mb-8">
-        <h1 className="font-sans text-2xl font-semibold tracking-tight">
-          Announcements
-        </h1>
-        <p className="mt-1 text-sm text-ink-muted">
-          In-app messages for users.
-        </p>
-      </div>
+  async function handleToggle(item: CmsAnnouncementRow, next: boolean) {
+    setTogglingId(item.id)
+    try {
+      const res = await fetch(`/api/cms/announcements/${item.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ published: next }),
+      })
+      const data = (await res.json()) as { error?: string }
+      if (!res.ok) throw new Error(data.error ?? "Update failed")
+      toast.success(next ? "Announcement is live" : "Announcement turned off")
+      loadAnnouncements()
+    } catch (err) {
+      toast.error((err as Error).message)
+    } finally {
+      setTogglingId(null)
+    }
+  }
 
-      <form
-        onSubmit={(e) => void handleCreate(e)}
-        className="mb-8 space-y-3 rounded-xl border border-sage-line/70 bg-card p-4"
-      >
-        <div className="space-y-2">
-          <Label htmlFor="ann-title">New announcement</Label>
-          <Input
-            id="ann-title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Title"
-          />
+  async function handleDelete(id: string) {
+    setDeletingId(id)
+    try {
+      const res = await fetch(`/api/cms/announcements/${id}`, {
+        method: "DELETE",
+      })
+      const data = (await res.json()) as { error?: string }
+      if (!res.ok) throw new Error(data.error ?? "Delete failed")
+      toast.success("Announcement deleted")
+      setItems((prev) => prev.filter((item) => item.id !== id))
+    } catch (err) {
+      toast.error((err as Error).message)
+    } finally {
+      setDeletingId(null)
+    }
+  }
+
+  const liveItems = items.filter((item) => item.published)
+  const inactiveItems = items.filter((item) => !item.published)
+
+  return (
+    <div className="mx-auto max-w-3xl px-6 py-10">
+      <div className="mb-8 flex items-start justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <Megaphone className="size-5 text-pine" aria-hidden />
+            <h1 className="font-sans text-2xl font-semibold tracking-tight">
+              Announcements
+            </h1>
+          </div>
+          <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink-muted">
+            Manage the banner shown at the top of the public site. Only one can
+            be active at a time.
+          </p>
         </div>
-        <Textarea
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          placeholder="Body (optional)"
-          rows={3}
-        />
         <Button
-          type="submit"
-          disabled={creating}
-          className="bg-pine text-pine-foreground hover:bg-pine-deep"
+          type="button"
+          className="shrink-0 bg-pine text-pine-foreground hover:bg-pine-deep"
+          onClick={() => setDialogOpen(true)}
         >
-          {creating ? <Loader2 className="size-4 animate-spin" /> : null}
-          Add draft
+          <Plus className="size-4" />
+          New announcement
         </Button>
-      </form>
+      </div>
 
       {loading ? (
         <p className="flex items-center gap-2 text-sm text-ink-muted">
           <Loader2 className="size-4 animate-spin" />
           Loading announcements…
         </p>
+      ) : items.length === 0 ? (
+        <p className="rounded-xl border border-dashed border-sage-line/70 bg-card px-5 py-10 text-center text-sm text-ink-muted">
+          No announcements yet. Create one to show a banner on the public site.
+        </p>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-sage-line/70 bg-card">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {items.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={4} className="text-ink-muted">
-                    No announcements yet.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                items.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell>
-                      {editingId === item.id ? (
-                        <div className="space-y-2">
-                          <Input
-                            value={editTitle}
-                            onChange={(e) => setEditTitle(e.target.value)}
-                            placeholder="Title"
-                          />
-                          <Textarea
-                            value={editBody}
-                            onChange={(e) => setEditBody(e.target.value)}
-                            placeholder="Body (optional)"
-                            rows={3}
-                          />
-                          <div className="flex gap-2">
-                            <Button
-                              type="button"
-                              size="sm"
-                              disabled={savingId === item.id}
-                              className="bg-pine text-pine-foreground hover:bg-pine-deep"
-                              onClick={() => void handleUpdate(item.id)}
-                            >
-                              {savingId === item.id ? (
-                                <Loader2 className="size-4 animate-spin" />
-                              ) : null}
-                              Save
-                            </Button>
-                            <Button
-                              type="button"
-                              size="sm"
-                              variant="outline"
-                              onClick={cancelEditing}
-                            >
-                              Cancel
-                            </Button>
-                          </div>
-                        </div>
-                      ) : (
-                        <>
-                          <p className="font-medium">{item.title}</p>
-                          {item.body ? (
-                            <p className="mt-1 line-clamp-2 text-xs text-ink-muted">
-                              {item.body}
-                            </p>
-                          ) : null}
-                        </>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={item.published ? "default" : "secondary"}>
-                        {item.published ? "Published" : "Draft"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-ink-muted">
-                      {formatDateTime(item.created_at)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {editingId === item.id ? null : (
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            onClick={() => startEditing(item)}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            disabled={togglingId === item.id}
-                            onClick={() => void handleTogglePublished(item)}
-                          >
-                            {togglingId === item.id ? (
-                              <Loader2 className="size-4 animate-spin" />
-                            ) : item.published ? (
-                              "Unpublish"
-                            ) : (
-                              "Publish"
-                            )}
-                          </Button>
-                        </div>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+        <div className="space-y-8">
+          {liveItems.length > 0 ? (
+            <section>
+              <h2 className="text-xs font-semibold uppercase tracking-widest text-ink-muted">
+                Live
+              </h2>
+              <div className="mt-3 space-y-3">
+                {liveItems.map((item) => (
+                  <AnnouncementCard
+                    key={item.id}
+                    item={item}
+                    toggling={togglingId === item.id}
+                    deleting={deletingId === item.id}
+                    onToggle={(next) => void handleToggle(item, next)}
+                    onDelete={() => void handleDelete(item.id)}
+                  />
+                ))}
+              </div>
+            </section>
+          ) : null}
+
+          {inactiveItems.length > 0 ? (
+            <section>
+              <h2 className="text-xs font-semibold uppercase tracking-widest text-ink-muted">
+                Inactive
+              </h2>
+              <div className="mt-3 space-y-3">
+                {inactiveItems.map((item) => (
+                  <AnnouncementCard
+                    key={item.id}
+                    item={item}
+                    toggling={togglingId === item.id}
+                    deleting={deletingId === item.id}
+                    onToggle={(next) => void handleToggle(item, next)}
+                    onDelete={() => void handleDelete(item.id)}
+                  />
+                ))}
+              </div>
+            </section>
+          ) : null}
         </div>
       )}
+
+      <Dialog
+        open={dialogOpen}
+        onOpenChange={(open) => {
+          setDialogOpen(open)
+          if (!open) resetForm()
+        }}
+      >
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>New announcement</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label htmlFor="ann-message">
+                Message <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="ann-message"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Free for teams under 5 — no credit card needed."
+              />
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="ann-cta-label">CTA label (optional)</Label>
+                <Input
+                  id="ann-cta-label"
+                  value={ctaLabel}
+                  onChange={(e) => setCtaLabel(e.target.value)}
+                  placeholder="Get started"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="ann-cta-url">CTA URL (optional)</Label>
+                <Input
+                  id="ann-cta-url"
+                  value={ctaUrl}
+                  onChange={(e) => setCtaUrl(e.target.value)}
+                  placeholder="/signup"
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              disabled={creating || !message.trim()}
+              className="bg-pine text-pine-foreground hover:bg-pine-deep"
+              onClick={() => void handleCreate()}
+            >
+              {creating ? <Loader2 className="size-4 animate-spin" /> : null}
+              Create
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

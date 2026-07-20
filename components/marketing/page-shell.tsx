@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
 import { MarketingNav } from "@/components/marketing/marketing-nav"
+import { SiteAnnouncementBanner } from "@/components/marketing/site-announcement-banner"
 import { SiteFooter } from "@/components/marketing/site-footer"
 
 export function PageShell({ children }: { children: ReactNode }) {
@@ -11,6 +12,7 @@ export function PageShell({ children }: { children: ReactNode }) {
       >
         Skip to content
       </a>
+      <SiteAnnouncementBanner />
       <MarketingNav />
       <main id="main">{children}</main>
       <SiteFooter />

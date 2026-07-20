@@ -171,10 +171,11 @@ async function fetchSignupTrendDates(
   while (true) {
     const { data, error } = await admin
       .from("organizations")
-      .select("created_at")
+      .select("id, created_at")
       .gte("created_at", start)
       .lt("created_at", end)
       .order("created_at", { ascending: true })
+      .order("id", { ascending: true })
       .range(offset, offset + pageSize - 1)
     if (error) throw error
     const rows = data ?? []

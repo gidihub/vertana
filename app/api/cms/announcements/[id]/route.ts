@@ -2,14 +2,35 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 
 import { cmsAdmin, withStaff } from "@/app/api/cms/_lib"
-import { isHttpsUrl, type CmsAnnouncementRow } from "@/lib/cms/types"
+import {
+  isValidAnnouncementLink,
+  normalizeAnnouncementLink,
+} from "@/lib/cms/announcements"
+import type { CmsAnnouncementRow } from "@/lib/cms/types"
+
+const linkSchema = z
+  .string()
+  .max(500)
+  .nullable()
+  .optional()
+  .refine((v) => isValidAnnouncementLink(v), {
+    message: "link_url must be a relative path or HTTPS URL",
+  })
 
 const patchSchema = z.object({
-  title: z.string().min(1).max(300).optional(),
-  body: z.string().max(10000).optional(),
-  link_url: z.string().url().nullable().optional(),
+  body: z.string().min(1).max(500).optional(),
+  title: z.string().max(100).optional(),
+  link_url: linkSchema,
   published: z.boolean().optional(),
 })
+
+async function unpublishOtherAnnouncements(exceptId: string) {
+  await cmsAdmin()
+    .from("cms_announcements")
+    .update({ published: false, published_at: null })
+    .eq("published", true)
+    .neq("id", exceptId)
+}
 
 export async function PATCH(
   req: Request,
@@ -19,17 +40,16 @@ export async function PATCH(
     const { id } = await params
     const body = patchSchema.parse(await req.json())
 
-    if (body.link_url && !isHttpsUrl(body.link_url)) {
-      return NextResponse.json(
-        { error: "link_url must be HTTPS" },
-        { status: 400 },
-      )
+    if (body.published === true) {
+      await unpublishOtherAnnouncements(id)
     }
 
     const updates: Record<string, unknown> = {}
-    if (body.title !== undefined) updates.title = body.title.trim()
     if (body.body !== undefined) updates.body = body.body.trim()
-    if (body.link_url !== undefined) updates.link_url = body.link_url
+    if (body.title !== undefined) updates.title = body.title.trim()
+    if (body.link_url !== undefined) {
+      updates.link_url = normalizeAnnouncementLink(body.link_url)
+    }
     if (body.published !== undefined) {
       updates.published = body.published
       updates.published_at = body.published ? new Date().toISOString() : null
