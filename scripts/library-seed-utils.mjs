@@ -82,3 +82,86 @@ export function loadGeneratedCategory(categoryId) {
 export function legacySeedCount(categoryId) {
   return LEGACY_SLUG_BY_CATEGORY[categoryId] ? 12 : 0
 }
+
+/** Keep in sync with supabase/migrations/045_applied_aptitude_categories.sql */
+export const APPLIED_APTITUDE_CATEGORIES = [
+  {
+    id: "applied-aptitude",
+    name: "Applied Aptitude",
+    parent_id: null,
+    sort_order: 6,
+    priority_tier: 2,
+  },
+  {
+    id: "reading-comprehension",
+    name: "Reading Comprehension",
+    parent_id: "applied-aptitude",
+    sort_order: 1,
+    priority_tier: 2,
+  },
+  {
+    id: "attention-to-detail",
+    name: "Attention to Detail",
+    parent_id: "applied-aptitude",
+    sort_order: 2,
+    priority_tier: 2,
+  },
+  {
+    id: "following-instructions",
+    name: "Following Instructions",
+    parent_id: "applied-aptitude",
+    sort_order: 3,
+    priority_tier: 2,
+  },
+  {
+    id: "applied-numeracy",
+    name: "Applied Numeracy",
+    parent_id: "applied-aptitude",
+    sort_order: 4,
+    priority_tier: 2,
+  },
+  {
+    id: "numerical-reasoning",
+    name: "Numerical Reasoning",
+    parent_id: "applied-aptitude",
+    sort_order: 5,
+    priority_tier: 2,
+  },
+  {
+    id: "critical-thinking",
+    name: "Critical Thinking",
+    parent_id: "applied-aptitude",
+    sort_order: 6,
+    priority_tier: 2,
+  },
+  {
+    id: "problem-solving",
+    name: "Problem Solving",
+    parent_id: "applied-aptitude",
+    sort_order: 7,
+    priority_tier: 2,
+  },
+]
+
+const APPLIED_APTITUDE_LEAF_IDS = new Set(
+  APPLIED_APTITUDE_CATEGORIES.filter((c) => c.parent_id).map((c) => c.id),
+)
+
+export async function ensureLibraryCategoriesForApply(supabase, categoryIds) {
+  const needsAppliedAptitude = categoryIds.some(
+    (id) => id === "applied-aptitude" || APPLIED_APTITUDE_LEAF_IDS.has(id),
+  )
+  if (!needsAppliedAptitude) return
+
+  const { error } = await supabase
+    .from("library_categories")
+    .upsert(APPLIED_APTITUDE_CATEGORIES, { onConflict: "id" })
+
+  if (error) {
+    throw new Error(`Applied Aptitude category upsert failed: ${error.message}`)
+  }
+
+  console.log(
+    `Ensured ${APPLIED_APTITUDE_CATEGORIES.length} Applied Aptitude categories in library_categories`,
+  )
+}

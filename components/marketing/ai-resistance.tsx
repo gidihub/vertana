@@ -6,6 +6,7 @@ import {
   type IconProps,
 } from "@tabler/icons-react"
 import type { ComponentType } from "react"
+import Link from "next/link"
 
 type Card = {
   icon: ComponentType<IconProps>
@@ -91,6 +92,15 @@ export function AiResistance() {
               {item}
             </span>
           ))}
+        </div>
+
+        <div className="mt-8">
+          <Link
+            href="/tools/ai-solvability-checker"
+            className="inline-flex items-center gap-2 rounded-full border border-pine/30 bg-paper px-5 py-2.5 text-sm font-semibold text-pine transition-colors hover:border-pine/50 hover:bg-sage/40"
+          >
+            Try the free AI solvability checker
+          </Link>
         </div>
       </div>
     </section>

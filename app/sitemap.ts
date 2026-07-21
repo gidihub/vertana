@@ -22,6 +22,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.4,
     },
     { url: `${SITE_URL}/assessments`, changeFrequency: "weekly", priority: 0.8 },
+    {
+      url: `${SITE_URL}/tools/ai-solvability-checker`,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
   ]
 
   const assessments = ASSESSMENT_LANDINGS.map((page) => ({

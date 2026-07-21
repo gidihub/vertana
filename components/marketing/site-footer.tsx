@@ -38,6 +38,7 @@ const LEGAL_LINKS = [
 
 const RESOURCE_LINKS = [
   { label: "Blog", href: "/blog" },
+  { label: "AI solvability checker", href: "/tools/ai-solvability-checker" },
   { label: "Hiring assessments", href: "/assessments" },
   { label: "React developer test", href: "/assessments/react-developer-assessment" },
   { label: "Prevent interview cheating", href: "/blog/prevent-cheating-remote-technical-interviews" },

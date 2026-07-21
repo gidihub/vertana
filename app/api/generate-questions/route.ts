@@ -4,6 +4,7 @@ import { z } from "zod"
 
 import { handleApiAuth } from "@/lib/auth/api"
 import { getOpenAiModel, requireOpenAiApiKey } from "@/lib/ai/model"
+import { AI_RESISTANCE_SELF_RATING_HINT } from "@/lib/ai/resistance-rubric"
 import { MAX_CODING_TEST_CASES, clampTestCases } from "@/lib/coding/limits"
 import {
   plannedQuestionSchema,
@@ -79,7 +80,7 @@ Requirements:
 - Mix question types appropriately (multiple_choice, short_answer, coding).
 - For each question include: type, prompt, options (MCQ only, exactly 4; empty array otherwise), correct_option_index (MCQ index or null), correct_answer_exact (short answer auto-grade string or null), points (number or null), estimated_minutes, difficulty (easy|medium|hard), ai_resistance (low|medium|high), and test_cases (array of {input, expected_output}; empty array for non-coding).
 - For coding questions: include 2–${MAX_CODING_TEST_CASES} concrete test_cases with realistic stdin/stdout pairs that match the prompt. Programs should read from stdin and write to stdout. Use empty string for input when not needed. Never exceed ${MAX_CODING_TEST_CASES} test cases per question.
-- ai_resistance: rate how easily a chatbot could answer without seeing the live assessment context. Generic definitional MCQs = low. Role-specific scenarios, debugging with provided snippets, or multi-step reasoning = medium/high.
+- ai_resistance: ${AI_RESISTANCE_SELF_RATING_HINT}
 - Each question prompt must be unique, specific to the brief, and must NOT repeat the same template with suffixes like (Q2) or (variant 2).
 - Keep prompts professional and concise. Between 4 and 10 questions unless the brief specifies otherwise.`,
   })

@@ -17,6 +17,7 @@ import {
   loadGeneratedCategory,
   normalizePrompt,
   questionToRow,
+  ensureLibraryCategoriesForApply,
 } from "./library-seed-utils.mjs"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -152,6 +153,8 @@ async function main() {
           : TIER1_EXPANDED
 
   const supabase = createClient(url, key)
+
+  await ensureLibraryCategoriesForApply(supabase, categories)
 
   for (const categoryId of categories) {
     await applyCategory(supabase, categoryId)

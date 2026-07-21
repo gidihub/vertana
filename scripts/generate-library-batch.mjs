@@ -237,10 +237,10 @@ async function rateResistance(questions) {
     schema: ratingSchema,
     prompt: `Rate ai_resistance (low|medium|high) for each hiring assessment question below.
 
-Guidelines:
-- low: generic definitional MCQ a chatbot could answer without live context
-- medium: role-specific scenarios, some reasoning, partial context needed
-- high: debugging with snippets, multi-step judgment, proprietary/live context, or coding with specific constraints
+Guidelines (same rubric as lib/ai/resistance-rubric.ts):
+- low: generic definitional MCQ a chatbot could answer from general knowledge alone, without live assessment context
+- medium: role-specific scenarios, applied reasoning, partial context, or multi-step thinking — harder than recall but still solvable without proprietary artifacts
+- high: debugging with supplied snippets, multi-step judgment over concrete artifacts, proprietary or live context, constrained coding with specific test cases, or prompts where a generic essay scores poorly on the rubric
 
 Make real distinctions — do NOT default everything to medium. Spread ratings across the batch.
 
