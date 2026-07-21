@@ -1,17 +1,20 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 import {
   ExternalLink,
   FileText,
+  LayoutGrid,
+  List,
   Loader2,
+  Pencil,
   Plus,
   Sparkles,
 } from "lucide-react"
 import { toast } from "sonner"
 
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -36,13 +39,32 @@ type ImportSummary = {
   slugs: string[]
 }
 
+type ViewMode = "table" | "cards"
+
+function StatusBadge({ status }: { status: BlogPostRow["status"] }) {
+  if (status === "published") {
+    return (
+      <span className="inline-flex items-center rounded-full bg-pine px-2.5 py-0.5 text-xs font-semibold lowercase text-pine-foreground">
+        published
+      </span>
+    )
+  }
+  return (
+    <span className="inline-flex items-center rounded-full border border-sage-line bg-sage px-2.5 py-0.5 text-xs font-semibold lowercase text-ink-muted">
+      draft
+    </span>
+  )
+}
+
 export default function CmsBlogListPage() {
+  const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [importing, setImporting] = useState(false)
   const [posts, setPosts] = useState<BlogPostRow[]>([])
   const [legacySummary, setLegacySummary] = useState<ImportSummary | null>(
     null,
   )
+  const [view, setView] = useState<ViewMode>("table")
 
   const loadPosts = useCallback(async () => {
     const res = await fetch("/api/cms/blog")
@@ -171,6 +193,31 @@ export default function CmsBlogListPage() {
         </div>
       ) : null}
 
+      {!loading && posts.length > 0 ? (
+        <div className="mb-4 flex justify-end gap-1 rounded-lg border border-sage-line/70 bg-card p-1">
+          <Button
+            type="button"
+            size="sm"
+            variant={view === "table" ? "secondary" : "ghost"}
+            onClick={() => setView("table")}
+            aria-pressed={view === "table"}
+          >
+            <List className="size-4" />
+            Table
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant={view === "cards" ? "secondary" : "ghost"}
+            onClick={() => setView("cards")}
+            aria-pressed={view === "cards"}
+          >
+            <LayoutGrid className="size-4" />
+            Cards
+          </Button>
+        </div>
+      ) : null}
+
       {loading ? (
         <p className="flex items-center gap-2 text-sm text-ink-muted">
           <Loader2 className="size-4 animate-spin" />
@@ -212,6 +259,57 @@ export default function CmsBlogListPage() {
             </Button>
           </CardContent>
         </Card>
+      ) : view === "cards" ? (
+        <ul className="flex flex-col gap-4">
+          {posts.map((post) => (
+            <li key={post.id}>
+              <article className="rounded-2xl border border-sage-line/80 bg-card p-5 shadow-sm">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <StatusBadge status={post.status} />
+                    <span className="inline-flex items-center rounded-full border border-sage-line bg-sage px-2.5 py-0.5 text-xs font-semibold text-ink">
+                      {post.category}
+                    </span>
+                  </div>
+                  <Link
+                    href={`/cms/blog/${post.id}`}
+                    className="inline-flex items-center gap-1 text-sm font-medium text-ink-muted hover:text-pine"
+                  >
+                    <Pencil className="size-3.5" />
+                    Edit
+                  </Link>
+                </div>
+                <Link
+                  href={`/cms/blog/${post.id}`}
+                  className="mt-3 block group"
+                >
+                  <h2 className="font-sans text-lg font-semibold tracking-tight text-ink group-hover:text-pine">
+                    {post.title}
+                  </h2>
+                  <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-ink-muted">
+                    {post.excerpt}
+                  </p>
+                </Link>
+                <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink-muted">
+                  <span>{formatDateTime(post.updated_at)}</span>
+                  <span>{post.read_time}</span>
+                  <span>by {post.author}</span>
+                  {post.status === "published" ? (
+                    <Link
+                      href={`/blog/${post.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-pine hover:underline"
+                    >
+                      View live
+                      <ExternalLink className="size-3" />
+                    </Link>
+                  ) : null}
+                </div>
+              </article>
+            </li>
+          ))}
+        </ul>
       ) : (
         <div className="overflow-hidden rounded-xl border border-sage-line/70 bg-card">
           <Table>
@@ -227,24 +325,23 @@ export default function CmsBlogListPage() {
             </TableHeader>
             <TableBody>
               {posts.map((post) => (
-                <TableRow key={post.id}>
+                <TableRow
+                  key={post.id}
+                  className="cursor-pointer"
+                  onClick={() => router.push(`/cms/blog/${post.id}`)}
+                >
                   <TableCell>
                     <Link
                       href={`/cms/blog/${post.id}`}
-                      className="font-medium text-ink hover:text-pine hover:underline"
+                      className="font-medium text-ink hover:text-pine hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pine focus-visible:ring-offset-2 rounded-sm"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       {post.title}
                     </Link>
                     <p className="text-xs text-ink-muted">/{post.slug}</p>
                   </TableCell>
                   <TableCell>
-                    <Badge
-                      variant={
-                        post.status === "published" ? "default" : "secondary"
-                      }
-                    >
-                      {post.status}
-                    </Badge>
+                    <StatusBadge status={post.status} />
                   </TableCell>
                   <TableCell>{post.category}</TableCell>
                   <TableCell className="text-sm text-ink-muted">
@@ -253,7 +350,7 @@ export default function CmsBlogListPage() {
                   <TableCell className="text-sm text-ink-muted">
                     {formatDateTime(post.updated_at)}
                   </TableCell>
-                  <TableCell>
+                  <TableCell onClick={(e) => e.stopPropagation()}>
                     {post.status === "published" ? (
                       <Link
                         href={`/blog/${post.slug}`}

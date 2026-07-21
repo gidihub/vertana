@@ -5,6 +5,7 @@ import {
   type BlogPost,
 } from "@/lib/marketing/blog"
 import { BLOG_TEAM_BYLINE } from "@/lib/marketing/blog-eeat"
+import { resolveBlogCoverUrl } from "@/lib/marketing/blog-covers"
 import { createAdminClient } from "@/lib/supabase/admin"
 
 function escapeHtml(text: string): string {
@@ -83,12 +84,19 @@ export async function syncLegacyBlogPosts(): Promise<LegacyBlogImportResult> {
   const admin = createAdminClient()
   const { data: existing, error: existingError } = await admin
     .from("blog_posts")
-    .select("slug, id, deleted_at")
+    .select("slug, id, deleted_at, cover_image_url")
 
   if (existingError) throw existingError
 
   const bySlug = new Map(
-    (existing ?? []).map((row) => [row.slug, { id: row.id, deleted_at: row.deleted_at }]),
+    (existing ?? []).map((row) => [
+      row.slug,
+      {
+        id: row.id,
+        deleted_at: row.deleted_at,
+        cover_image_url: row.cover_image_url as string | null,
+      },
+    ]),
   )
   let imported = 0
   let updated = 0
@@ -110,10 +118,10 @@ export async function syncLegacyBlogPosts(): Promise<LegacyBlogImportResult> {
       content,
       category: post.category,
       author: "vertana-team",
-      cover_image_url: null,
       status: "published",
       read_time: readTime,
       tags: [post.category.toLowerCase().replace(/\s+/g, "-")],
+      sources: post.sources,
       published_at: `${post.publishedAt}T12:00:00.000Z`,
       updated_at: `${post.updatedAt}T12:00:00.000Z`,
     }
@@ -124,12 +132,19 @@ export async function syncLegacyBlogPosts(): Promise<LegacyBlogImportResult> {
         skipped += 1
         continue
       }
+      const updateRow = {
+        ...row,
+        cover_image_url: resolveBlogCoverUrl(
+          existingRow.cover_image_url,
+          post.category,
+        ),
+      }
       let { error } = await admin
         .from("blog_posts")
-        .update(row)
+        .update(updateRow)
         .eq("id", existingRow.id)
       if (error?.message?.includes("sources")) {
-        const { sources: _s, correction_note: _c, ...rest } = row as {
+        const { sources: _s, correction_note: _c, ...rest } = updateRow as {
           sources?: unknown
           correction_note?: unknown
         }
@@ -142,7 +157,10 @@ export async function syncLegacyBlogPosts(): Promise<LegacyBlogImportResult> {
       updated += 1
       slugs.push(post.slug)
     } else {
-      const { error } = await admin.from("blog_posts").insert(row)
+      const { error } = await admin.from("blog_posts").insert({
+        ...row,
+        cover_image_url: resolveBlogCoverUrl(null, post.category),
+      })
       if (error) throw error
       imported += 1
       slugs.push(post.slug)

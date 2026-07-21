@@ -11,6 +11,7 @@ import {
 } from "@/components/marketing/blog-article-chrome"
 import { PageShell } from "@/components/marketing/page-shell"
 import { getRelatedPosts } from "@/lib/marketing/blog"
+import { resolveBlogCoverUrl } from "@/lib/marketing/blog-covers"
 import type { BlogPostRow, BlogSourceRow } from "@/lib/cms/types"
 
 export function BlogCmsArticle({
@@ -28,6 +29,8 @@ export function BlogCmsArticle({
   }))
   const sources = (post.sources ?? []) as BlogSourceRow[]
   const showSourcesSection = sources.length > 0 && !post.content.includes("<h2>Sources</h2>")
+
+  const cover = resolveBlogCoverUrl(post.cover_image_url, post.category)
 
   return (
     <PageShell>
@@ -63,14 +66,12 @@ export function BlogCmsArticle({
       </section>
       <section className="bg-paper">
         <div className="mx-auto w-full max-w-3xl px-4 py-16 sm:px-6">
-          {post.cover_image_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={post.cover_image_url}
-              alt=""
-              className="mb-10 w-full rounded-2xl border border-sage-line object-cover"
-            />
-          ) : null}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={cover}
+            alt=""
+            className="mb-10 aspect-[16/9] w-full rounded-2xl border border-sage-line object-cover"
+          />
           <article>
             <CmsArticleBody html={post.content} />
             {showSourcesSection ? (

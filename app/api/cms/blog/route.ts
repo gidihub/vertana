@@ -6,6 +6,7 @@ import {
   cmsForbidden,
   withStaff,
 } from "@/app/api/cms/_lib"
+import { publishDueScheduledPosts } from "@/lib/cms/publish-scheduled"
 import {
   estimateReadTime,
   isHttpsUrl,
@@ -24,11 +25,14 @@ const createSchema = z.object({
   status: z.enum(["draft", "published"]).optional(),
   read_time: z.string().max(50).optional(),
   tags: z.array(z.string()).optional(),
+  scheduled_at: z.string().datetime().nullable().optional(),
 })
 
 export async function GET() {
   const staff = await import("@/lib/cms-auth").then((m) => m.assertStaff())
   if (!staff) return cmsForbidden()
+
+  await publishDueScheduledPosts()
 
   const { data, error } = await cmsAdmin()
     .from("blog_posts")
@@ -68,6 +72,7 @@ export async function POST(req: Request) {
       status,
       read_time: body.read_time ?? estimateReadTime(content),
       tags: body.tags ?? [],
+      scheduled_at: body.scheduled_at ?? null,
       published_at: status === "published" ? now : null,
     }
 

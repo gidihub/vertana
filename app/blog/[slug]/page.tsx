@@ -10,6 +10,7 @@ import {
   getStaffPreviewPost,
 } from "@/lib/cms/blog-queries"
 import { blogArticleJsonLd } from "@/lib/marketing/blog-eeat"
+import { resolveBlogCoverUrl } from "@/lib/marketing/blog-covers"
 import { escapeJsonLd } from "@/lib/cms/sanitize-html"
 import { assertStaff } from "@/lib/cms-auth"
 
@@ -39,7 +40,13 @@ export async function generateMetadata({
       ? resolved.post.updated_at
       : resolved.post.updatedAt
   const cover =
-    resolved.kind === "cms" ? resolved.post.cover_image_url : null
+    resolved.kind === "cms"
+      ? resolveBlogCoverUrl(resolved.post.cover_image_url, resolved.post.category)
+      : resolveBlogCoverUrl(null, resolved.post.category)
+
+  const coverAbsolute = cover.startsWith("http")
+    ? cover
+    : `${SITE_URL}${cover.startsWith("/") ? cover : `/${cover}`}`
 
   return {
     title: `${title} · Vertana`,
@@ -55,13 +62,13 @@ export async function generateMetadata({
           ? resolved.post.published_at ?? undefined
           : resolved.post.publishedAt,
       modifiedTime: updatedAt,
-      ...(cover ? { images: [{ url: cover }] } : {}),
+      images: [{ url: coverAbsolute }],
     },
     twitter: {
-      card: cover ? "summary_large_image" : "summary",
+      card: "summary_large_image",
       title,
       description,
-      ...(cover ? { images: [cover] } : {}),
+      images: [coverAbsolute],
     },
   }
 }

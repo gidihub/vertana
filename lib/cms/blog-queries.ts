@@ -5,6 +5,7 @@ import {
 } from "@/lib/marketing/blog"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { createClient } from "@/lib/supabase/server"
+import { publishDueScheduledPosts } from "@/lib/cms/publish-scheduled"
 import type { BlogAuthorRow, BlogPostRow } from "@/lib/cms/types"
 
 const FALLBACK_AUTHORS: Record<string, BlogAuthorRow> = {
@@ -33,6 +34,7 @@ export async function cmsRowExistsForSlug(slug: string): Promise<boolean> {
 }
 
 export async function getPublishedPosts(): Promise<BlogPostRow[]> {
+  await publishDueScheduledPosts()
   const supabase = await createClient()
   const { data, error } = await supabase
     .from("blog_posts")

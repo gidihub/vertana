@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#14342B"/>
+  <rect x="80" y="80" width="1040" height="470" rx="24" fill="#1A4038"/>
+  <path d="M200 420V180h80l120 180 120-180h80v240h-64V280l-104 140h-64l-104-140v140h-64z" fill="#C8E6D8" opacity="0.85"/>
+  <text x="600" y="520" text-anchor="middle" fill="#7FAF98" font-family="system-ui,sans-serif" font-size="24" font-weight="600">Guides</text>
+</svg>

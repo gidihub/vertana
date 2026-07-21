@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#14342B"/>
+  <rect x="80" y="80" width="1040" height="470" rx="24" fill="#2A3530"/>
+  <path d="M600 170l160 80v120c0 88-160 140-160 140S440 458 440 370V250l160-80z" fill="#5A9A7A" opacity="0.55" stroke="#8BC4A8" stroke-width="3"/>
+  <text x="600" y="520" text-anchor="middle" fill="#7FAF98" font-family="system-ui,sans-serif" font-size="24" font-weight="600">Compliance</text>
+</svg>

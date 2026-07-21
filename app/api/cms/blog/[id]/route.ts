@@ -90,6 +90,7 @@ export async function PATCH(
       if (!existing?.published_at) {
         patch.published_at = new Date().toISOString()
       }
+      patch.scheduled_at = null
     }
 
     const { data, error } = await cmsAdmin()
