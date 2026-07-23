@@ -1,13 +1,12 @@
 "use client"
 
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 import {
+  Calendar,
+  Clock,
   ExternalLink,
   FileText,
-  LayoutGrid,
-  List,
   Loader2,
   Pencil,
   Plus,
@@ -23,28 +22,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 import type { BlogPostRow } from "@/lib/cms/types"
-import { formatDateTime } from "@/lib/format"
+import { formatDate } from "@/lib/format"
 
 type ImportSummary = {
   total: number
   slugs: string[]
 }
 
-type ViewMode = "table" | "cards"
-
 function StatusBadge({ status }: { status: BlogPostRow["status"] }) {
   if (status === "published") {
     return (
-      <span className="inline-flex items-center rounded-full bg-pine px-2.5 py-0.5 text-xs font-semibold lowercase text-pine-foreground">
+      <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold lowercase text-emerald-700">
         published
       </span>
     )
@@ -57,14 +46,12 @@ function StatusBadge({ status }: { status: BlogPostRow["status"] }) {
 }
 
 export default function CmsBlogListPage() {
-  const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [importing, setImporting] = useState(false)
   const [posts, setPosts] = useState<BlogPostRow[]>([])
   const [legacySummary, setLegacySummary] = useState<ImportSummary | null>(
     null,
   )
-  const [view, setView] = useState<ViewMode>("table")
 
   const loadPosts = useCallback(async () => {
     const res = await fetch("/api/cms/blog")
@@ -129,18 +116,17 @@ export default function CmsBlogListPage() {
     }
   }
 
-  const publishedCount = posts.filter((p) => p.status === "published").length
-  const draftCount = posts.filter((p) => p.status === "draft").length
-
   return (
-    <div className="mx-auto max-w-6xl px-6 py-10">
+    <div className="mx-auto max-w-4xl px-6 py-10">
       <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="font-sans text-2xl font-semibold tracking-tight">
-            Blog posts
+          <h1 className="font-sans text-3xl font-semibold tracking-tight">
+            Blog
           </h1>
           <p className="mt-1 text-sm text-ink-muted">
-            Draft and published articles for the public blog.
+            {loading
+              ? "Loading…"
+              : `${posts.length} post${posts.length === 1 ? "" : "s"} total`}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -165,58 +151,10 @@ export default function CmsBlogListPage() {
             className="bg-pine text-pine-foreground hover:bg-pine-deep"
           >
             <Plus className="size-4" />
-            New post
+            New Post
           </Button>
         </div>
       </div>
-
-      {!loading && posts.length > 0 ? (
-        <div className="mb-6 grid gap-4 sm:grid-cols-3">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Total posts</CardDescription>
-              <CardTitle className="text-2xl">{posts.length}</CardTitle>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Published</CardDescription>
-              <CardTitle className="text-2xl">{publishedCount}</CardTitle>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Drafts</CardDescription>
-              <CardTitle className="text-2xl">{draftCount}</CardTitle>
-            </CardHeader>
-          </Card>
-        </div>
-      ) : null}
-
-      {!loading && posts.length > 0 ? (
-        <div className="mb-4 flex justify-end gap-1 rounded-lg border border-sage-line/70 bg-card p-1">
-          <Button
-            type="button"
-            size="sm"
-            variant={view === "table" ? "secondary" : "ghost"}
-            onClick={() => setView("table")}
-            aria-pressed={view === "table"}
-          >
-            <List className="size-4" />
-            Table
-          </Button>
-          <Button
-            type="button"
-            size="sm"
-            variant={view === "cards" ? "secondary" : "ghost"}
-            onClick={() => setView("cards")}
-            aria-pressed={view === "cards"}
-          >
-            <LayoutGrid className="size-4" />
-            Cards
-          </Button>
-        </div>
-      ) : null}
 
       {loading ? (
         <p className="flex items-center gap-2 text-sm text-ink-muted">
@@ -259,125 +197,62 @@ export default function CmsBlogListPage() {
             </Button>
           </CardContent>
         </Card>
-      ) : view === "cards" ? (
+      ) : (
         <ul className="flex flex-col gap-4">
           {posts.map((post) => (
             <li key={post.id}>
-              <article className="rounded-2xl border border-sage-line/80 bg-card p-5 shadow-sm">
+              <article className="rounded-2xl border border-sage-line/80 bg-card p-5 shadow-sm transition-colors hover:border-pine/30">
                 <div className="flex items-start justify-between gap-4">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <StatusBadge status={post.status} />
-                    <span className="inline-flex items-center rounded-full border border-sage-line bg-sage px-2.5 py-0.5 text-xs font-semibold text-ink">
-                      {post.category}
-                    </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <StatusBadge status={post.status} />
+                      <span className="inline-flex items-center rounded-full border border-sage-line bg-sage px-2.5 py-0.5 text-xs font-semibold text-ink">
+                        {post.category}
+                      </span>
+                    </div>
+                    <Link href={`/cms/blog/${post.id}`} className="mt-3 block group">
+                      <h2 className="font-sans text-lg font-semibold tracking-tight text-ink group-hover:text-pine">
+                        {post.title}
+                      </h2>
+                      <p className="mt-1.5 line-clamp-1 text-sm leading-relaxed text-ink-muted">
+                        {post.excerpt}
+                      </p>
+                    </Link>
+                    <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink-muted">
+                      <span className="inline-flex items-center gap-1.5">
+                        <Calendar className="size-3.5" aria-hidden />
+                        {formatDate(post.published_at ?? post.updated_at)}
+                      </span>
+                      <span className="inline-flex items-center gap-1.5">
+                        <Clock className="size-3.5" aria-hidden />
+                        {post.read_time}
+                      </span>
+                      <span>by {post.author}</span>
+                      {post.status === "published" ? (
+                        <Link
+                          href={`/blog/${post.slug}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-pine hover:underline"
+                        >
+                          View live
+                          <ExternalLink className="size-3" />
+                        </Link>
+                      ) : null}
+                    </div>
                   </div>
                   <Link
                     href={`/cms/blog/${post.id}`}
-                    className="inline-flex items-center gap-1 text-sm font-medium text-ink-muted hover:text-pine"
+                    className="inline-flex shrink-0 items-center gap-1.5 rounded-md px-2 py-1 text-sm font-medium text-ink-muted transition-colors hover:bg-sage hover:text-pine"
                   >
-                    <Pencil className="size-3.5" />
+                    <Pencil className="size-3.5" aria-hidden />
                     Edit
                   </Link>
-                </div>
-                <Link
-                  href={`/cms/blog/${post.id}`}
-                  className="mt-3 block group"
-                >
-                  <h2 className="font-sans text-lg font-semibold tracking-tight text-ink group-hover:text-pine">
-                    {post.title}
-                  </h2>
-                  <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-ink-muted">
-                    {post.excerpt}
-                  </p>
-                </Link>
-                <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink-muted">
-                  <span>{formatDateTime(post.updated_at)}</span>
-                  <span>{post.read_time}</span>
-                  <span>by {post.author}</span>
-                  {post.status === "published" ? (
-                    <Link
-                      href={`/blog/${post.slug}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-pine hover:underline"
-                    >
-                      View live
-                      <ExternalLink className="size-3" />
-                    </Link>
-                  ) : null}
                 </div>
               </article>
             </li>
           ))}
         </ul>
-      ) : (
-        <div className="overflow-hidden rounded-xl border border-sage-line/70 bg-card">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Author</TableHead>
-                <TableHead>Updated</TableHead>
-                <TableHead className="w-10" />
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {posts.map((post) => (
-                <TableRow
-                  key={post.id}
-                  className="cursor-pointer"
-                  onClick={() => router.push(`/cms/blog/${post.id}`)}
-                >
-                  <TableCell>
-                    <Link
-                      href={`/cms/blog/${post.id}`}
-                      className="font-medium text-ink hover:text-pine hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pine focus-visible:ring-offset-2 rounded-sm"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {post.title}
-                    </Link>
-                    <p className="text-xs text-ink-muted">/{post.slug}</p>
-                  </TableCell>
-                  <TableCell>
-                    <StatusBadge status={post.status} />
-                  </TableCell>
-                  <TableCell>{post.category}</TableCell>
-                  <TableCell className="text-sm text-ink-muted">
-                    {post.author}
-                  </TableCell>
-                  <TableCell className="text-sm text-ink-muted">
-                    {formatDateTime(post.updated_at)}
-                  </TableCell>
-                  <TableCell onClick={(e) => e.stopPropagation()}>
-                    {post.status === "published" ? (
-                      <Link
-                        href={`/blog/${post.slug}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex text-ink-muted hover:text-pine"
-                        title="View live"
-                      >
-                        <ExternalLink className="size-4" />
-                      </Link>
-                    ) : (
-                      <Link
-                        href={`/blog/${post.slug}?preview=true`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex text-ink-muted hover:text-pine"
-                        title="Preview draft"
-                      >
-                        <ExternalLink className="size-4" />
-                      </Link>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
       )}
     </div>
   )

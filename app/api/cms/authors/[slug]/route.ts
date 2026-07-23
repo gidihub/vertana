@@ -81,3 +81,21 @@ export async function PATCH(
     return NextResponse.json({ author: data as BlogAuthorRow })
   })
 }
+
+export async function DELETE(
+  _req: Request,
+  ctx: { params: Promise<{ slug: string }> },
+) {
+  return withStaff(async () => {
+    const { slug } = await ctx.params
+    const { error } = await cmsAdmin()
+      .from("blog_authors")
+      .delete()
+      .eq("slug", slug)
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 400 })
+    }
+    return NextResponse.json({ ok: true })
+  })
+}

@@ -9,6 +9,7 @@ import {
   Megaphone,
   MessageSquare,
   Users,
+  UsersRound,
 } from "lucide-react"
 
 import { Logo } from "@/components/logo"
@@ -25,7 +26,8 @@ const NAV: Array<{
   { href: "/cms/authors", label: "Authors", icon: Users },
   { href: "/cms/announcements", label: "Announcements", icon: Megaphone },
   { href: "/cms/feedback", label: "Feedback", icon: MessageSquare },
-  { href: "/cms/users", label: "Analytics", icon: BarChart3 },
+  { href: "/cms/users", label: "Users", icon: UsersRound },
+  { href: "/cms/analytics", label: "Analytics", icon: BarChart3 },
 ]
 
 function isActive(pathname: string, href: string, exact?: boolean) {
