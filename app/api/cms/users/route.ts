@@ -12,6 +12,10 @@ export async function GET() {
     const data = await getCmsUserAnalytics()
     return NextResponse.json(data)
   } catch (err) {
-    return NextResponse.json({ error: (err as Error).message }, { status: 500 })
+    console.error("[vertana] getCmsUserAnalytics failed:", err)
+    return NextResponse.json(
+      { error: "Failed to load user analytics." },
+      { status: 500 },
+    )
   }
 }

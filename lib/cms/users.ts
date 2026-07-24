@@ -1,3 +1,5 @@
+import { unstable_cache } from "next/cache"
+
 import { createAdminClient } from "@/lib/supabase/admin"
 
 /** A single platform user, joined to their org membership + plan. */
@@ -57,6 +59,16 @@ async function listAllAuthUsers(): Promise<AuthUser[]> {
   return all
 }
 
+/**
+ * Cached wrapper around {@link listAllAuthUsers}. The full paginated user list
+ * is expensive to rebuild on every request, so we reuse it for a bounded window
+ * (5 minutes) via Next.js's data cache. On a cache miss the underlying pagination
+ * and error behavior are preserved (errors propagate to the caller).
+ */
+const getCachedAuthUsers = unstable_cache(listAllAuthUsers, ["cms-auth-users"], {
+  revalidate: 300,
+})
+
 /** Pull a human display name out of auth metadata, else null. */
 function displayName(metadata: Record<string, unknown>): string | null {
   for (const key of ["full_name", "name", "display_name"]) {
@@ -70,7 +82,7 @@ export async function getCmsUserAnalytics(): Promise<CmsUserAnalytics> {
   const admin = createAdminClient()
 
   const [authUsers, membershipsRes, orgsRes] = await Promise.all([
-    listAllAuthUsers(),
+    getCachedAuthUsers(),
     admin.from("team_members").select("user_id, org_id, role"),
     admin.from("organizations").select("id, name, plan_tier"),
   ])

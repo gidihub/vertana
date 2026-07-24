@@ -32,7 +32,8 @@ export default async function CmsOverviewPage() {
   let failed = false
   try {
     stats = await getCmsOverviewStats()
-  } catch {
+  } catch (err) {
+    console.error("[vertana] getCmsOverviewStats failed:", err)
     failed = true
   }
 

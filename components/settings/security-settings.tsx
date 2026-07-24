@@ -2,7 +2,14 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { KeyRound, Loader2, LogOut, MonitorSmartphone, ShieldCheck } from "lucide-react"
+import {
+  KeyRound,
+  Loader2,
+  LogOut,
+  MonitorSmartphone,
+  ShieldCheck,
+  Trash2,
+} from "lucide-react"
 import { toast } from "sonner"
 
 import { RecruiterShell } from "@/components/recruiter-shell"
@@ -18,12 +25,14 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import { Label } from "@/components/ui/label"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog"
 import { createClient } from "@/lib/supabase/client"
 
@@ -47,6 +56,11 @@ export function SecuritySettings() {
   const [secret, setSecret] = useState<string | null>(null)
   const [code, setCode] = useState("")
   const [verifying, setVerifying] = useState(false)
+
+  // Delete-account dialog state
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState("")
+  const [deleting, setDeleting] = useState(false)
 
   const verifiedFactor = factors.find((f) => f.status === "verified") ?? null
 
@@ -168,6 +182,21 @@ export function SecuritySettings() {
     } catch (err) {
       toast.error((err as Error).message)
       setBusy(null)
+    }
+  }
+
+  async function deleteAccount() {
+    setDeleting(true)
+    try {
+      const res = await fetch("/api/account/delete", { method: "POST" })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || "Failed to delete account")
+      toast.success("Your account has been deleted")
+      router.push("/login")
+      router.refresh()
+    } catch (err) {
+      toast.error((err as Error).message)
+      setDeleting(false)
     }
   }
 
@@ -313,6 +342,40 @@ export function SecuritySettings() {
               </SettingList>
             </CardContent>
           </Card>
+
+          <Card className="border-danger/40">
+            <CardHeader>
+              <CardTitle className="text-base text-danger">Danger zone</CardTitle>
+              <CardDescription>Proceed with caution.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SettingList>
+                <SettingRow
+                  title={
+                    <span className="flex items-center gap-2">
+                      <Trash2 className="size-4 text-danger" />
+                      Delete account
+                    </span>
+                  }
+                  description="Permanently delete your account. This cannot be undone."
+                  control={
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      disabled={busy !== null}
+                      onClick={() => {
+                        setDeleteConfirm("")
+                        setDeleteOpen(true)
+                      }}
+                    >
+                      Delete account
+                    </Button>
+                  }
+                />
+              </SettingList>
+            </CardContent>
+          </Card>
         </div>
       </SettingsLayout>
 
@@ -366,6 +429,52 @@ export function SecuritySettings() {
               )}
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete your account?</DialogTitle>
+            <DialogDescription>
+              This permanently deletes your account and signs you out
+              everywhere. This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="delete-confirm">
+              Type <span className="font-semibold">DELETE</span> to confirm
+            </Label>
+            <Input
+              id="delete-confirm"
+              value={deleteConfirm}
+              onChange={(e) => setDeleteConfirm(e.target.value)}
+              placeholder="DELETE"
+              autoComplete="off"
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={deleting}
+              onClick={() => setDeleteOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={deleteConfirm.trim() !== "DELETE" || deleting}
+              onClick={() => void deleteAccount()}
+            >
+              {deleting ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                "Delete account"
+              )}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </RecruiterShell>

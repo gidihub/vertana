@@ -19,7 +19,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { useOrganization } from "@/lib/store"
+import { refreshStore, useOrganization } from "@/lib/store"
 import { createClient } from "@/lib/supabase/client"
 import { useAccount } from "@/lib/settings/use-account"
 
@@ -44,8 +44,15 @@ export function ProfileSettings() {
   const [initialName, setInitialName] = useState("")
   const [savingName, setSavingName] = useState(false)
 
+  const [orgName, setOrgName] = useState("")
+  const [savingOrgName, setSavingOrgName] = useState(false)
+
   const [tourOpen, setTourOpen] = useState(false)
   const [tourDone, setTourDone] = useState(true)
+
+  useEffect(() => {
+    setOrgName(org?.name ?? "")
+  }, [org?.name])
 
   useEffect(() => {
     void createClient()
@@ -78,9 +85,33 @@ export function ProfileSettings() {
     }
   }
 
+  async function saveOrgName() {
+    const trimmed = orgName.trim()
+    setSavingOrgName(true)
+    try {
+      const res = await fetch("/api/org/name", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: trimmed }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Failed to rename organization")
+      toast.success("Organization renamed")
+    } catch (err) {
+      toast.error((err as Error).message)
+      return
+    } finally {
+      setSavingOrgName(false)
+    }
+    // Refresh independently so a refresh failure can't surface as a rename error.
+    await refreshStore()
+  }
+
   const email = account?.email ?? null
   const role = account?.role ?? null
   const nameDirty = displayName.trim() !== initialName.trim()
+  const canManageOrg = role === "owner" || role === "admin"
+  const orgNameDirty = orgName.trim() !== (org?.name ?? "").trim()
 
   return (
     <RecruiterShell title="Settings" subtitle="Profile">
@@ -154,11 +185,41 @@ export function ProfileSettings() {
             <CardContent>
               <SettingList>
                 <SettingRow
+                  htmlFor={canManageOrg ? "org-name" : undefined}
                   title="Name"
+                  description={
+                    canManageOrg
+                      ? "Shown across the workspace and on candidate-facing pages."
+                      : "Only owners and admins can rename the organization."
+                  }
                   control={
-                    <span className="text-sm font-medium text-ink">
-                      {org?.name ?? "—"}
-                    </span>
+                    canManageOrg ? (
+                      <div className="flex items-center gap-2">
+                        <Input
+                          id="org-name"
+                          value={orgName}
+                          onChange={(e) => setOrgName(e.target.value)}
+                          placeholder="Organization name"
+                          className="w-48"
+                        />
+                        <Button
+                          type="button"
+                          size="sm"
+                          disabled={!orgNameDirty || !orgName.trim() || savingOrgName}
+                          onClick={() => void saveOrgName()}
+                        >
+                          {savingOrgName ? (
+                            <Loader2 className="size-4 animate-spin" />
+                          ) : (
+                            "Save"
+                          )}
+                        </Button>
+                      </div>
+                    ) : (
+                      <span className="text-sm font-medium text-ink">
+                        {org?.name ?? "—"}
+                      </span>
+                    )
                   }
                 />
                 <SettingRow
