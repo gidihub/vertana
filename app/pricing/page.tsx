@@ -28,6 +28,9 @@ import type { PackConfig, PlanConfig } from "@/lib/pricing/config"
 import { cn } from "@/lib/utils"
 import { numericText } from "@/lib/design-tokens"
 
+/** PPP prices depend on per-request geo headers — never statically cache. */
+export const dynamic = "force-dynamic"
+
 export const metadata: Metadata = {
   title: "Pricing — no-shows don't cost you credits | Vertana",
   description:

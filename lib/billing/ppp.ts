@@ -30,19 +30,34 @@ export {
 export type HeadersLike = { get(name: string): string | null }
 
 /**
+ * Internal header set by middleware from trusted edge geo (see middleware.ts).
+ * Server code reads this first so PPP resolution is consistent even when
+ * `headers()` in a Server Component does not surface platform geo headers.
+ */
+export const GEO_COUNTRY_HEADER = "x-vertana-geo-country"
+
+/** Normalize a raw country code from an edge header. */
+export function normalizeCountryCode(
+  value: string | null | undefined,
+): string | null {
+  const normalized = value?.trim().toUpperCase()
+  return normalized && normalized !== "XX" ? normalized : null
+}
+
+/**
  * Read the geo country from trusted edge headers. NEVER trust a client-submitted
  * country or price — these headers are set by the edge/CDN, not the browser.
  */
 export function detectCountryFromHeaders(headers: HeadersLike): string | null {
-  // Order matters: prefer the header set by the current hosting platform, which
-  // the platform overwrites on every request and a client cannot forge. On
-  // Vercel that is `x-vercel-ip-country`. `cf-ipcountry` is only trustworthy when
-  // actually served through Cloudflare; listing it last avoids a client spoofing
-  // a cheaper PPP tier by sending `cf-ipcountry` to a non-Cloudflare origin.
+  // Order matters:
+  // 1. Middleware-injected header (derived from @vercel/functions geolocation)
+  // 2. Vercel platform header (may not reach Server Components reliably)
+  // 3. Cloudflare header (only when actually proxied through Cloudflare)
   const country =
-    headers.get("x-vercel-ip-country") ?? headers.get("cf-ipcountry")
-  const normalized = country?.trim().toUpperCase()
-  return normalized && normalized !== "XX" ? normalized : null
+    headers.get(GEO_COUNTRY_HEADER) ??
+    headers.get("x-vercel-ip-country") ??
+    headers.get("cf-ipcountry")
+  return normalizeCountryCode(country)
 }
 
 export function detectCountryFromRequest(req: Request): string | null {

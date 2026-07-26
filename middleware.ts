@@ -1,6 +1,11 @@
 import { createServerClient } from "@supabase/ssr"
+import { geolocation } from "@vercel/functions"
 import { type NextRequest, NextResponse } from "next/server"
 
+import {
+  GEO_COUNTRY_HEADER,
+  normalizeCountryCode,
+} from "@/lib/billing/ppp"
 import { publicOrigin } from "@/lib/http/origin"
 import { getSupabaseAnonKey, getSupabaseUrl } from "@/lib/supabase/env"
 
@@ -25,27 +30,47 @@ function isRecruiterRoute(pathname: string): boolean {
 }
 
 /**
- * The homepage and pricing page each render one URL but vary their prices by the
- * trusted `x-vercel-ip-country` edge header (PPP). Tell the CDN to key its cache
- * on that header so each region gets the right prices without creating duplicate,
- * separately-indexed URLs. Crawlers (no geo header) receive the anchor version.
+ * Routes whose HTML embeds geo-personalized PPP prices. These must never be
+ * publicly cached — many shared/mobile caches ignore Vary and serve anchor
+ * prices to every region.
  */
-const PPP_CACHED_PATHS = new Set(["/", "/pricing"])
+const PPP_PERSONALIZED_PATHS = new Set(["/", "/pricing"])
 
-function withPricingCacheHeaders(response: NextResponse): NextResponse {
-  response.headers.set("Vary", "x-vercel-ip-country")
+function detectCountryAtEdge(request: NextRequest): string | null {
+  const { country } = geolocation(request)
+  return (
+    normalizeCountryCode(country) ??
+    normalizeCountryCode(request.headers.get("x-vercel-ip-country")) ??
+    normalizeCountryCode(request.headers.get("cf-ipcountry"))
+  )
+}
+
+/** Inject trusted geo country for downstream Server Components / route handlers. */
+function nextWithGeoCountry(request: NextRequest): NextResponse {
+  const requestHeaders = new Headers(request.headers)
+  requestHeaders.delete(GEO_COUNTRY_HEADER)
+
+  const country = detectCountryAtEdge(request)
+  if (country) {
+    requestHeaders.set(GEO_COUNTRY_HEADER, country)
+  }
+
+  return NextResponse.next({ request: { headers: requestHeaders } })
+}
+
+function withPricingNoStoreHeaders(response: NextResponse): NextResponse {
   response.headers.set(
     "Cache-Control",
-    "public, s-maxage=3600, stale-while-revalidate=86400",
+    "private, no-cache, no-store, must-revalidate",
   )
   return response
 }
 
 export async function middleware(request: NextRequest) {
-  let response = NextResponse.next({ request })
+  let response = nextWithGeoCountry(request)
 
-  if (PPP_CACHED_PATHS.has(request.nextUrl.pathname)) {
-    return withPricingCacheHeaders(response)
+  if (PPP_PERSONALIZED_PATHS.has(request.nextUrl.pathname)) {
+    return withPricingNoStoreHeaders(response)
   }
 
   const url = getSupabaseUrl()
@@ -59,7 +84,7 @@ export async function middleware(request: NextRequest) {
       },
       setAll(cookiesToSet) {
         cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-        response = NextResponse.next({ request })
+        response = nextWithGeoCountry(request)
         cookiesToSet.forEach(({ name, value, options }) =>
           response.cookies.set(name, value, options),
         )
@@ -94,6 +119,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/",
     "/pricing",
     "/dashboard/:path*",
     "/team/:path*",

@@ -8,6 +8,9 @@ import { Pricing } from "@/components/marketing/pricing"
 import { Faq } from "@/components/marketing/faq"
 import { SiteFooter } from "@/components/marketing/site-footer"
 
+/** Homepage embeds geo-personalized pricing — never statically cache. */
+export const dynamic = "force-dynamic"
+
 export default function HomePage() {
   return (
     <div className="min-h-svh bg-paper font-sans text-ink">
