@@ -6,6 +6,7 @@ import {
   clientIpFromHeaders,
   countryFromEdgeHeaders,
   normalizeCountryCode,
+  proxySecretRejected,
   readGeoConfig,
 } from "../pricing/geo-source.ts"
 import { pppTierForCountry } from "../pricing/geo.ts"
@@ -56,6 +57,15 @@ describe("countryFromEdgeHeaders", () => {
     )
   })
 
+  it("resolves to anchor when custom is set with no configured headers", () => {
+    const config = readGeoConfig({ GEO_PROVIDER: "custom" })
+    // Must not silently trust known provider headers like cf-ipcountry here.
+    assert.equal(
+      countryFromEdgeHeaders(headers({ "cf-ipcountry": "RW" }), config),
+      null,
+    )
+  })
+
   it("ignores geo when the provider is pinned to another platform", () => {
     const config = readGeoConfig({ GEO_PROVIDER: "vercel" })
     assert.equal(
@@ -95,6 +105,30 @@ describe("countryFromEdgeHeaders", () => {
     assert.equal(
       countryFromEdgeHeaders(headers({ "cf-ipcountry": "ZA" }), config),
       null,
+    )
+  })
+})
+
+describe("proxySecretRejected", () => {
+  it("is false when no secret is configured", () => {
+    const config = readGeoConfig({})
+    assert.equal(proxySecretRejected(headers({}), config), false)
+  })
+
+  it("is true when a secret is configured but missing or wrong", () => {
+    const config = readGeoConfig({ GEO_PROXY_SECRET: "s3cret" })
+    assert.equal(proxySecretRejected(headers({}), config), true)
+    assert.equal(
+      proxySecretRejected(headers({ "x-geo-proxy-secret": "nope" }), config),
+      true,
+    )
+  })
+
+  it("is false when the configured secret matches", () => {
+    const config = readGeoConfig({ GEO_PROXY_SECRET: "s3cret" })
+    assert.equal(
+      proxySecretRejected(headers({ "x-geo-proxy-secret": "s3cret" }), config),
+      false,
     )
   })
 })

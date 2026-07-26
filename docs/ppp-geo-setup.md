@@ -82,8 +82,16 @@ GEO_PROXY_SECRET=<long-random-string>
 ```
 
 Then in Cloudflare: **Rules → Transform Rules → Modify Request Header → Set
-static**, header `x-geo-proxy-secret`, value the same string. Requests arriving
-without it get no geo at all, so a bypass attempt lands on full price.
+static**, header `x-geo-proxy-secret`, value the same string. Once a secret is
+set, any request that doesn't present a matching one is treated as untrusted: it
+gets no geo from **either** the edge header or the IP-lookup fallback, so a
+bypass attempt lands on anchor (full) price.
+
+> **Caveat:** enabling the IP-lookup fallback (`GEO_IP_LOOKUP_URL`) *without* a
+> secret re-opens this hole on a directly-reachable origin, because the client IP
+> comes from `x-forwarded-for` / `cf-connecting-ip`, which the client controls.
+> If you use the IP fallback, pair it with `GEO_PROXY_SECRET` or lock the origin
+> to the edge (below).
 
 **2. Lock the origin to the edge**
 

@@ -153,14 +153,30 @@ function headersForProvider(config: GeoConfig): readonly string[] {
     case "none":
       return []
     case "custom":
-      return config.customHeaders.length
-        ? config.customHeaders
-        : KNOWN_GEO_HEADERS
+      // Only trust headers the operator explicitly named. Falling back to the
+      // full known-header set here would silently accept e.g. cf-ipcountry on a
+      // non-Cloudflare origin, handing out an unintended discount tier.
+      return config.customHeaders
     case "auto":
       return KNOWN_GEO_HEADERS
     default:
       return PROVIDER_HEADERS[config.provider]
   }
+}
+
+/**
+ * True when a proxy secret is configured but the request did not present a
+ * matching one. Such a request did not arrive through our trusted edge, so no
+ * geo source (edge header *or* IP lookup) may be trusted for it.
+ */
+export function proxySecretRejected(
+  headers: HeaderReader,
+  config: GeoConfig = readGeoConfig(),
+): boolean {
+  return Boolean(
+    config.secret &&
+      !secretMatches(config.secret, headers.get(config.secretHeader)),
+  )
 }
 
 /**
@@ -171,7 +187,7 @@ export function countryFromEdgeHeaders(
   headers: HeaderReader,
   config: GeoConfig = readGeoConfig(),
 ): string | null {
-  if (config.secret && !secretMatches(config.secret, headers.get(config.secretHeader))) {
+  if (proxySecretRejected(headers, config)) {
     return null
   }
 

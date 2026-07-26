@@ -6,6 +6,7 @@ import { countryFromIp, readGeoIpConfig } from "@/lib/pricing/geo-ip"
 import {
   clientIpFromHeaders,
   countryFromEdgeHeaders,
+  proxySecretRejected,
   readGeoConfig,
 } from "@/lib/pricing/geo-source"
 import { publicOrigin } from "@/lib/http/origin"
@@ -44,8 +45,14 @@ const PPP_PERSONALIZED_PATHS = new Set(["/", "/pricing"])
  * reads as anchor (full) pricing.
  */
 async function resolveCountry(request: NextRequest): Promise<string | null> {
-  const country = countryFromEdgeHeaders(request.headers, readGeoConfig())
+  const geoConfig = readGeoConfig()
+  const country = countryFromEdgeHeaders(request.headers, geoConfig)
   if (country) return country
+
+  // A failed proxy-secret check means the request did not come through our
+  // trusted edge. Never let it reach the unauthenticated IP lookup, or an
+  // attacker hitting a directly-reachable origin could spoof a cheaper region.
+  if (proxySecretRejected(request.headers, geoConfig)) return null
 
   // No edge geo header — e.g. a DigitalOcean origin with no CDN in front. Fall
   // back to an IP lookup if one is configured, but only for the pages that
