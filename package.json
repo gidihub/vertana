@@ -34,6 +34,7 @@
     "test:session-playback": "node --experimental-strip-types --import ./scripts/resolve-ts-alias.mjs --test lib/candidates/session-playback.test.ts",
     "test:proctoring": "node --experimental-strip-types --import ./scripts/resolve-ts-alias.mjs --test lib/proctoring/user-agent.test.ts",
     "test:coding-limits": "node --experimental-strip-types --import ./scripts/resolve-ts-alias.mjs --test lib/coding/limits.test.ts",
+    "test:ppp": "node --experimental-strip-types --import ./scripts/resolve-ts-alias.mjs --test lib/billing/ppp.test.ts",
     "test:integrations": "node --experimental-strip-types --import ./scripts/resolve-ts-alias.mjs --test lib/integrations/ssrf.test.ts lib/integrations/dispatch-core.test.ts lib/integrations/adapters/webhook.test.ts",
     "test:e2e": "playwright test"
   },

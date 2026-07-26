@@ -1,6 +1,14 @@
 import { createServerClient } from "@supabase/ssr"
 import { type NextRequest, NextResponse } from "next/server"
 
+import { GEO_COUNTRY_HEADER } from "@/lib/billing/ppp"
+import { countryFromIp, readGeoIpConfig } from "@/lib/pricing/geo-ip"
+import {
+  clientIpFromHeaders,
+  countryFromEdgeHeaders,
+  proxySecretRejected,
+  readGeoConfig,
+} from "@/lib/pricing/geo-source"
 import { publicOrigin } from "@/lib/http/origin"
 import { getSupabaseAnonKey, getSupabaseUrl } from "@/lib/supabase/env"
 
@@ -25,27 +33,63 @@ function isRecruiterRoute(pathname: string): boolean {
 }
 
 /**
- * The homepage and pricing page each render one URL but vary their prices by the
- * trusted `x-vercel-ip-country` edge header (PPP). Tell the CDN to key its cache
- * on that header so each region gets the right prices without creating duplicate,
- * separately-indexed URLs. Crawlers (no geo header) receive the anchor version.
+ * Routes whose HTML embeds geo-personalized PPP prices. These must never be
+ * stored in a shared cache: Cloudflare ignores `Vary` on HTML, so one cached
+ * copy would serve a single country's prices to the whole world.
  */
-const PPP_CACHED_PATHS = new Set(["/", "/pricing"])
+const PPP_PERSONALIZED_PATHS = new Set(["/", "/pricing"])
 
-function withPricingCacheHeaders(response: NextResponse): NextResponse {
-  response.headers.set("Vary", "x-vercel-ip-country")
+/**
+ * Resolve the visitor's country at the only place that sees the raw edge
+ * request. Returns null when no trusted source is available, which the app
+ * reads as anchor (full) pricing.
+ */
+async function resolveCountry(request: NextRequest): Promise<string | null> {
+  const geoConfig = readGeoConfig()
+  const country = countryFromEdgeHeaders(request.headers, geoConfig)
+  if (country) return country
+
+  // A failed proxy-secret check means the request did not come through our
+  // trusted edge. Never let it reach the unauthenticated IP lookup, or an
+  // attacker hitting a directly-reachable origin could spoof a cheaper region.
+  if (proxySecretRejected(request.headers, geoConfig)) return null
+
+  // No edge geo header — e.g. a DigitalOcean origin with no CDN in front. Fall
+  // back to an IP lookup if one is configured, but only for the pages that
+  // actually show prices, so it never sits in the path of an API call.
+  if (!PPP_PERSONALIZED_PATHS.has(request.nextUrl.pathname)) return null
+  return countryFromIp(clientIpFromHeaders(request.headers), readGeoIpConfig())
+}
+
+/**
+ * Forward the resolved country to the app on an internal header, dropping any
+ * inbound copy first so a browser cannot spoof a cheaper region. Headers are
+ * re-read from the request on each call so cookie refreshes are preserved.
+ */
+function nextWithGeoCountry(
+  request: NextRequest,
+  country: string | null,
+): NextResponse {
+  const requestHeaders = new Headers(request.headers)
+  requestHeaders.delete(GEO_COUNTRY_HEADER)
+  if (country) requestHeaders.set(GEO_COUNTRY_HEADER, country)
+  return NextResponse.next({ request: { headers: requestHeaders } })
+}
+
+function withPricingNoStoreHeaders(response: NextResponse): NextResponse {
   response.headers.set(
     "Cache-Control",
-    "public, s-maxage=3600, stale-while-revalidate=86400",
+    "private, no-cache, no-store, must-revalidate",
   )
   return response
 }
 
 export async function middleware(request: NextRequest) {
-  let response = NextResponse.next({ request })
+  const country = await resolveCountry(request)
+  let response = nextWithGeoCountry(request, country)
 
-  if (PPP_CACHED_PATHS.has(request.nextUrl.pathname)) {
-    return withPricingCacheHeaders(response)
+  if (PPP_PERSONALIZED_PATHS.has(request.nextUrl.pathname)) {
+    return withPricingNoStoreHeaders(response)
   }
 
   const url = getSupabaseUrl()
@@ -59,7 +103,7 @@ export async function middleware(request: NextRequest) {
       },
       setAll(cookiesToSet) {
         cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-        response = NextResponse.next({ request })
+        response = nextWithGeoCountry(request, country)
         cookiesToSet.forEach(({ name, value, options }) =>
           response.cookies.set(name, value, options),
         )
@@ -94,6 +138,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/",
     "/pricing",
     "/dashboard/:path*",
     "/team/:path*",

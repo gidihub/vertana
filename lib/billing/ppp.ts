@@ -1,11 +1,18 @@
 /**
  * Server-side geo detection for regional (PPP) pricing.
  *
- * Tier IDs and the country → tier map live in lib/pricing/geo.ts (the single
- * source of truth). This module only reads the trusted edge header and re-exports
- * the geo helpers so existing call sites keep importing from "@/lib/billing/ppp".
+ * Tier IDs and the country → tier map live in lib/pricing/geo.ts; which header
+ * carries the country (Cloudflare, Vercel, a custom reverse proxy) and whether
+ * it can be trusted live in lib/pricing/geo-source.ts. This module wires the two
+ * together so existing call sites keep importing from "@/lib/billing/ppp".
  */
 
+import {
+  countryFromEdgeHeaders,
+  normalizeCountryCode,
+  readGeoConfig,
+  type GeoConfig,
+} from "@/lib/pricing/geo-source"
 import {
   ANCHOR_TIER,
   PPP_ENV_SUFFIX,
@@ -30,19 +37,30 @@ export {
 export type HeadersLike = { get(name: string): string | null }
 
 /**
- * Read the geo country from trusted edge headers. NEVER trust a client-submitted
- * country or price — these headers are set by the edge/CDN, not the browser.
+ * Internal header that middleware sets from the resolved edge geo, after
+ * stripping any inbound copy a client may have sent (see middleware.ts).
+ * Server Components read this first because platform geo headers are not
+ * consistently forwarded into `headers()` on every host.
+ *
+ * Only trustworthy on paths covered by the middleware matcher — every path that
+ * resolves a price must stay in that matcher.
  */
-export function detectCountryFromHeaders(headers: HeadersLike): string | null {
-  // Order matters: prefer the header set by the current hosting platform, which
-  // the platform overwrites on every request and a client cannot forge. On
-  // Vercel that is `x-vercel-ip-country`. `cf-ipcountry` is only trustworthy when
-  // actually served through Cloudflare; listing it last avoids a client spoofing
-  // a cheaper PPP tier by sending `cf-ipcountry` to a non-Cloudflare origin.
-  const country =
-    headers.get("x-vercel-ip-country") ?? headers.get("cf-ipcountry")
-  const normalized = country?.trim().toUpperCase()
-  return normalized && normalized !== "XX" ? normalized : null
+export const GEO_COUNTRY_HEADER = "x-vertana-geo-country"
+
+export { normalizeCountryCode }
+
+/**
+ * Read the visitor's country from trusted server-side headers. NEVER trust a
+ * client-submitted country or price — the header source and its trust rules are
+ * configured in lib/pricing/geo-source.ts. Null means "use anchor pricing".
+ */
+export function detectCountryFromHeaders(
+  headers: HeadersLike,
+  config?: GeoConfig,
+): string | null {
+  const injected = normalizeCountryCode(headers.get(GEO_COUNTRY_HEADER))
+  if (injected) return injected
+  return countryFromEdgeHeaders(headers, config ?? readGeoConfig())
 }
 
 export function detectCountryFromRequest(req: Request): string | null {
