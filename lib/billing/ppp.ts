@@ -1,11 +1,18 @@
 /**
  * Server-side geo detection for regional (PPP) pricing.
  *
- * Tier IDs and the country → tier map live in lib/pricing/geo.ts (the single
- * source of truth). This module only reads the trusted edge header and re-exports
- * the geo helpers so existing call sites keep importing from "@/lib/billing/ppp".
+ * Tier IDs and the country → tier map live in lib/pricing/geo.ts; which header
+ * carries the country (Cloudflare, Vercel, a custom reverse proxy) and whether
+ * it can be trusted live in lib/pricing/geo-source.ts. This module wires the two
+ * together so existing call sites keep importing from "@/lib/billing/ppp".
  */
 
+import {
+  countryFromEdgeHeaders,
+  normalizeCountryCode,
+  readGeoConfig,
+  type GeoConfig,
+} from "@/lib/pricing/geo-source"
 import {
   ANCHOR_TIER,
   PPP_ENV_SUFFIX,
@@ -30,34 +37,30 @@ export {
 export type HeadersLike = { get(name: string): string | null }
 
 /**
- * Internal header set by middleware from trusted edge geo (see middleware.ts).
- * Server code reads this first so PPP resolution is consistent even when
- * `headers()` in a Server Component does not surface platform geo headers.
+ * Internal header that middleware sets from the resolved edge geo, after
+ * stripping any inbound copy a client may have sent (see middleware.ts).
+ * Server Components read this first because platform geo headers are not
+ * consistently forwarded into `headers()` on every host.
+ *
+ * Only trustworthy on paths covered by the middleware matcher — every path that
+ * resolves a price must stay in that matcher.
  */
 export const GEO_COUNTRY_HEADER = "x-vertana-geo-country"
 
-/** Normalize a raw country code from an edge header. */
-export function normalizeCountryCode(
-  value: string | null | undefined,
-): string | null {
-  const normalized = value?.trim().toUpperCase()
-  return normalized && normalized !== "XX" ? normalized : null
-}
+export { normalizeCountryCode }
 
 /**
- * Read the geo country from trusted edge headers. NEVER trust a client-submitted
- * country or price — these headers are set by the edge/CDN, not the browser.
+ * Read the visitor's country from trusted server-side headers. NEVER trust a
+ * client-submitted country or price — the header source and its trust rules are
+ * configured in lib/pricing/geo-source.ts. Null means "use anchor pricing".
  */
-export function detectCountryFromHeaders(headers: HeadersLike): string | null {
-  // Order matters:
-  // 1. Middleware-injected header (derived from @vercel/functions geolocation)
-  // 2. Vercel platform header (may not reach Server Components reliably)
-  // 3. Cloudflare header (only when actually proxied through Cloudflare)
-  const country =
-    headers.get(GEO_COUNTRY_HEADER) ??
-    headers.get("x-vercel-ip-country") ??
-    headers.get("cf-ipcountry")
-  return normalizeCountryCode(country)
+export function detectCountryFromHeaders(
+  headers: HeadersLike,
+  config?: GeoConfig,
+): string | null {
+  const injected = normalizeCountryCode(headers.get(GEO_COUNTRY_HEADER))
+  if (injected) return injected
+  return countryFromEdgeHeaders(headers, config ?? readGeoConfig())
 }
 
 export function detectCountryFromRequest(req: Request): string | null {
