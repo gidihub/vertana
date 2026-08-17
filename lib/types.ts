@@ -188,6 +188,8 @@ export interface Test {
   status: TestStatus
   token: string // used for the public candidate link
   created_at: string
+  /** User id of the recruiter who created this test (for assigned-scope RBAC). */
+  created_by?: string | null
   questions: Question[]
 }
 

@@ -10,6 +10,7 @@ import {
   Users,
   Plug,
   Database,
+  Shield,
   type LucideIcon,
 } from "lucide-react"
 import type { ReactNode } from "react"
@@ -27,6 +28,7 @@ const ACCOUNT_NAV: NavItem[] = [
 const ORG_NAV: NavItem[] = [
   { href: "/settings/billing", label: "Billing", icon: CreditCard },
   { href: "/settings/team", label: "Team", icon: Users },
+  { href: "/settings/roles", label: "Roles", icon: Shield },
   { href: "/settings/integrations", label: "Integrations", icon: Plug },
   { href: "/settings/data", label: "Data & privacy", icon: Database },
 ]

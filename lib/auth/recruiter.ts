@@ -117,5 +117,12 @@ export async function setupOrganizationForUser(input: {
     role: "owner",
   })
 
+  const { ensureOrgRbacSeeded } = await import("@/lib/db/rbac")
+  try {
+    await ensureOrgRbacSeeded(org.id)
+  } catch (err) {
+    console.error("[rbac] failed to seed defaults for new org:", err)
+  }
+
   return { orgId: org.id, orgName: org.name }
 }

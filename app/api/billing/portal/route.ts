@@ -1,19 +1,15 @@
 import { NextResponse } from "next/server"
 
 import { handleApiAuth } from "@/lib/auth/api"
+import { requireBillingPermission } from "@/lib/auth/resource-access"
 import { getOrganization } from "@/lib/org"
 import { getSiteUrl, isStripeConfigured } from "@/lib/stripe/env"
 import { getStripe } from "@/lib/stripe/client"
 import { ensureStripeCustomerForOrg } from "@/lib/billing/customer"
 
 export async function POST() {
-  return handleApiAuth(async ({ orgId, user, role }) => {
-    if (role !== "owner") {
-      return NextResponse.json(
-        { error: "Only organization owners can manage billing" },
-        { status: 403 },
-      )
-    }
+  return handleApiAuth(async ({ orgId, user }) => {
+    await requireBillingPermission()
 
     if (!isStripeConfigured()) {
       return NextResponse.json(

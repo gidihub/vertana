@@ -1,6 +1,7 @@
 import { generateToken } from "@/lib/db/mappers"
 import { sendTeamInviteEmail } from "@/lib/notifications/team-invite-email"
 import { createAdminClient } from "@/lib/supabase/admin"
+import type { RoleId } from "@/lib/auth/permissions"
 
 /** Thrown when an invite would exceed the org's seat allowance. */
 export class SeatLimitError extends Error {
@@ -12,8 +13,17 @@ export class SeatLimitError extends Error {
   }
 }
 
-export type TeamMemberRole = "owner" | "admin" | "member"
-export type TeamInviteRole = "admin" | "member"
+/** Roles that can be assigned via team invite (owner is never invited). */
+export const INVITABLE_TEAM_ROLES = [
+  "admin",
+  "hiring_manager",
+  "recruiter",
+  "reviewer",
+  "billing_manager",
+] as const
+
+export type TeamMemberRole = RoleId
+export type TeamInviteRole = (typeof INVITABLE_TEAM_ROLES)[number]
 
 export interface TeamMemberView {
   id: string

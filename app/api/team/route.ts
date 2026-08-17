@@ -2,19 +2,23 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 
 import { handleApiAuth } from "@/lib/auth/api"
+import { requirePermission } from "@/lib/auth/permission-context"
 import { auditRecruiterAction } from "@/lib/audit/events"
 import {
   createTeamInvite,
+  INVITABLE_TEAM_ROLES,
   loadTeamInvites,
   loadTeamMembers,
   revokeTeamInvite,
+  type TeamInviteRole,
 } from "@/lib/db/team"
 import { getSeatUsage } from "@/lib/billing/seats"
 import { getOrganization } from "@/lib/org"
+import { ROLE_LABELS } from "@/lib/auth/permissions"
 
 const inviteSchema = z.object({
   email: z.string().email(),
-  role: z.enum(["admin", "member"]).default("member"),
+  role: z.enum(INVITABLE_TEAM_ROLES).default("recruiter"),
 })
 
 export async function GET() {
@@ -34,13 +38,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  return handleApiAuth(async ({ orgId, user, role: callerRole }) => {
-    if (callerRole !== "owner" && callerRole !== "admin") {
-      return NextResponse.json(
-        { error: "Only owners and admins can invite teammates" },
-        { status: 403 },
-      )
-    }
+  return handleApiAuth(async ({ orgId, user }) => {
+    await requirePermission("team.manage")
 
     try {
       const body = inviteSchema.parse(await req.json())
@@ -48,7 +47,7 @@ export async function POST(req: Request) {
       const invite = await createTeamInvite({
         orgId,
         email: body.email,
-        role: body.role,
+        role: body.role as TeamInviteRole,
         invitedByUserId: user.id,
         inviterEmail: user.email ?? "A teammate",
         orgName: org.name,
@@ -60,7 +59,11 @@ export async function POST(req: Request) {
           action: "team.invite_created",
           resourceType: "team_invite",
           resourceId: invite.id,
-          metadata: { email: body.email, role: body.role },
+          metadata: {
+            email: body.email,
+            role: body.role,
+            roleLabel: ROLE_LABELS[body.role],
+          },
         })
       } catch {
         // Audit failure is logged in writeAuditLog; don't block team invite.
@@ -76,10 +79,8 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-  return handleApiAuth(async ({ orgId, role: callerRole }) => {
-    if (callerRole !== "owner" && callerRole !== "admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-    }
+  return handleApiAuth(async ({ orgId }) => {
+    await requirePermission("team.manage")
 
     const { searchParams } = new URL(req.url)
     const inviteId = searchParams.get("inviteId")

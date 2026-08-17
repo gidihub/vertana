@@ -5,7 +5,12 @@ import { Loader2, Mail, UserPlus, X } from "lucide-react"
 import { toast } from "sonner"
 
 import type { TeamInviteView, TeamMemberView } from "@/lib/db/team"
+import {
+  INVITABLE_TEAM_ROLES,
+  type TeamInviteRole,
+} from "@/lib/db/team"
 import type { SeatUsage } from "@/lib/billing/seats"
+import { ROLE_DESCRIPTIONS, ROLE_LABELS } from "@/lib/auth/permissions"
 import { useOrganization } from "@/lib/store"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -27,11 +32,10 @@ import {
 } from "@/components/ui/select"
 import { formatDate } from "@/lib/format"
 
-const ROLE_LABELS: Record<string, string> = {
-  owner: "Owner",
-  admin: "Admin",
-  member: "Member",
-}
+const INVITE_ROLE_OPTIONS = INVITABLE_TEAM_ROLES.map((id) => ({
+  id,
+  label: ROLE_LABELS[id],
+}))
 
 function SeatMeter({ seats }: { seats: SeatUsage }) {
   const unlimited = seats.total == null
@@ -44,9 +48,7 @@ function SeatMeter({ seats }: { seats: SeatUsage }) {
         <span>({seats.pendingInvites} pending)</span>
       ) : null}
       {!unlimited && !seats.canInvite ? (
-        <span className="text-warning-foreground">
-          · seat limit reached
-        </span>
+        <span className="text-warning-foreground">· seat limit reached</span>
       ) : null}
     </div>
   )
@@ -59,7 +61,7 @@ export function TeamPanel() {
   const [invites, setInvites] = useState<TeamInviteView[]>([])
   const [seats, setSeats] = useState<SeatUsage | null>(null)
   const [email, setEmail] = useState("")
-  const [role, setRole] = useState<"member" | "admin">("member")
+  const [role, setRole] = useState<TeamInviteRole>("recruiter")
   const [inviting, setInviting] = useState(false)
 
   const load = useCallback(async () => {
@@ -232,18 +234,24 @@ export function TeamPanel() {
               />
               <Select
                 value={role}
-                onValueChange={(v) => setRole(v as "member" | "admin")}
+                onValueChange={(v) => setRole(v as TeamInviteRole)}
                 disabled={inviting || (seats ? !seats.canInvite : false)}
               >
-                <SelectTrigger className="w-full sm:w-36">
+                <SelectTrigger className="w-full sm:w-52">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="member">Member</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
+                  {INVITE_ROLE_OPTIONS.map((option) => (
+                    <SelectItem key={option.id} value={option.id}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
+            <p className="text-xs text-muted-foreground">
+              {ROLE_DESCRIPTIONS[role]}
+            </p>
             <Button
               type="submit"
               className="self-start bg-pine text-pine-foreground hover:bg-pine-deep"

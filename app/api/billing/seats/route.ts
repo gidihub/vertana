@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 
 import { handleApiAuth } from "@/lib/auth/api"
+import { requireBillingPermission } from "@/lib/auth/resource-access"
 import { auditRecruiterAction } from "@/lib/audit/events"
 import { getSeatUsage } from "@/lib/billing/seats"
 import { setExtraSeats, SeatChangeError } from "@/lib/billing/manage-seats"
@@ -13,13 +14,8 @@ const bodySchema = z.object({
 })
 
 export async function POST(req: Request) {
-  return handleApiAuth(async ({ orgId, user, role }) => {
-    if (role !== "owner") {
-      return NextResponse.json(
-        { error: "Only organization owners can manage seats" },
-        { status: 403 },
-      )
-    }
+  return handleApiAuth(async ({ orgId, user }) => {
+    await requireBillingPermission()
     if (!isStripeConfigured()) {
       return NextResponse.json(
         { error: "Stripe billing is not configured" },

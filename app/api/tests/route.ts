@@ -2,6 +2,11 @@ import { NextResponse } from "next/server"
 
 import { handleApiAuth } from "@/lib/auth/api"
 import { auditRecruiterAction } from "@/lib/audit/events"
+import { loadRecruiterPermissions, requirePermission } from "@/lib/auth/permission-context"
+import {
+  filterCandidatesForUser,
+  filterTestsForUser,
+} from "@/lib/auth/scope-filter"
 import {
   countInvitesByTest,
   countNeedsScoringByTest,
@@ -14,16 +19,17 @@ import type { Test } from "@/lib/types"
 
 export async function GET() {
   return handleApiAuth(async (ctx) => {
-    // Resolve the org's tests once and reuse them across the three aggregate
-    // helpers, instead of each helper independently re-loading them.
-    const tests = await loadTestsForOrg(ctx.orgId)
-    const [candidates, needs_scoring, invite_counts, email_funnel] =
-      await Promise.all([
-        loadAllCandidates(tests),
-        countNeedsScoringByTest(tests),
-        countInvitesByTest(tests),
-        countOrgInviteFunnel(tests),
-      ])
+    const permCtx = await loadRecruiterPermissions()
+    const allTests = await loadTestsForOrg(ctx.orgId)
+    const tests = filterTestsForUser(allTests, permCtx)
+    const testsById = new Map(tests.map((t) => [t.id, t]))
+    const allCandidates = await loadAllCandidates(allTests)
+    const candidates = filterCandidatesForUser(allCandidates, permCtx, testsById)
+    const [needs_scoring, invite_counts, email_funnel] = await Promise.all([
+      countNeedsScoringByTest(tests),
+      countInvitesByTest(tests),
+      countOrgInviteFunnel(tests),
+    ])
     return NextResponse.json({
       tests,
       candidates,
@@ -36,6 +42,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   return handleApiAuth(async (ctx) => {
+    await requirePermission("tests.create")
     try {
       const test = (await req.json()) as Test
       const saved = await saveTestRecord(test, {

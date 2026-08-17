@@ -1,19 +1,15 @@
 import { NextResponse } from "next/server"
 
 import { handleApiAuth } from "@/lib/auth/api"
+import { requireBillingPermission } from "@/lib/auth/resource-access"
 import { getOrganization } from "@/lib/org"
 import { getStripe } from "@/lib/stripe/client"
 import { isStripeConfigured } from "@/lib/stripe/env"
 import type { InvoiceView } from "@/lib/billing/invoice"
 
 export async function GET() {
-  return handleApiAuth(async ({ role }) => {
-    if (role !== "owner") {
-      return NextResponse.json(
-        { error: "Only organization owners can view billing history" },
-        { status: 403 },
-      )
-    }
+  return handleApiAuth(async () => {
+    await requireBillingPermission()
 
     const org = await getOrganization()
     if (!isStripeConfigured() || !org.stripe_customer_id) {

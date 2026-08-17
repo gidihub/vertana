@@ -261,6 +261,7 @@ export function rowToTest(
     status: row.status,
     token,
     created_at: row.created_at,
+    created_by: row.created_by,
     questions: questions
       .sort((a, b) => a.order_index - b.order_index)
       .map(rowToQuestion),
